@@ -4,20 +4,21 @@ import java.util.List;
 
 public class Livre {
     private String titre;
-    private int classification;
+    private String classification;
     private Double prix;
     private List<Auteur> auteurs;
+    private Editeur editeur;
 
-    public Livre(String titre, int classification, Double prix) {
+    public Livre(String titre, String classification, Double prix, List<Auteur> auteurs, Editeur editeur) {
         this.titre = titre;
         this.classification = classification;
         this.prix = prix;
         this.auteurs = new ArrayList<>();
+        this.editeur = editeur;
+        for (Auteur auteur : auteurs) {
+            auteur.ajouterLivre(this);
+        }
     }
-
-    public void ajouterAuteur(Auteur auteur) {
-        this.auteurs.add(auteur);
-    }   
 
 
 }

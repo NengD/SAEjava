@@ -12,7 +12,6 @@ public class Client extends Personne {
         this.adresse = adresse;
         this.commandes = new ArrayList<>();
     }
-
     public void passserCommande(boolean enLigne,String typeLivraison,List<Livre> livres){
 
     }
