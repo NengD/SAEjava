@@ -1,3 +1,4 @@
+
 public abstract  class Personne {
     protected String nom;
     protected String prenom;
@@ -6,5 +7,7 @@ public abstract  class Personne {
         this.nom = nom;
         this.prenom = prenom;
     }
+
     
+
 }
