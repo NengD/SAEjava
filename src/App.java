@@ -1,4 +1,5 @@
 public class App {
+	private ConnexionMySQL connexionSQL;
     public boolean quitter;
 
     public App(){
@@ -7,9 +8,37 @@ public class App {
 
     public void lancer() {
         while(!this.quitter) {
-            menuPrincipal();
+            menuConnexion();
         }
         quitter();
+    }
+
+	public void menuConnexion() {
+	    boolean commande_faite = false;
+	    while(!commande_faite) {
+		    System.out.println("╭────────────────╮");
+		    System.out.println("│ Menu Connexion │");
+		    System.out.println("╰────────────────╯");
+            System.out.println("C: Menu Client");
+	        System.out.println("Q: Quitter");
+
+            /// Majuscule et minuscule prise en compte
+	        String commande_brute = System.console().readLine();
+	        String commande = commande_brute.strip().toLowerCase();
+
+	        if(commande.equals("q")) {
+                this.quitter = true;
+                commande_faite = true;}
+            else if(commande.equals("c")){
+				try {
+            		this.connexionSQL = new ConnexionMySQL();
+					menuPrincipal();
+        		}catch (ClassNotFoundException ex){
+            		System.out.println("Driver MySQL non trouvé!!!");
+            		System.exit(1);
+        		}
+			}
+        }
     }
 
     public void menuPrincipal() {
@@ -99,8 +128,8 @@ public class App {
 
     /// Affiche un message d'au revoir
     public void quitter() {
-	System.out.println("╭─────────────────────────────────────────╮");
-	System.out.println("│ Au revoir, la librairie reste ouverte ! │");
-	System.out.println("╰─────────────────────────────────────────╯");
+	System.out.println("╭──────────────────────────────────────────────────────╮");
+	System.out.println("│ Au revoir, la librairie reste ouverte et accessible! │");
+	System.out.println("╰──────────────────────────────────────────────────────╯");
     }
 }
