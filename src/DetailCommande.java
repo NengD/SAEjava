@@ -14,7 +14,5 @@ public class DetailCommande {
     }
     
     
-    public Double prixTotal(){
-
-    }
+    //public Double prixTotal(){}
 }

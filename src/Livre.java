@@ -20,5 +20,26 @@ public class Livre {
         }
     }
 
+    public String getTitre() {
+        return titre;
+    }
+
+    public String getClassification() {
+        return classification;
+    }
+
+    public Double getPrix() {
+        return prix;
+    }
+
+    public List<Auteur> getAuteurs() {
+        return auteurs;
+    }
+
+    public Editeur getEditeur() {
+        return editeur;
+    }
+    
+
 
 }

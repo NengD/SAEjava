@@ -25,28 +25,23 @@ public class Client extends Personne {
 
     }
 
-    public List<Livre> consulterCatalogue(){
-        List<Livre> livres = new ArrayList<>();
-        Statement s=laConnexion.createStatement();
-		ResultSet rs=s.executeQuery("SELECT * FROM LIVRE");	
+    public List<String> consulterCatalogue(){
+        List<String> livres=new ArrayList<>();
+        Statement s=this.connexion.createStatement();
+		ResultSet rs=s.executeQuery("SELECT titre,nomclass,prix,nomedit,nomauteur FROM LIVRE NATURAL JOIN AUTEUR NATURAL JOIN EDITEUR NATURAL JOIN CLASSIFICATION");	
 		while (rs.next()){
             String titre=rs.getString("titre");
             String classification=rs.getString("classification");
-            Double prix=rs.getDouble("prix");
-            int idEditeur=rs.getInt("idEditeur");
-            Editeur editeur=new Editeur(idEditeur);
-            List<Auteur> auteurs=new ArrayList<>();
-            Livre livre=new Livre(titre, classification, prix, auteurs, editeur);
-            livres.add(livre);
+            String prix=Double.toString(rs.getDouble("prix"));
+            String nomEditeur=rs.getString("nomedit");
+            String auteurs=rs.getString("nomauteur");
+            livres.add(titre+" "+classification+" "+prix+" "+nomEditeur);
         }
 		rs.close();
 		return livres;
     }
 
-    public List<Livre> onVousRecommande(){
-        List<Livre> livres = new ArrayList<>();
-        return livres;
-    }
+    //public List<Livre> onVousRecommande(){}
 
 
 }

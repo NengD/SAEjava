@@ -9,11 +9,7 @@ public class Administrateur extends Personne {
 
     }
 
-    public void ajouterLibrairie(Magasin librairie) {
+    public void ajouterLibrairie(Magasin librairie) {}
 
-    }
-
-    public String consulterStatistique(){
-        
-    }
+    //public String consulterStatistique(){}
 }

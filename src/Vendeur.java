@@ -9,16 +9,14 @@ public class Vendeur extends Personne {
     }
 
     public void ajouterLivre(Livre livre, int quantite){
-        this.magasin..stock.ajouterLivre(livre, quantite);
+        this.magasin.stock.ajouterLivre(livre, quantite);
     }
 
     public void majQuantiteLivre(Livre livre, int quantite){
         this.magasin.stock.ajouterLivre(livre, quantite);
     }
 
-    public boolean livreDisponible(String nomLivre){
-
-    }
+    //public boolean livreDisponible(String nomLivre){}
 
     public void passerCommandePourClient(boolean enLigne,String typeLivraison,List<Livre> livres,Client client){
 

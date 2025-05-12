@@ -3,12 +3,12 @@ import java.util.HashMap;
 
 public class Stock {
     private Magasin magasin;
-    private Map<Livre,int> quantiteLivre;
+    private Map<Livre,Integer> quantiteLivre;
     private Double valeurStock;
 
     public Stock(Magasin magasin) {
         this.magasin = magasin;
-        this.quantiteLivre = new HashMap<>()
+        this.quantiteLivre = new HashMap<>();
         this.valeurStock = 0.0;
     }
 

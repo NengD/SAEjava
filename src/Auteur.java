@@ -1,5 +1,5 @@
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Auteur extends Personne {
 
@@ -10,9 +10,7 @@ public class Auteur extends Personne {
         this.livres = new ArrayList<>();
     }
 
-    public List<Livre> aEcrit(){
-
-    }
+    //public List<Livre> aEcrit(){}
 
     public void ajouterLivre(Livre livre) {
         livres.add(livre);
