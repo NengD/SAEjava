@@ -16,6 +16,7 @@ public class Magasin {
     }
 
     public String editerFacture(){
+        
 
     }
 
