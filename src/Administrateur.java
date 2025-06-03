@@ -5,11 +5,13 @@ public class Administrateur extends Personne {
         super(nom, prenom);
     }
 
-    public void ajouterVendeur(Vendeur vendeur,Magasin magasin) {
-
+    public void creerVendeur(String nom,String prenom,Magasin magasin) {
+        Vendeur vendeur = new Vendeur(nom, prenom);
+        magasin.ajouterVendeur(vendeur);
     }
 
-    public void ajouterLibrairie(Magasin librairie) {}
+    public void ajouterLibrairie(Magasin librairie) {
+    }
 
     //public String consulterStatistique(){}
 }

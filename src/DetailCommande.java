@@ -1,17 +1,23 @@
 
-import java.util.List;
-
 public class DetailCommande {
-    private int quantite;
+    private static int numLigne = 0;
     private Commande commande;
-    private List<Livre> livres;
-    private String date;
+    private Livre livre;
+    private int quantite;
 
-    public DetailCommande(int quantite, Commande commande, List<Livre> livres) {
+    public DetailCommande(Commande commande, Livre livre, int quantite) {
+        this.livre = livre;
         this.quantite = quantite;
         this.commande = commande;
-        this.livres = livres;
+        this.numLigne++;
     }
+    public void resetNumLigne(){
+        this.numLigne = 0;
+    }
+    public int getNumLigne() {
+        return numLigne;
+    }
+
     
     
     //public Double prixTotal(){}

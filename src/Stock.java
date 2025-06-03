@@ -1,11 +1,15 @@
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Stock {
     private Magasin magasin;
     private Map<Livre,Integer> quantiteLivre;
     private Double valeurStock;
 
+    public Map<Livre, Integer> getQuantiteLivre() {
+        return quantiteLivre;
+    }
+    
     public Stock(Magasin magasin) {
         this.magasin = magasin;
         this.quantiteLivre = new HashMap<>();
