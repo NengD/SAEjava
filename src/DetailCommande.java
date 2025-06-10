@@ -18,7 +18,7 @@ public class DetailCommande {
         return numLigne;
     }
 
-    
-    
-    //public Double prixTotal(){}
+    public Double prixTotal(){
+        return livre.getPrix() * quantite;
+    }
 }
