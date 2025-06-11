@@ -36,7 +36,7 @@ public class Client extends Personne {
             }
             ps1.setString(4, String.valueOf(typeLivraison));
             ps1.setInt(5, this.numClient);
-            ps1.setInt(6, magasin.getNumMagasin());
+            ps1.setString(6, magasin.getIdMagasin());
             ps1.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'insertion de la commande : " + e.getMessage());
@@ -60,7 +60,6 @@ public class Client extends Personne {
                 ps2.executeUpdate();
                 ps2.close();
 
-                // Mettre à jour le stock pour chaque livre et quantité
                 magasin.stock.majQuantiteLivre(livre, -dictLivres.get(livre));
                 numlig++;
             } catch (SQLException e) {
