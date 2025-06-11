@@ -3,15 +3,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Livre {
-    private static Integer isbn = 0;
+    private String isbn;
     private String titre;
     private String classification;
     private Double prix;
     private List<Auteur> auteurs;
     private Editeur editeur;
 
-    public Livre(String titre, String classification, Double prix, List<Auteur> auteurs, Editeur editeur) {
-        this.isbn++;
+    public Livre(String isbn, String titre, String classification, Double prix, List<Auteur> auteurs, Editeur editeur) {
+        this.isbn=isbn;
         this.titre = titre;
         this.classification = classification;
         this.prix = prix;
@@ -41,7 +41,7 @@ public class Livre {
     public Editeur getEditeur() {
         return editeur;
     }
-    public Integer getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
     

@@ -4,23 +4,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 
 public class Client extends Personne {
 
     private String adresse;
     private List<Commande> commandes;
-    private ConnexionMySQL connexion;
     private static int numClient = 0;
 
     public Client(String nom, String prenom, String adresse, ConnexionMySQL connexion) {
-        super(nom, prenom);
+        super(nom, prenom, connexion);
         this.adresse = adresse;
         this.commandes = new ArrayList<>();
-        this.connexion = connexion;
         numClient++;
     }
 
@@ -28,7 +26,7 @@ public class Client extends Personne {
         Commande commande = new Commande(enLigne, typeLivraison, this);
         magasin.ajouteCommande(commande);
         try {
-            PreparedStatement ps1 = connexion.prepareStatement("INSERT INTO COMMANDE (numcom, datecom, enligne, livraison, idcli, idmag) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement ps1 = this.connexion.prepareStatement("INSERT INTO COMMANDE (numcom, datecom, enligne, livraison, idcli, idmag) VALUES (?, ?, ?, ?, ?, ?)");
             ps1.setInt(1, commande.getNumCommande());
             ps1.setString(2, LocalDate.now().toString());
             if (enLigne) {
@@ -47,36 +45,35 @@ public class Client extends Personne {
 
         Map<Livre, Integer> dictLivres = new HashMap<>();
         for (Livre livre : livres) {
-            if (dictLivres.containsKey(livre)) {
-                dictLivres.put(livre, dictLivres.get(livre) + 1);
-            } else {
-                dictLivres.put(livre, 1);
-            }
+            dictLivres.put(livre, dictLivres.getOrDefault(livre, 0) + 1);
         }
 
+        int numlig = 1;
         for (Livre livre : dictLivres.keySet()) {
-            DetailCommande detailCommande = new DetailCommande(commande , livre, dictLivres.get(livre));
             try {
-                PreparedStatement ps2 = connexion.prepareStatement("INSERT INTO DETAILCOMMANDE (numcom, numlig, qte, prixvente, isbn) VALUES (?, ?, ?, ?, ?)");
+                PreparedStatement ps2 = connexion.prepareStatement(
+                    "INSERT INTO DETAILCOMMANDE (numcom, numlig, isbn) VALUES (?, ?, ?)"
+                );
                 ps2.setInt(1, commande.getNumCommande());
-                ps2.setInt(2, detailCommande.getNumLigne());
-                ps2.setInt(3, dictLivres.get(livre));
-                ps2.setDouble(4, livre.getPrix());
-                ps2.setString(5, livre.getIsbn().toString());
+                ps2.setInt(2, numlig);
+                ps2.setString(3, livre.getIsbn().toString());
                 ps2.executeUpdate();
+                ps2.close();
+
+                // Mettre à jour le stock pour chaque livre et quantité
+                magasin.stock.majQuantiteLivre(livre, -dictLivres.get(livre));
+                numlig++;
             } catch (SQLException e) {
                 System.out.println("Erreur lors de l'insertion du détail de la commande : " + e.getMessage());
             }
         }
-        
-        magasin.stock.majQuantiteLivre(livres.get(0), -1);
     }
 
     public List<String> consulterCatalogue() {
-        Statement s=connexion.createStatement();
+        List<String> livres=new ArrayList<>();
         try {
+            Statement s = this.connexion.createStatement();
             ResultSet rs=s.executeQuery("SELECT titre, nomclass, prix, nomedit, nomauteur FROM LIVRE NATURAL JOIN AUTEUR NATURAL JOIN EDITEUR NATURAL JOIN CLASSIFICATION");
-            List<String> livres=new ArrayList<>();
             while (rs.next()) {
             String titre=rs.getString("titre");
             String nomClass=rs.getString("nomclass");
