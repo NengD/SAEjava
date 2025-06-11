@@ -13,7 +13,23 @@ public class Commande {
         this.client = client;
     }
     public int getNumCommande() {
-        return numCommande;
+        return this.numCommande;
     }
+    public boolean isEnLigne() {
+        return this.enLigne;
+    }
+    public char getTypeLivraison() {
+        return this.typeLivraison;
+    }
+    public String getDateCommande() {
+        return this.dateCommande;
+    }
+    public Client getClient() {
+        return this.client;
+    }
+    public DetailCommande getDetailCommande() {
+        return this.detailCommande;
+    }
+    
 }
 
