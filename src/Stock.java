@@ -53,11 +53,23 @@ public class Stock {
 
     public Double getValeurStock() {
         Double valeur = 0.0;
-        for (Map.Entry<Livre, Integer> entry : quantiteLivre.entrySet()) {
-            Livre livre = entry.getKey();
-            Integer quantite = entry.getValue();
-            valeur += livre.getPrix() * quantite;
+        
+        try {
+            Statement s = this.connexion.createStatement();
+            ResultSet rs = s.executeQuery("select * from STOCK");
+            while (rs.next()) {
+                String isbn = rs.getString("isbn");
+                int quantite = rs.getInt("quantite");
+                if (isbn != null && quantite > 0) {
+                ResultSet rs1 = s.executeQuery("select prix from Livre where isbn = '" + isbn + "'");
+                double prix = rs1.getDouble("prix");
+                valeur += prix * quantite;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de la valeur du stock : " + e.getMessage());
         }
+        
         return valeur;
     }
 
