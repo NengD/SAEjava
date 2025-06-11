@@ -73,8 +73,22 @@ public class Stock {
         return valeur;
     }
 
-    public Map<Livre, Integer> getQuantiteLivre() {
-        return quantiteLivre;
+    public Integer getQuantiteLivre() {
+        try{
+            Statement s = this.connexion.createStatement();
+            ResultSet rs = s.executeQuery("select * from STOCK");
+            int quantite = 0;
+            while (rs.next()) {
+                String isbn = rs.getString("isbn");
+                if (isbn != null) {
+                    quantite += rs.getInt("quantite");
+                }
+            }
+            return quantite;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de la quantité totale de livres : " + e.getMessage());
+            return null;
+        }
     }
 }
 
