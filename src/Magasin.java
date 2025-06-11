@@ -6,21 +6,32 @@ public class Magasin {
     private List<Vendeur> vendeurs;
     private List<Commande> commandes;
     public Stock stock;
-    private static int numMagasin = 0;
+    private String idMagasin;
+
+    public Magasin(String nom) {
+        this.nom = nom;
+        this.vendeurs = new ArrayList<>();
+        this.commandes = new ArrayList<>();
+        this.stock = new Stock(this);
+        this.idMagasin=idMagasin;
+    }
 
     public Magasin(String nom, Stock stock) {
         this.nom = nom;
         this.vendeurs = new ArrayList<>();
         this.commandes = new ArrayList<>();
         this.stock = stock;
-        numMagasin++;
+        this.idMagasin=idMagasin;
     }
-    public int getNumMagasin() {
-        return this.numMagasin;
+
+    public String getIdMagasin() {
+        return this.idMagasin;
     }
+
     public void ajouterVendeur(Vendeur vendeur) {
         this.vendeurs.add(vendeur);
     }
+
     public void ajouteCommande(Commande commande) {
         this.commandes.add(commande);
     }

@@ -4,16 +4,11 @@ import java.util.Map;
 public class Stock {
     private Magasin magasin;
     private Map<Livre,Integer> quantiteLivre;
-    private Double valeurStock;
 
-    public Map<Livre, Integer> getQuantiteLivre() {
-        return quantiteLivre;
-    }
     
     public Stock(Magasin magasin) {
         this.magasin = magasin;
         this.quantiteLivre = new HashMap<>();
-        this.valeurStock = 0.0;
     }
 
     public void ajouterLivre(Livre livre, int quantite) {
@@ -40,6 +35,10 @@ public class Stock {
             valeur += livre.getPrix() * quantite;
         }
         return valeur;
+    }
+
+    public Map<Livre, Integer> getQuantiteLivre() {
+        return quantiteLivre;
     }
 }
 
