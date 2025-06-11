@@ -89,6 +89,64 @@ public class Client extends Personne {
             return null;
         }
     }
-}
-    //public List<Livre> onVousRecommande(){}
 
+    public List<String> onVousRecommande() {
+        List<String> recommandations = new ArrayList<>();
+        try {
+            // 1. Récupérer les idLivre achetés par ce client
+            String livresClientQuery = "SELECT idLivre FROM COMMANDE NATURAL JOIN DETAILCOMMANDE WHERE idClient = " + this.getId();
+            List<Integer> livresClient = new ArrayList<>();
+            try (Statement s = this.connexion.createStatement();
+                ResultSet rs = s.executeQuery(livresClientQuery)) {
+                while (rs.next()) {
+                    livresClient.add(rs.getInt("idLivre"));
+                }
+            }
+
+            if (livresClient.isEmpty()) return recommandations;
+
+            // 2. Trouver les autres clients ayant au moins 3 livres en commun
+            String inLivres = String.join(",", livresClient.stream().map(String::valueOf).toArray(String[]::new));
+            String clientsSimilairesQuery = "SELECT idClient FROM DETAILCOMMANDE WHERE idLivre IN (" + inLivres + ") AND idClient != " + this.getId() +
+                    " GROUP BY idClient HAVING COUNT(DISTINCT idLivre) >= 3";
+            List<Integer> clientsSimilaires = new ArrayList<>();
+            try (Statement s = this.connexion.createStatement();
+                ResultSet rs = s.executeQuery(clientsSimilairesQuery)) {
+                while (rs.next()) {
+                    clientsSimilaires.add(rs.getInt("idClient"));
+                }
+            }
+
+            if (clientsSimilaires.isEmpty()) return recommandations;
+
+            // 3. Récupérer les livres achetés par ces clients mais pas par ce client
+            String inClients = String.join(",", clientsSimilaires.stream().map(String::valueOf).toArray(String[]::new));
+            String autresLivresQuery = "SELECT DISTINCT idLivre FROM DETAILCOMMANDE WHERE idClient IN (" + inClients + ") AND idLivre NOT IN (" + inLivres + ")";
+            List<Integer> livresARecommander = new ArrayList<>();
+            try (Statement s = this.connexion.createStatement();
+                ResultSet rs = s.executeQuery(autresLivresQuery)) {
+                while (rs.next()) {
+                    livresARecommander.add(rs.getInt("idLivre"));
+                }
+            }
+
+            if (livresARecommander.isEmpty()) return recommandations;
+
+            // 4. Récupérer les titres de ces livres
+            String inLivresRec = String.join(",", livresARecommander.stream().map(String::valueOf).toArray(String[]::new));
+            String titresQuery = "SELECT titre FROM LIVRE WHERE idLivre IN (" + inLivresRec + ")";
+            try (Statement s = this.connexion.createStatement();
+                ResultSet rs = s.executeQuery(titresQuery)) {
+                while (rs.next()) {
+                    String titre = rs.getString("titre");
+                    if (titre != null && !recommandations.contains(titre)) {
+                        recommandations.add(titre);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return recommandations;
+    }
+}
