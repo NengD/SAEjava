@@ -13,4 +13,18 @@ public class DetailCommande {
     public Double prixTotal(){
         return livre.getPrix() * quantite;
     }
+
+    public Commande getCommande() {
+        return this.commande;
+    }
+
+    public Livre getLivre() {
+        return this.livre;
+    }
+
+    public int getQuantite() {
+        return this.quantite;
+    }
+    
+
 }
