@@ -67,16 +67,14 @@ public class App {
     public Client getClientFromDB(String idClient) {
         try {
             java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT nomcli, prenomcli, adressecli FROM CLIENT WHERE idcli = ?");
+                    "SELECT idcli FROM CLIENT WHERE idcli = ?");
             ps.setInt(1, Integer.parseInt(idClient));
             java.sql.ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                String nom = rs.getString("nomcli");
-                String prenom = rs.getString("prenomcli");
-                String adresse = rs.getString("adressecli");
+                int idcli = rs.getInt("idcli");
                 rs.close();
                 ps.close();
-                return new Client(nom, prenom, adresse, this.connexionSQL);
+                return new Client(idcli, this.connexionSQL);
             } else {
                 rs.close();
                 ps.close();
@@ -162,7 +160,8 @@ public class App {
                 String classification = System.console().readLine();
                 System.out.println("Prix :");
                 double prix = Double.parseDouble(System.console().readLine());
-                Livre livre = new Livre(isbn, titre, classification, prix, new ArrayList<>(), null);
+                // Ici, seul l'ISBN doit être utilisé pour créer l'objet Livre
+                Livre livre = new Livre(isbn);
                 System.out.println("Quantité :");
                 int quantite = Integer.parseInt(System.console().readLine());
                 vendeur.ajouterLivre(livre, quantite);
@@ -171,7 +170,7 @@ public class App {
                 String isbn = System.console().readLine();
                 System.out.println("Quantité à ajouter :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                Livre livre = new Livre(isbn);
                 vendeur.majQuantiteLivre(livre, quantite);
             } else if (commande.equals("d")) {
                 System.out.println("Nom du livre :");
@@ -192,7 +191,7 @@ public class App {
                 for (int i = 0; i < nbLivres; i++) {
                     System.out.println("ISBN du livre " + (i + 1) + " :");
                     String isbn = System.console().readLine();
-                    Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                    Livre livre = new Livre(isbn);
                     livres.add(livre);
                 }
                 System.out.println("Commande en ligne ? (o/n) :");
@@ -203,7 +202,7 @@ public class App {
             } else if (commande.equals("t")) {
                 System.out.println("ISBN du livre à transférer :");
                 String isbn = System.console().readLine();
-                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                Livre livre = new Livre(isbn);
                 System.out.println("Quantité à transférer :");
                 int quantite = Integer.parseInt(System.console().readLine());
                 System.out.println("ID du magasin de destination :");
@@ -227,6 +226,7 @@ public class App {
             System.out.println("P: Passer une commande");
             System.out.println("M: Choisir le mode de réception");
             System.out.println("C: Consulter le catalogue");
+            System.out.println("O: On vous recommande");
 
             String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
@@ -238,7 +238,7 @@ public class App {
                 String nomLivre = System.console().readLine();
                 Livre livreTrouve = null;
                 for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
-                    if (l.getTitre().equalsIgnoreCase(nomLivre)) {
+                    if (l.getTitre(this.connexionSQL.getConnection()).equalsIgnoreCase(nomLivre)) {
                         livreTrouve = l;
                         break;
                     }
@@ -272,7 +272,14 @@ public class App {
                 System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
-                System.out.println(client.consulterCatalogue(this.connexionSQL.getConnection()));
+                for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
+                    System.out.println(l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection()));
+                }
+            } else if (commande.equals("o")) {
+                System.out.println("Livres recommandés pour vous :");
+                for (String titre : client.onVousRecommande()) {
+                    System.out.println("- " + titre);
+                }
             } else {
                 System.out.println("Commande inconnue.");
             }
