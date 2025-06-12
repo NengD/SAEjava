@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public class App {
@@ -68,8 +67,7 @@ public class App {
     public Client getClientFromDB(String idClient) {
         try {
             java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT nomcli, prenomcli, adressecli FROM CLIENT WHERE idcli = ?"
-            );
+                    "SELECT nomcli, prenomcli, adressecli FROM CLIENT WHERE idcli = ?");
             ps.setInt(1, Integer.parseInt(idClient));
             java.sql.ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -236,26 +234,40 @@ public class App {
             if (commande.equals("r")) {
                 commande_faite = true;
             } else if (commande.equals("p")) {
-                System.out.println("Combien de livres voulez-vous commander ?");
-                int nbLivres = Integer.parseInt(System.console().readLine());
-                ArrayList<Livre> livres = new ArrayList<>();
-                for (int i = 0; i < nbLivres; i++) {
-                    System.out.println("ISBN du livre " + (i + 1) + " :");
-                    String isbn = System.console().readLine();
-                    Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
-                    livres.add(livre);
+                System.out.println("Nom du livre à commander :");
+                String nomLivre = System.console().readLine();
+                Livre livreTrouve = null;
+                for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
+                    if (l.getTitre().equalsIgnoreCase(nomLivre)) {
+                        livreTrouve = l;
+                        break;
+                    }
                 }
-                System.out.println("Commande en ligne ? (o/n) :");
-                boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
-                System.out.println("Type de livraison (L/M/R) :");
-                char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
+                if (livreTrouve == null) {
+                    System.out.println("Livre non trouvé dans le catalogue.");
+                    return;
+                }
+                System.out.println("Quantité à commander :");
+                int quantite = Integer.parseInt(System.console().readLine());
                 System.out.println("Nom du magasin pour la commande :");
                 String nomMagasin = System.console().readLine();
                 Magasin magasin = new Magasin(nomMagasin);
+                System.out.println("Commande en ligne ? (o/n) :");
+                boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
+                char typeLivraison;
+                if (enLigne) {
+                    typeLivraison = 'L';
+                } else {
+                    System.out.println("Type de livraison (M pour magasin, R pour relais) :");
+                    typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
+                }
+                ArrayList<Livre> livres = new ArrayList<>();
+                for (int i = 0; i < quantite; i++) {
+                    livres.add(livreTrouve);
+                }
                 client.passerCommande(enLigne, typeLivraison, livres, magasin);
                 System.out.println("Commande passée !");
             } else if (commande.equals("m")) {
-                // Choisir le mode de réception
                 System.out.println("Nouveau mode de réception (L/M/R) :");
                 System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
@@ -267,7 +279,6 @@ public class App {
         }
     }
 
-    /// Affiche un message d'au revoir
     public void quitter() {
         System.out.println("╭───────────────────────────────────────────────────────╮");
         System.out.println("│ Au revoir, la librairie reste ouverte et accessible ! │");
