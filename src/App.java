@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 public class App {
@@ -256,13 +257,14 @@ public class App {
                 boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
                 System.out.println("Type de livraison (L/M/R) :");
                 char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
-                client.passerCommande(enLigne, String.valueOf(typeLivraison), livres);
+                System.out.println("Nom du magasin pour la commande :");
+                String nomMagasin = System.console().readLine();
+                Magasin magasin = new Magasin(nomMagasin);
+                client.passerCommande(enLigne, typeLivraison, livres, magasin);
                 System.out.println("Commande passée !");
             } else if (commande.equals("m")) {
                 // Choisir le mode de réception
                 System.out.println("Nouveau mode de réception (L/M/R) :");
-                char mode = System.console().readLine().trim().toUpperCase().charAt(0);
-                client.choisirModeReception(String.valueOf(mode));
                 System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
                 System.out.println("Catalogue :");

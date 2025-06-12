@@ -71,7 +71,10 @@ public class Client extends Personne {
         List<Livre> livres = new ArrayList<>();
         try {
             Statement s = this.connexion.createStatement();
-            ResultSet rs = s.executeQuery("SELECT l.isbn, l.titre, c.nomclass, l.prix FROM LIVRE l LEFT JOIN CLASSIFICATION c ON l.classification = c.iddewey");
+            ResultSet rs = s.executeQuery(
+                    "SELECT l.isbn, l.titre, c.nomclass, l.prix "
+                    + "FROM LIVRE l LEFT JOIN CLASSIFICATION c ON l.classification = c.iddewey"
+            );
             while (rs.next()) {
                 String isbn = rs.getString("isbn");
                 String titre = rs.getString("titre");

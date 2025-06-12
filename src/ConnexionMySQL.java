@@ -9,8 +9,8 @@ public class ConnexionMySQL {
         Class.forName("org.mariadb.jdbc.Driver");
     }
 
-    public void connecter(String nomLogin, String motDePasse) throws SQLException {
-        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-maria:3306/Librairie", nomLogin, motDePasse);
+    public void connecter() throws SQLException {
+        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-maria:3306/DBmoreau", "moreau", "moreau");
         this.connecte = this.mysql != null;
     }
 

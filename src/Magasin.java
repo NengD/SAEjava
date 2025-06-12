@@ -12,7 +12,7 @@ public class Magasin {
         this.nom = nom;
         this.vendeurs = new ArrayList<>();
         this.commandes = new ArrayList<>();
-        this.stock = new Stock(this);
+        this.stock = new Stock(this, null);
         this.idMagasin=idMagasin;
     }
 
