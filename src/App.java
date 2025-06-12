@@ -1,4 +1,6 @@
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class App {
@@ -23,19 +25,17 @@ public class App {
             System.out.println("╭────────────────╮");
             System.out.println("│ Menu Connexion │");
             System.out.println("╰────────────────╯");
-            System.out.println("P: Menu principal");
+            System.out.println("C: Se connecter");
             System.out.println("Q: Quitter");
 
-            /// Majuscule et minuscule prise en compte
-	        String commande_brute = System.console().readLine();
+            String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("q")) {
                 this.quitter = true;
                 commande_faite = true;
-            } else if (commande.equals("p")) {
+            } else if (commande.equals("c")) {
                 try {
-                    this.connexionSQL = new ConnexionMySQL();
                     boolean connexion_faite = false;
                     String login = "";
                     String mdp = "";
@@ -50,9 +50,31 @@ public class App {
                             connexion_faite = true;
                         }
                     }
-                    this.connexionSQL.connecter(login, mdp);
-                    System.out.println("Connexion réussie à la base de données !");
-                    menuPrincipal();
+                    // Connexion à la base avec les identifiants saisis
+                    this.connexionSQL = new ConnexionMySQL();
+                    this.connexionSQL.connecter();
+
+                    // Vérification du login/mdp dans la table Utilisateur
+                    String role = "";
+                    String sql = "SELECT role FROM Utilisateur WHERE login = ? AND mdp = ?";
+                    try (PreparedStatement ps = this.connexionSQL.prepareStatement(sql)) {
+                        ps.setString(1, login);
+                        ps.setString(2, mdp);
+                        ResultSet rs = ps.executeQuery();
+                        if (rs.next()) {
+                            role = rs.getString("role");
+                        }
+                    }
+
+                    if (role.equals("admin")) {
+                        menuAdmin();
+                    } else if (role.equals("vendeur")) {
+                        menuVendeur();
+                    } else if (role.equals("client")) {
+                        menuClient();
+                    } else {
+                        System.out.println("Login ou mot de passe incorrect !");
+                    }
                 } catch (ClassNotFoundException ex) {
                     System.out.println("Driver MySQL non trouvé !");
                     System.exit(1);
@@ -60,35 +82,6 @@ public class App {
                     System.out.println("Login ou mot de passe incorrect !");
                     System.exit(1);
                 }
-            }
-        }
-    }
-
-    public void menuPrincipal() {
-        boolean commande_faite = false;
-        while (!commande_faite) {
-            System.out.println("╭────────────────╮");
-            System.out.println("│ Menu principal │");
-            System.out.println("╰────────────────╯");
-            System.out.println("Que voulez vous faire?");
-            System.out.println("A: Menu Administrateur");
-            System.out.println("V: Menu Vendeur");
-            System.out.println("C: Menu Client");
-            System.out.println("Q: Quitter");
-
-            /// Majuscule et minuscule prise en compte
-	        String commande_brute = System.console().readLine();
-            String commande = commande_brute.strip().toLowerCase();
-
-            if (commande.equals("q")) {
-                this.quitter = true;
-                commande_faite = true;
-            } else if (commande.equals("a")) {
-                menuAdmin();
-            } else if (commande.equals("v")) {
-                menuVendeur();
-            } else if (commande.equals("c")) {
-                menuClient();
             }
         }
     }
