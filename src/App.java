@@ -43,13 +43,11 @@ public class App {
             } else if (commande.equals("a")) {
                 System.out.println("Entrez l'ID de l'administrateur :");
                 String idAdmin = System.console().readLine();
-                // À compléter pour récupérer l'admin depuis la BD si besoin
                 Administrateur admin = new Administrateur("Admin", "Admin", this.connexionSQL);
                 menuAdmin(admin);
             } else if (commande.equals("v")) {
                 System.out.println("Entrez l'ID du vendeur :");
                 String idVendeur = System.console().readLine();
-                // À compléter pour récupérer le vendeur depuis la BD si besoin
                 Vendeur vendeur = new Vendeur("Vendeur", "Vendeur", this.connexionSQL);
                 menuVendeur(vendeur);
             } else if (commande.equals("c")) {
@@ -67,7 +65,6 @@ public class App {
         }
     }
 
-// Ajoute cette méthode à ta classe App
     public Client getClientFromDB(String idClient) {
         try {
             java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
@@ -119,7 +116,7 @@ public class App {
                 String prenom = System.console().readLine();
                 System.out.println("Nom du magasin :");
                 String nomMagasin = System.console().readLine();
-                Magasin magasin = new Magasin(nomMagasin); // À adapter si besoin
+                Magasin magasin = new Magasin(nomMagasin);
                 admin.creerVendeur(nom, prenom, magasin);
                 System.out.println("Vendeur créé !");
             } else if (commande.equals("a")) {
@@ -130,10 +127,8 @@ public class App {
                 admin.ajouterLibrairie(nom, ville);
                 System.out.println("Librairie ajoutée !");
             } else if (commande.equals("g")) {
-                // Appel à la méthode de gestion des stocks (à compléter selon ton code)
                 System.out.println("Gestion des stocks (fonctionnalité à implémenter)");
             } else if (commande.equals("s")) {
-                // Appel à la méthode de statistiques (à compléter selon ton code)
                 System.out.println("Statistiques de vente (fonctionnalité à implémenter)");
             } else {
                 System.out.println("Commande inconnue.");
@@ -169,7 +164,6 @@ public class App {
                 String classification = System.console().readLine();
                 System.out.println("Prix :");
                 double prix = Double.parseDouble(System.console().readLine());
-                // Pour simplifier, on ne gère pas les auteurs/éditeurs ici
                 Livre livre = new Livre(isbn, titre, classification, prix, new ArrayList<>(), null);
                 System.out.println("Quantité :");
                 int quantite = Integer.parseInt(System.console().readLine());
@@ -179,7 +173,7 @@ public class App {
                 String isbn = System.console().readLine();
                 System.out.println("Quantité à ajouter :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À améliorer si besoin
+                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
                 vendeur.majQuantiteLivre(livre, quantite);
             } else if (commande.equals("d")) {
                 System.out.println("Nom du livre :");
@@ -216,7 +210,7 @@ public class App {
                 int quantite = Integer.parseInt(System.console().readLine());
                 System.out.println("ID du magasin de destination :");
                 String idMagasin = System.console().readLine();
-                Magasin magasinDest = new Magasin(idMagasin); // À améliorer pour charger le vrai magasin
+                Magasin magasinDest = new Magasin(idMagasin);
                 vendeur.transfertLivre(livre, quantite, magasinDest);
             } else {
                 System.out.println("Commande inconnue.");
@@ -242,14 +236,12 @@ public class App {
             if (commande.equals("r")) {
                 commande_faite = true;
             } else if (commande.equals("p")) {
-                // Passer une commande
                 System.out.println("Combien de livres voulez-vous commander ?");
                 int nbLivres = Integer.parseInt(System.console().readLine());
                 ArrayList<Livre> livres = new ArrayList<>();
                 for (int i = 0; i < nbLivres; i++) {
                     System.out.println("ISBN du livre " + (i + 1) + " :");
                     String isbn = System.console().readLine();
-                    // Ici tu pourrais récupérer le livre depuis la BD si besoin
                     Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
                     livres.add(livre);
                 }
