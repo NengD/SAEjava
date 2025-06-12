@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public class App {
@@ -159,21 +158,27 @@ public class App {
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
-                this.quitter = true;
                 commande_faite = true;
             } else if (commande.equals("a")) {
                 System.out.println("ISBN du livre :");
                 String isbn = System.console().readLine();
+                System.out.println("Titre :");
+                String titre = System.console().readLine();
+                System.out.println("Classification :");
+                String classification = System.console().readLine();
+                System.out.println("Prix :");
+                double prix = Double.parseDouble(System.console().readLine());
+                // Pour simplifier, on ne gère pas les auteurs/éditeurs ici
+                Livre livre = new Livre(isbn, titre, classification, prix, new ArrayList<>(), null);
                 System.out.println("Quantité :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À compléter
                 vendeur.ajouterLivre(livre, quantite);
             } else if (commande.equals("m")) {
                 System.out.println("ISBN du livre :");
                 String isbn = System.console().readLine();
                 System.out.println("Quantité à ajouter :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À compléter
+                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À améliorer si besoin
                 vendeur.majQuantiteLivre(livre, quantite);
             } else if (commande.equals("d")) {
                 System.out.println("Nom du livre :");
@@ -181,9 +186,37 @@ public class App {
                 boolean dispo = vendeur.livreDisponible(nomLivre);
                 System.out.println("Disponible : " + dispo);
             } else if (commande.equals("p")) {
-                System.out.println("Commande client (fonctionnalité à implémenter)");
+                System.out.println("ID du client :");
+                String idClient = System.console().readLine();
+                Client client = getClientFromDB(idClient);
+                if (client == null) {
+                    System.out.println("Client introuvable.");
+                    continue;
+                }
+                System.out.println("Combien de livres à commander ?");
+                int nbLivres = Integer.parseInt(System.console().readLine());
+                ArrayList<Livre> livres = new ArrayList<>();
+                for (int i = 0; i < nbLivres; i++) {
+                    System.out.println("ISBN du livre " + (i + 1) + " :");
+                    String isbn = System.console().readLine();
+                    Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                    livres.add(livre);
+                }
+                System.out.println("Commande en ligne ? (o/n) :");
+                boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
+                System.out.println("Type de livraison (L/M/R) :");
+                char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
+                vendeur.passerCommandePourClient(enLigne, String.valueOf(typeLivraison), livres, client);
             } else if (commande.equals("t")) {
-                System.out.println("Transfert de livre (fonctionnalité à implémenter)");
+                System.out.println("ISBN du livre à transférer :");
+                String isbn = System.console().readLine();
+                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                System.out.println("Quantité à transférer :");
+                int quantite = Integer.parseInt(System.console().readLine());
+                System.out.println("ID du magasin de destination :");
+                String idMagasin = System.console().readLine();
+                Magasin magasinDest = new Magasin(idMagasin); // À améliorer pour charger le vrai magasin
+                vendeur.transfertLivre(livre, quantite, magasinDest);
             } else {
                 System.out.println("Commande inconnue.");
             }
@@ -206,12 +239,31 @@ public class App {
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
-                this.quitter = true;
                 commande_faite = true;
             } else if (commande.equals("p")) {
-                System.out.println("Passer une commande (fonctionnalité à implémenter)");
+                // Passer une commande
+                System.out.println("Combien de livres voulez-vous commander ?");
+                int nbLivres = Integer.parseInt(System.console().readLine());
+                ArrayList<Livre> livres = new ArrayList<>();
+                for (int i = 0; i < nbLivres; i++) {
+                    System.out.println("ISBN du livre " + (i + 1) + " :");
+                    String isbn = System.console().readLine();
+                    // Ici tu pourrais récupérer le livre depuis la BD si besoin
+                    Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null);
+                    livres.add(livre);
+                }
+                System.out.println("Commande en ligne ? (o/n) :");
+                boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
+                System.out.println("Type de livraison (L/M/R) :");
+                char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
+                client.passerCommande(enLigne, String.valueOf(typeLivraison), livres);
+                System.out.println("Commande passée !");
             } else if (commande.equals("m")) {
-                System.out.println("Choisir le mode de réception (fonctionnalité à implémenter)");
+                // Choisir le mode de réception
+                System.out.println("Nouveau mode de réception (L/M/R) :");
+                char mode = System.console().readLine().trim().toUpperCase().charAt(0);
+                client.choisirModeReception(String.valueOf(mode));
+                System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
                 System.out.println(client.consulterCatalogue());
