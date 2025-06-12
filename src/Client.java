@@ -1,4 +1,5 @@
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,29 +68,30 @@ public class Client extends Personne {
         }
     }
 
-    public List<Livre> consulterCatalogue() {
+    public static List<Livre> consulterCatalogue(Connection connexion) {
         List<Livre> livres = new ArrayList<>();
         try {
-            Statement s = this.connexion.createStatement();
-            ResultSet rs = s.executeQuery(
-                    "SELECT l.isbn, l.titre, c.nomclass, l.prix "
-                    + "FROM LIVRE l LEFT JOIN CLASSIFICATION c ON l.classification = c.iddewey"
-            );
+            String sql = "SELECT l.isbn, l.titre, c.nomclass, l.prix, SUM(p.qte) AS quantite_totale "
+                    + "FROM LIVRE l "
+                    + "LEFT JOIN POSSEDER p ON l.isbn = p.isbn "
+                    + "LEFT JOIN THEMES t ON l.isbn = t.isbn "
+                    + "LEFT JOIN CLASSIFICATION c ON t.iddewey = c.iddewey "
+                    + "GROUP BY l.isbn, l.titre, c.nomclass, l.prix "
+                    + "ORDER BY l.isbn";
+            Statement st = connexion.createStatement();
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 String isbn = rs.getString("isbn");
                 String titre = rs.getString("titre");
-                String classification = rs.getString("nomclass");
-                Double prix = rs.getDouble("prix");
+                String classification = rs.getString("nomclass"); // nom de la classification
+                double prix = rs.getDouble("prix");
                 Livre livre = new Livre(isbn, titre, classification, prix, new ArrayList<>(), null);
                 livres.add(livre);
             }
-            rs.close();
-            s.close();
-            return livres;
         } catch (SQLException e) {
-            System.out.println("Erreur lors de la consultation du catalogue : " + e.getMessage());
-            return null;
+            System.out.println("Erreur lors de la récupération des livres : " + e.getMessage());
         }
+        return livres;
     }
 
     /*public List<String> onVousRecommande() {

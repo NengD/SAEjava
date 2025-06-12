@@ -11,7 +11,7 @@ public class Livre {
     private Editeur editeur;
 
     public Livre(String isbn, String titre, String classification, Double prix, List<Auteur> auteurs, Editeur editeur) {
-        this.isbn=isbn;
+        this.isbn = isbn;
         this.titre = titre;
         this.classification = classification;
         this.prix = prix;
@@ -41,10 +41,14 @@ public class Livre {
     public Editeur getEditeur() {
         return editeur;
     }
+
     public String getIsbn() {
         return isbn;
     }
-    
 
+    @Override
+    public String toString() {
+        return "ISBN: " + isbn + ", Titre: " + titre + ", Classification: " + classification + ", Prix: " + prix;
+    }
 
 }

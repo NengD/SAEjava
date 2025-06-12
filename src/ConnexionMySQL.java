@@ -30,4 +30,8 @@ public class ConnexionMySQL {
         return this.mysql.prepareStatement(requete);
     }
 
+    public Connection getConnection() {
+    return this.mysql;
+    }
+
 }

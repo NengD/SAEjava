@@ -268,7 +268,7 @@ public class App {
                 System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
-                System.out.println(client.consulterCatalogue());
+                System.out.println(client.consulterCatalogue(this.connexionSQL.getConnection()));
             } else {
                 System.out.println("Commande inconnue.");
             }
