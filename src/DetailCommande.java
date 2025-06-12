@@ -1,30 +1,70 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DetailCommande {
-    private Commande commande;
-    private Livre livre;
-    private int quantite;
+    private int numCommande;
+    private String isbn;
 
-    public DetailCommande(Commande commande, Livre livre, int quantite) {
-        this.livre = livre;
-        this.quantite = quantite;
-        this.commande = commande;
+    public DetailCommande(int numCommande, String isbn) {
+        this.numCommande = numCommande;
+        this.isbn = isbn;
     }
 
-    public Double prixTotal(){
-        return livre.getPrix() * quantite;
+    public int getNumCommande() {
+        return numCommande;
     }
 
-    public Commande getCommande() {
-        return this.commande;
+    public String getIsbn() {
+        return isbn;
     }
 
-    public Livre getLivre() {
-        return this.livre;
+    public int getQuantite(Connection connexion) {
+        try {
+            PreparedStatement ps = connexion.prepareStatement(
+                "SELECT qte FROM DETAILCOMMANDE WHERE numcom = ? AND isbn = ?"
+            );
+            ps.setInt(1, numCommande);
+            ps.setString(2, isbn);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int qte = rs.getInt("qte");
+                rs.close();
+                ps.close();
+                return qte;
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur getQuantite : " + e.getMessage());
+        }
+        return 0;
     }
 
-    public int getQuantite() {
-        return this.quantite;
+    public double getPrixVente(Connection connexion) {
+        try {
+            PreparedStatement ps = connexion.prepareStatement(
+                "SELECT prixvente FROM DETAILCOMMANDE WHERE numcom = ? AND isbn = ?"
+            );
+            ps.setInt(1, numCommande);
+            ps.setString(2, isbn);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                double prix = rs.getDouble("prixvente");
+                rs.close();
+                ps.close();
+                return prix;
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur getPrixVente : " + e.getMessage());
+        }
+        return 0.0;
     }
-    
 
+    public double prixTotal(Connection connexion) {
+        return getPrixVente(connexion) * getQuantite(connexion);
+    }
 }
