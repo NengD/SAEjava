@@ -1,7 +1,5 @@
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class App {
 
@@ -10,6 +8,12 @@ public class App {
 
     public App() {
         this.quitter = false;
+        try {
+            this.connexionSQL = new ConnexionMySQL();
+            this.connexionSQL.connecter();
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
+        }
     }
 
     public void lancer() {
@@ -22,10 +26,12 @@ public class App {
     public void menuConnexion() {
         boolean commande_faite = false;
         while (!commande_faite) {
-            System.out.println("╭────────────────╮");
-            System.out.println("│ Menu Connexion │");
-            System.out.println("╰────────────────╯");
-            System.out.println("C: Se connecter");
+            System.out.println("╭───────────────────────────────╮");
+            System.out.println("│ Menu de sélection utilisateur │");
+            System.out.println("╰───────────────────────────────╯");
+            System.out.println("A: Administrateur");
+            System.out.println("V: Vendeur");
+            System.out.println("C: Client");
             System.out.println("Q: Quitter");
 
             String commande_brute = System.console().readLine();
@@ -34,59 +40,60 @@ public class App {
             if (commande.equals("q")) {
                 this.quitter = true;
                 commande_faite = true;
+            } else if (commande.equals("a")) {
+                System.out.println("Entrez l'ID de l'administrateur :");
+                String idAdmin = System.console().readLine();
+                // À compléter pour récupérer l'admin depuis la BD si besoin
+                Administrateur admin = new Administrateur("Admin", "Admin", this.connexionSQL);
+                menuAdmin(admin);
+            } else if (commande.equals("v")) {
+                System.out.println("Entrez l'ID du vendeur :");
+                String idVendeur = System.console().readLine();
+                // À compléter pour récupérer le vendeur depuis la BD si besoin
+                Vendeur vendeur = new Vendeur("Vendeur", "Vendeur", this.connexionSQL);
+                menuVendeur(vendeur);
             } else if (commande.equals("c")) {
-                try {
-                    boolean connexion_faite = false;
-                    String login = "";
-                    String mdp = "";
-                    while (!connexion_faite) {
-                        if (login.equals("")) {
-                            System.out.println("Quel est votre login");
-                            login = System.console().readLine();
-                        } else if (mdp.equals("")) {
-                            System.out.println("Quel est votre mot de passe");
-                            mdp = System.console().readLine();
-                        } else {
-                            connexion_faite = true;
-                        }
-                    }
-                    // Connexion à la base avec les identifiants saisis
-                    this.connexionSQL = new ConnexionMySQL();
-                    this.connexionSQL.connecter();
-
-                    // Vérification du login/mdp dans la table Utilisateur
-                    String role = "";
-                    String sql = "SELECT role FROM Utilisateur WHERE login = ? AND mdp = ?";
-                    try (PreparedStatement ps = this.connexionSQL.prepareStatement(sql)) {
-                        ps.setString(1, login);
-                        ps.setString(2, mdp);
-                        ResultSet rs = ps.executeQuery();
-                        if (rs.next()) {
-                            role = rs.getString("role");
-                        }
-                    }
-
-                    if (role.equals("admin")) {
-                        menuAdmin();
-                    } else if (role.equals("vendeur")) {
-                        menuVendeur();
-                    } else if (role.equals("client")) {
-                        menuClient();
-                    } else {
-                        System.out.println("Login ou mot de passe incorrect !");
-                    }
-                } catch (ClassNotFoundException ex) {
-                    System.out.println("Driver MySQL non trouvé !");
-                    System.exit(1);
-                } catch (SQLException ex) {
-                    System.out.println("Login ou mot de passe incorrect !");
-                    System.exit(1);
+                System.out.println("Entrez l'ID du client :");
+                String idClient = System.console().readLine();
+                Client client = getClientFromDB(idClient);
+                if (client != null) {
+                    menuClient(client);
+                } else {
+                    System.out.println("Client introuvable.");
                 }
+            } else {
+                System.out.println("Commande inconnue.");
             }
         }
     }
 
-    public void menuAdmin() {
+// Ajoute cette méthode à ta classe App
+    public Client getClientFromDB(String idClient) {
+        try {
+            java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
+                    "SELECT nomcli, prenomcli, adressecli FROM CLIENT WHERE idcli = ?"
+            );
+            ps.setInt(1, Integer.parseInt(idClient));
+            java.sql.ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String nom = rs.getString("nomcli");
+                String prenom = rs.getString("prenomcli");
+                String adresse = rs.getString("adressecli");
+                rs.close();
+                ps.close();
+                return new Client(nom, prenom, adresse, this.connexionSQL);
+            } else {
+                rs.close();
+                ps.close();
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la récupération du client : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void menuAdmin(Administrateur admin) {
         boolean commande_faite = false;
         while (!commande_faite) {
             System.out.println("╭─────────────────────╮");
@@ -99,18 +106,42 @@ public class App {
             System.out.println("G: Gérer les stocks de toutes les librairies");
             System.out.println("S: Consulter les statistiques de vente");
 
-            /// Majuscule et minuscule prise en compte
-	        String commande_brute = System.console().readLine();
+            String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
                 this.quitter = true;
                 commande_faite = true;
+            } else if (commande.equals("c")) {
+                System.out.println("Nom du vendeur :");
+                String nom = System.console().readLine();
+                System.out.println("Prénom du vendeur :");
+                String prenom = System.console().readLine();
+                System.out.println("Nom du magasin :");
+                String nomMagasin = System.console().readLine();
+                Magasin magasin = new Magasin(nomMagasin); // À adapter si besoin
+                admin.creerVendeur(nom, prenom, magasin);
+                System.out.println("Vendeur créé !");
+            } else if (commande.equals("a")) {
+                System.out.println("Nom de la librairie :");
+                String nom = System.console().readLine();
+                System.out.println("Ville :");
+                String ville = System.console().readLine();
+                admin.ajouterLibrairie(nom, ville);
+                System.out.println("Librairie ajoutée !");
+            } else if (commande.equals("g")) {
+                // Appel à la méthode de gestion des stocks (à compléter selon ton code)
+                System.out.println("Gestion des stocks (fonctionnalité à implémenter)");
+            } else if (commande.equals("s")) {
+                // Appel à la méthode de statistiques (à compléter selon ton code)
+                System.out.println("Statistiques de vente (fonctionnalité à implémenter)");
+            } else {
+                System.out.println("Commande inconnue.");
             }
         }
     }
 
-    public void menuVendeur() {
+    public void menuVendeur(Vendeur vendeur) {
         boolean commande_faite = false;
         while (!commande_faite) {
             System.out.println("╭──────────────╮");
@@ -124,18 +155,42 @@ public class App {
             System.out.println("P: Passer une commande pour un client en magasin");
             System.out.println("T: Transférer un livre d’une autre librairie pour satisfaire une commande client");
 
-            /// Majuscule et minuscule prise en compte
-	        String commande_brute = System.console().readLine();
+            String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
                 this.quitter = true;
                 commande_faite = true;
+            } else if (commande.equals("a")) {
+                System.out.println("ISBN du livre :");
+                String isbn = System.console().readLine();
+                System.out.println("Quantité :");
+                int quantite = Integer.parseInt(System.console().readLine());
+                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À compléter
+                vendeur.ajouterLivre(livre, quantite);
+            } else if (commande.equals("m")) {
+                System.out.println("ISBN du livre :");
+                String isbn = System.console().readLine();
+                System.out.println("Quantité à ajouter :");
+                int quantite = Integer.parseInt(System.console().readLine());
+                Livre livre = new Livre(isbn, "Titre", "Classification", 0.0, new ArrayList<>(), null); // À compléter
+                vendeur.majQuantiteLivre(livre, quantite);
+            } else if (commande.equals("d")) {
+                System.out.println("Nom du livre :");
+                String nomLivre = System.console().readLine();
+                boolean dispo = vendeur.livreDisponible(nomLivre);
+                System.out.println("Disponible : " + dispo);
+            } else if (commande.equals("p")) {
+                System.out.println("Commande client (fonctionnalité à implémenter)");
+            } else if (commande.equals("t")) {
+                System.out.println("Transfert de livre (fonctionnalité à implémenter)");
+            } else {
+                System.out.println("Commande inconnue.");
             }
         }
     }
 
-    public void menuClient() {
+    public void menuClient(Client client) {
         boolean commande_faite = false;
         while (!commande_faite) {
             System.out.println("╭─────────────╮");
@@ -147,21 +202,29 @@ public class App {
             System.out.println("M: Choisir le mode de réception");
             System.out.println("C: Consulter le catalogue");
 
-            /// Majuscule et minuscule prise en compte
-	        String commande_brute = System.console().readLine();
+            String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
                 this.quitter = true;
                 commande_faite = true;
+            } else if (commande.equals("p")) {
+                System.out.println("Passer une commande (fonctionnalité à implémenter)");
+            } else if (commande.equals("m")) {
+                System.out.println("Choisir le mode de réception (fonctionnalité à implémenter)");
+            } else if (commande.equals("c")) {
+                System.out.println("Catalogue :");
+                System.out.println(client.consulterCatalogue());
+            } else {
+                System.out.println("Commande inconnue.");
             }
         }
     }
 
     /// Affiche un message d'au revoir
     public void quitter() {
-        System.out.println("╭──────────────────────────────────────────────────────╮");
-        System.out.println("│ Au revoir, la librairie reste ouverte et accessible! │");
-        System.out.println("╰──────────────────────────────────────────────────────╯");
+        System.out.println("╭───────────────────────────────────────────────────────╮");
+        System.out.println("│ Au revoir, la librairie reste ouverte et accessible ! │");
+        System.out.println("╰───────────────────────────────────────────────────────╯");
     }
 }
