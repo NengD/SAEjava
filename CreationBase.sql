@@ -88,13 +88,6 @@ CREATE TABLE THEMES (
   iddewey varchar(3) NOT NULL
 );
 
-CREATE TABLE Utilisateur (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    login VARCHAR(50) UNIQUE,
-    mdp VARCHAR(255),
-    role VARCHAR(20) -- 'admin', 'vendeur', 'client'
-);
-
 ALTER TABLE COMMANDE ADD FOREIGN KEY (idmag) REFERENCES MAGASIN (idmag);
 ALTER TABLE COMMANDE ADD FOREIGN KEY (idcli) REFERENCES CLIENT (idcli);
 
