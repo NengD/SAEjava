@@ -69,5 +69,70 @@ public class Administrateur {
         }
     }
 
-    // public String consulterStatistique() { ... }
+
+    public void afficherChiffreAffaires() {
+        try {
+            Connection conn = this.connexion.getConnection();
+            // Chiffre d'affaires par magasin
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT m.idmag, m.nommag, SUM(d.qte * d.prixvente) AS ca " +
+                "FROM MAGASIN m " +
+                "LEFT JOIN VENDEUR v ON m.idmag = v.idmag " +
+                "LEFT JOIN COMMANDE c ON v.idven = c.idven " +
+                "LEFT JOIN DETAILCOMMANDE d ON c.idcom = d.idcom " +
+                "GROUP BY m.idmag, m.nommag"
+            );
+            ResultSet rs = ps.executeQuery();
+            double caTotal = 0.0;
+            System.out.println("Chiffre d'affaires par magasin :");
+            while (rs.next()) {
+                String nomMag = rs.getString("nommag");
+                double ca = rs.getDouble("ca");
+                System.out.printf("- %s : %.2f €\n", nomMag, ca);
+                caTotal += ca;
+            }
+            System.out.printf("Chiffre d'affaires total : %.2f €\n", caTotal);
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'affichage du chiffre d'affaires : " + e.getMessage());
+        }
+    }
+
+
+
+    public void bestseller() {
+        try {
+            Connection conn = this.connexion.getConnection();
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT l.idlivre, l.titre, SUM(d.qte) AS total_vendu " +
+                "FROM LIVRE l " +
+                "JOIN DETAILCOMMANDE d ON l.idlivre = d.idlivre " +
+                "GROUP BY l.idlivre, l.titre " +
+                "ORDER BY total_vendu DESC " +
+                "LIMIT 1"
+            );
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String titre = rs.getString("titre");
+                int quantite = rs.getInt("total_vendu");
+                System.out.println("Meilleur livre toutes boutiques confondues : " + titre + " (" + quantite + " exemplaires vendus)");
+            } else {
+                System.out.println("Aucun livre vendu.");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la recherche du bestseller : " + e.getMessage());
+        }
+    }
+
+   public void consulterStatisques(){
+    System.out.println("=== Statistiques ===");
+    afficherChiffreAffaires();
+    bestseller();
+   }
+
+
+
 }
