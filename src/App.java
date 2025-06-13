@@ -48,6 +48,10 @@ public class App {
                 System.out.println("Entrez l'ID du vendeur :");
                 String idVendeur = System.console().readLine();
                 Vendeur vendeur = new Vendeur("Vendeur", "Vendeur", this.connexionSQL);
+                System.out.println("Entrez le nom du magasin du vendeur :");
+                String nomMagasin = System.console().readLine();
+                Magasin magasin = new Magasin(nomMagasin);
+                vendeur.setMagasin(magasin);
                 menuVendeur(vendeur);
             } else if (commande.equals("c")) {
                 System.out.println("Entrez l'ID du client :");
