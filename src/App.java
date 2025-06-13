@@ -176,7 +176,6 @@ public class App {
                 System.out.println("Ville :");
                 String ville = System.console().readLine();
                 admin.ajouterLibrairie(nom, ville);
-                System.out.println("Librairie ajoutée !");
             } else if (commande.equals("g")) {
                 System.out.println("Gestion des stocks (fonctionnalité à implémenter)");
             } else if (commande.equals("s")) {
