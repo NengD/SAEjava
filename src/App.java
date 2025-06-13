@@ -178,7 +178,7 @@ public class App {
                 String ville = System.console().readLine();
                 admin.ajouterLibrairie(nom, ville);
             } else if (commande.equals("s")) {
-                consulterStatistiques();
+                admin.consulterStatisques();
             } else if (commande.equals("t")) {
                 System.out.println("ISBN du livre à transférer :");
                 String isbn = System.console().readLine();
