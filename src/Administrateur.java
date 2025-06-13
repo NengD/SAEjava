@@ -17,20 +17,20 @@ public class Administrateur {
         try {
             // Générer un nouvel idvendeur
             Connection conn = this.connexion.getConnection();
-            int idvendeur = -1;
-            PreparedStatement psNum = conn.prepareStatement("SELECT COALESCE(MAX(idvendeur), 0) + 1 AS nextId FROM VENDEUR");
+            int idven = -1;
+            PreparedStatement psNum = conn.prepareStatement("SELECT COALESCE(MAX(idven), 0) + 1 AS nextId FROM VENDEUR");
             ResultSet rsNum = psNum.executeQuery();
             if (rsNum.next()) {
-                idvendeur = rsNum.getInt("nextId");
+                idven = rsNum.getInt("nextId");
             }
             rsNum.close();
             psNum.close();
 
             // Insérer le vendeur dans la base
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO VENDEUR (idvendeur, nom, prenom, idmag) VALUES (?, ?, ?, ?)"
+                "INSERT INTO VENDEUR (idven, nom, prenom, idmag) VALUES (?, ?, ?, ?)"
             );
-            ps.setInt(1, idvendeur);
+            ps.setInt(1, idven);
             ps.setString(2, nom);
             ps.setString(3, prenom);
             ps.setString(4, magasin.getIdMagasin(conn));
