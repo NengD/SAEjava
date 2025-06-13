@@ -258,7 +258,7 @@ public class App {
                 if (enLigne) {
                     typeLivraison = 'L';
                 } else {
-                    System.out.println("Type de livraison (M pour magasin, R pour relais) :");
+                    System.out.println("Type de livraison (M pour retrait en magasin, C pour livraison à domicile( chez le client)) :");
                     typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
                 }
                 ArrayList<Livre> livres = new ArrayList<>();
@@ -268,7 +268,7 @@ public class App {
                 client.passerCommande(enLigne, typeLivraison, livres, magasin);
                 System.out.println("Commande passée !");
             } else if (commande.equals("m")) {
-                System.out.println("Nouveau mode de réception (L/M/R) :");
+                System.out.println("Nouveau mode de réception (M/C) :");
                 System.out.println("Mode de réception mis à jour !");
             } else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
