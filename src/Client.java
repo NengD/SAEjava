@@ -119,8 +119,9 @@ public class Client {
         List<String> recommandations = new ArrayList<>();
         try {
             // 1. Récupérer les ISBN achetés par ce client
-            String livresClientQuery = "SELECT DISTINCT isbn FROM COMMANDE NATURAL JOIN DETAILCOMMANDE WHERE idcli = ?";
             List<String> livresClient = new ArrayList<>();
+            String livresClientQuery = "SELECT DISTINCT d.isbn FROM DETAILCOMMANDE d " +
+                                    "JOIN COMMANDE c ON d.numcom = c.numcom WHERE c.idcli = ?";
             try (PreparedStatement ps = this.connexion.getConnection().prepareStatement(livresClientQuery)) {
                 ps.setInt(1, this.getId());
                 try (ResultSet rs = ps.executeQuery()) {
@@ -129,16 +130,15 @@ public class Client {
                     }
                 }
             }
-
-            if (livresClient.isEmpty()) {
-                return recommandations;
-            }
+            if (livresClient.isEmpty()) return recommandations;
 
             // 2. Trouver les autres clients ayant au moins 3 livres en commun
             String inLivres = String.join(",", livresClient.stream().map(isbn -> "'" + isbn + "'").toArray(String[]::new));
             String clientsSimilairesQuery =
-                "SELECT idcli FROM DETAILCOMMANDE WHERE isbn IN (" + inLivres + ") AND idcli != ? " +
-                "GROUP BY idcli HAVING COUNT(DISTINCT isbn) >= 3";
+                "SELECT c.idcli FROM DETAILCOMMANDE d " +
+                "JOIN COMMANDE c ON d.numcom = c.numcom " +
+                "WHERE d.isbn IN (" + inLivres + ") AND c.idcli != ? " +
+                "GROUP BY c.idcli HAVING COUNT(DISTINCT d.isbn) >= 3";
             List<Integer> clientsSimilaires = new ArrayList<>();
             try (PreparedStatement ps = this.connexion.getConnection().prepareStatement(clientsSimilairesQuery)) {
                 ps.setInt(1, this.getId());
@@ -148,16 +148,15 @@ public class Client {
                     }
                 }
             }
-
-            if (clientsSimilaires.isEmpty()) {
-                return recommandations;
-            }
+            if (clientsSimilaires.isEmpty()) return recommandations;
 
             // 3. Récupérer les livres achetés par ces clients mais pas par ce client
             String inClients = String.join(",", clientsSimilaires.stream().map(String::valueOf).toArray(String[]::new));
             String autresLivresQuery =
-                "SELECT DISTINCT isbn FROM DETAILCOMMANDE WHERE idcli IN (" + inClients + ") " +
-                "AND isbn NOT IN (" + inLivres + ")";
+                "SELECT DISTINCT d.isbn FROM DETAILCOMMANDE d " +
+                "JOIN COMMANDE c ON d.numcom = c.numcom " +
+                "WHERE c.idcli IN (" + inClients + ") " +
+                "AND d.isbn NOT IN (" + inLivres + ")";
             List<String> livresARecommander = new ArrayList<>();
             try (Statement s = this.connexion.getConnection().createStatement();
                 ResultSet rs = s.executeQuery(autresLivresQuery)) {
@@ -165,10 +164,7 @@ public class Client {
                     livresARecommander.add(rs.getString("isbn"));
                 }
             }
-
-            if (livresARecommander.isEmpty()) {
-                return recommandations;
-            }
+            if (livresARecommander.isEmpty()) return recommandations;
 
             // 4. Récupérer les titres de ces livres
             String inLivresRec = String.join(",", livresARecommander.stream().map(isbn -> "'" + isbn + "'").toArray(String[]::new));
