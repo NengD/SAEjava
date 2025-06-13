@@ -245,18 +245,17 @@ public class App {
                 }
                 System.out.println("Commande en ligne ? (o/n) :");
                 boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
-                System.out.println("Type de livraison (L/M/R) :");
+                System.out.println("Type de livraison (M pour retrait en magasin, C pour livraison à domicile) :");
                 char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
                 vendeur.passerCommandePourClient(enLigne, String.valueOf(typeLivraison), livres, client);
             } else if (commande.equals("t")) {
                 System.out.println("ISBN du livre à transférer :");
                 String isbn = System.console().readLine();
-                Livre livre = new Livre(isbn);
                 System.out.println("Quantité à transférer :");
                 int quantite = Integer.parseInt(System.console().readLine());
                 System.out.println("ID du magasin de destination :");
                 int idMagasin = Integer.parseInt(System.console().readLine());
-                vendeur.transfertLivre(livre, quantite, idMagasin);
+                vendeur.transfertLivre(isbn, quantite, idMagasin);
             } else {
                 System.out.println("Commande inconnue.");
             }
