@@ -3,40 +3,54 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Vendeur extends Personne {
+public class Vendeur {
 
-    private Magasin magasin;
+    private int idVendeur;
+    private int idmagasin;
+    private ConnexionMySQL connexion;
 
-    public Vendeur(String nom, String prenom, ConnexionMySQL connexion) {
-        super(nom, prenom, connexion);
+    public Vendeur(int idVendeur, ConnexionMySQL connexion,int idmagasin) {
+        this.connexion = connexion;
+        this.idVendeur = idVendeur;
+        this.idmagasin = idmagasin;
     }
 
-    public void setMagasin(Magasin magasin) {
-        this.magasin = magasin;
+    public int getIdVendeur() {
+        return idVendeur;
     }
 
-    public Magasin getMagasin() {
-        return this.magasin;
+    public void setIdVendeur(int idVendeur) {
+        this.idVendeur = idVendeur;
     }
 
-    public void ajouterLivre(Livre livre, int quantite){
+    public int getIdMagasin() {
+        return this.idmagasin;
+    }
+
+    public void ajouterLivre(String idLivre, int quantite){
         try {
-            PreparedStatement ps = this.connexion.prepareStatement("SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?");
-            ps.setString(1, this.magasin.getIdMagasin(this.connexion.getConnection()));
-            ps.setString(2, livre.getIsbn());
+            PreparedStatement ps = this.connexion.prepareStatement(
+                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
+            );
+            ps.setInt(1, this.idmagasin);
+            ps.setString(2, idLivre);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int nouvelleQte = rs.getInt("qte") + quantite;
-                PreparedStatement psUpdate = this.connexion.prepareStatement("UPDATE POSSEDER SET qte = ? WHERE idmag = ? AND isbn = ?");
+                PreparedStatement psUpdate = this.connexion.prepareStatement(
+                    "UPDATE POSSEDER SET qte = ? WHERE idmag = ? AND isbn = ?"
+                );
                 psUpdate.setInt(1, nouvelleQte);
-                psUpdate.setString(2, this.magasin.getIdMagasin(this.connexion.getConnection()));
-                psUpdate.setString(3, livre.getIsbn());
+                psUpdate.setInt(2, this.idmagasin);
+                psUpdate.setString(3, idLivre);
                 psUpdate.executeUpdate();
                 psUpdate.close();
             } else {
-                PreparedStatement psInsert = this.connexion.prepareStatement("INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)");
-                psInsert.setString(1, this.magasin.getIdMagasin(this.connexion.getConnection()));
-                psInsert.setString(2, livre.getIsbn());
+                PreparedStatement psInsert = this.connexion.prepareStatement(
+                    "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)"
+                );
+                psInsert.setInt(1, this.idmagasin);
+                psInsert.setString(2, idLivre);
                 psInsert.setInt(3, quantite);
                 psInsert.executeUpdate();
                 psInsert.close();
@@ -55,7 +69,7 @@ public class Vendeur extends Personne {
                 "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
             );
             ps.setInt(1, quantite);
-            ps.setString(2, this.magasin.getIdMagasin(this.connexion.getConnection()));
+            ps.setInt(2, this.idmagasin);
             ps.setString(3, livre.getIsbn());
             int rows = ps.executeUpdate();
             ps.close();
@@ -74,7 +88,7 @@ public class Vendeur extends Personne {
             PreparedStatement ps = this.connexion.prepareStatement(
                 "SELECT qte FROM POSSEDER p JOIN LIVRE l ON p.isbn = l.isbn WHERE p.idmag = ? AND l.titre = ?"
             );
-            ps.setString(1, this.magasin.getIdMagasin(this.connexion.getConnection()));
+            ps.setInt(1, this.idmagasin);
             ps.setString(2, nomLivre);
             ResultSet rs = ps.executeQuery();
             boolean disponible = false;
@@ -90,15 +104,15 @@ public class Vendeur extends Personne {
         }
     }
 
-    public void transfertLivre(Livre livre, int quantite, Magasin magasinDest){
+    public void transfertLivre(Livre livre, int quantite, int idMagasinDest){
         try {
-            String idMagOrig = this.magasin.getIdMagasin(this.connexion.getConnection());
-            String idMagDest = magasinDest.getIdMagasin(this.connexion.getConnection());
+            int idMagOrig = this.idmagasin;
+            int idMagDest = idMagasinDest;
 
             PreparedStatement psCheck = this.connexion.prepareStatement(
                 "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
             );
-            psCheck.setString(1, idMagOrig);
+            psCheck.setInt(1, idMagOrig);
             psCheck.setString(2, livre.getIsbn());
             ResultSet rs = psCheck.executeQuery();
             if (rs.next() && rs.getInt("qte") >= quantite) {
@@ -106,7 +120,7 @@ public class Vendeur extends Personne {
                     "UPDATE POSSEDER SET qte = qte - ? WHERE idmag = ? AND isbn = ?"
                 );
                 psUpdateOrig.setInt(1, quantite);
-                psUpdateOrig.setString(2, idMagOrig);
+                psUpdateOrig.setInt(2, idMagOrig);
                 psUpdateOrig.setString(3, livre.getIsbn());
                 psUpdateOrig.executeUpdate();
                 psUpdateOrig.close();
@@ -114,7 +128,7 @@ public class Vendeur extends Personne {
                 PreparedStatement psCheckDest = this.connexion.prepareStatement(
                     "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
                 );
-                psCheckDest.setString(1, idMagDest);
+                psCheckDest.setInt(1, idMagDest);
                 psCheckDest.setString(2, livre.getIsbn());
                 ResultSet rsDest = psCheckDest.executeQuery();
                 if (rsDest.next()) {
@@ -122,7 +136,7 @@ public class Vendeur extends Personne {
                         "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
                     );
                     psUpdateDest.setInt(1, quantite);
-                    psUpdateDest.setString(2, idMagDest);
+                    psUpdateDest.setInt(2, idMagDest);
                     psUpdateDest.setString(3, livre.getIsbn());
                     psUpdateDest.executeUpdate();
                     psUpdateDest.close();
@@ -130,7 +144,7 @@ public class Vendeur extends Personne {
                     PreparedStatement psInsertDest = this.connexion.prepareStatement(
                         "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)"
                     );
-                    psInsertDest.setString(1, idMagDest);
+                    psInsertDest.setInt(1, idMagDest);
                     psInsertDest.setString(2, livre.getIsbn());
                     psInsertDest.setInt(3, quantite);
                     psInsertDest.executeUpdate();
@@ -151,6 +165,6 @@ public class Vendeur extends Personne {
 
     public void passerCommandePourClient(boolean enLigne, String typeLivraison, List<Livre> livres, Client client){
         char typeLiv = typeLivraison.charAt(0);
-        client.passerCommande(enLigne, typeLiv, livres, this.magasin);
+        client.passerCommande(enLigne, typeLiv, livres, this.idmagasin);
     }
 }

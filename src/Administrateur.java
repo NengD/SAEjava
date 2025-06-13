@@ -3,10 +3,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Administrateur extends Personne {
+public class Administrateur {
 
-    public Administrateur(String nom, String prenom, ConnexionMySQL connexion) {
-        super(nom, prenom, connexion);
+    private int idadmin;
+    private ConnexionMySQL connexion;
+
+    public Administrateur(int idadmin, ConnexionMySQL connexion) {
+        this.idadmin = idadmin;
+        this.connexion = connexion;
     }
 
     public void creerVendeur(String nom, String prenom, Magasin magasin) {

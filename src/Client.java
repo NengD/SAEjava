@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +21,7 @@ public class Client {
         return idcli;
     }
 
-    public void passerCommande(boolean enLigne, char typeLivraison, List<Livre> livres, Magasin magasin) {
+    public void passerCommande(boolean enLigne, char typeLivraison, List<Livre> livres, int idmagasin) {
         Connection connexion = this.connexion.getConnection();
         try {
             // Générer un nouveau numéro de commande
@@ -35,16 +34,16 @@ public class Client {
             rsNum.close();
             psNum.close();
 
-            // Insérer la commande
+            // Insérer la commande (sans idven)
             PreparedStatement ps1 = connexion.prepareStatement(
                 "INSERT INTO COMMANDE (numcom, datecom, enligne, livraison, idcli, idmag) VALUES (?, ?, ?, ?, ?, ?)"
             );
             ps1.setInt(1, numCommande);
-            ps1.setString(2, LocalDate.now().toString());
+            ps1.setString(2, java.time.LocalDate.now().toString());
             ps1.setString(3, enLigne ? "O" : "N");
             ps1.setString(4, String.valueOf(typeLivraison));
             ps1.setInt(5, this.idcli);
-            ps1.setString(6, magasin.getIdMagasin(connexion));
+            ps1.setInt(6, idmagasin);
             ps1.executeUpdate();
             ps1.close();
 
@@ -85,7 +84,7 @@ public class Client {
                     "UPDATE POSSEDER SET qte = qte - ? WHERE idmag = ? AND isbn = ?"
                 );
                 psMaj.setInt(1, quantite);
-                psMaj.setString(2, magasin.getIdMagasin(connexion));
+                psMaj.setInt(2, idmagasin);
                 psMaj.setString(3, isbn);
                 psMaj.executeUpdate();
                 psMaj.close();

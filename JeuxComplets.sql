@@ -24613,3 +24613,12 @@ insert into DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) values
 	(5025,3,9782227471580,1,17.99),
 	(5025,4,9782012372498,1, 26.6),
 	(5025,5,9782082005746,1,8.29);
+
+INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES
+  (1, 'Dupont', 'Marie', 1),
+  (2, 'Martin', 'Jean', 2),
+  (3, 'Durand', 'Sophie', 3);
+
+INSERT INTO ADMINISTRATEUR (idadm, nomadm, prenomadm) VALUES
+  (1, 'Lefevre', 'Paul'),
+  (2, 'Bernard', 'Lucie');

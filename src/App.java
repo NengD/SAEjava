@@ -42,17 +42,21 @@ public class App {
             } else if (commande.equals("a")) {
                 System.out.println("Entrez l'ID de l'administrateur :");
                 String idAdmin = System.console().readLine();
-                Administrateur admin = new Administrateur("Admin", "Admin", this.connexionSQL);
-                menuAdmin(admin);
+                Administrateur admin = getAdminFromDB(idAdmin);
+                if (admin != null) {
+                    menuAdmin(admin);
+                } else {
+                    System.out.println("Administrateur introuvable.");
+                }
             } else if (commande.equals("v")) {
                 System.out.println("Entrez l'ID du vendeur :");
                 String idVendeur = System.console().readLine();
-                Vendeur vendeur = new Vendeur("Vendeur", "Vendeur", this.connexionSQL);
-                System.out.println("Entrez le nom du magasin du vendeur :");
-                String nomMagasin = System.console().readLine();
-                Magasin magasin = new Magasin(nomMagasin);
-                vendeur.setMagasin(magasin);
-                menuVendeur(vendeur);
+                Vendeur vendeur = getVendeurFromDB(idVendeur);
+                if (vendeur != null) {
+                    menuVendeur(vendeur);
+                } else {
+                    System.out.println("Vendeur introuvable.");
+                }
             } else if (commande.equals("c")) {
                 System.out.println("Entrez l'ID du client :");
                 String idClient = System.console().readLine();
@@ -89,6 +93,55 @@ public class App {
             return null;
         }
     }
+
+    public Vendeur getVendeurFromDB(String idVendeur) {
+        try {
+            java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
+                    "SELECT idven, idmag FROM VENDEUR WHERE idven = ?"
+            );
+            ps.setInt(1, Integer.parseInt(idVendeur));
+            java.sql.ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int idven = rs.getInt("idven");
+                int idmag = rs.getInt("idmag");
+                rs.close();
+                ps.close();
+                return new Vendeur(idven, this.connexionSQL, idmag);
+            } else {
+                rs.close();
+                ps.close();
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la récupération du vendeur : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Administrateur getAdminFromDB(String idAdmin) {
+    try {
+        java.sql.PreparedStatement ps = this.connexionSQL.prepareStatement(
+            "SELECT idadm, prenomadm, nomadm FROM ADMINISTRATEUR WHERE idadm = ?"
+        );
+        ps.setInt(1, Integer.parseInt(idAdmin));
+        java.sql.ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            int idadm = rs.getInt("idadm");
+            String prenom = rs.getString("prenomadm");
+            String nom = rs.getString("nomadm");
+            rs.close();
+            ps.close();
+            return new Administrateur(idadm, this.connexionSQL);
+        } else {
+            rs.close();
+            ps.close();
+            return null;
+        }
+    } catch (Exception e) {
+        System.out.println("Erreur lors de la récupération de l'administrateur : " + e.getMessage());
+        return null;
+    }
+}
 
     public void menuAdmin(Administrateur admin) {
         boolean commande_faite = false;
@@ -158,17 +211,9 @@ public class App {
             } else if (commande.equals("a")) {
                 System.out.println("ISBN du livre :");
                 String isbn = System.console().readLine();
-                System.out.println("Titre :");
-                String titre = System.console().readLine();
-                System.out.println("Classification :");
-                String classification = System.console().readLine();
-                System.out.println("Prix :");
-                double prix = Double.parseDouble(System.console().readLine());
-                // Ici, seul l'ISBN doit être utilisé pour créer l'objet Livre
-                Livre livre = new Livre(isbn);
                 System.out.println("Quantité :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                vendeur.ajouterLivre(livre, quantite);
+                vendeur.ajouterLivre(isbn, quantite);
             } else if (commande.equals("m")) {
                 System.out.println("ISBN du livre :");
                 String isbn = System.console().readLine();
@@ -210,9 +255,8 @@ public class App {
                 System.out.println("Quantité à transférer :");
                 int quantite = Integer.parseInt(System.console().readLine());
                 System.out.println("ID du magasin de destination :");
-                String idMagasin = System.console().readLine();
-                Magasin magasinDest = new Magasin(idMagasin);
-                vendeur.transfertLivre(livre, quantite, magasinDest);
+                int idMagasin = Integer.parseInt(System.console().readLine());
+                vendeur.transfertLivre(livre, quantite, idMagasin);
             } else {
                 System.out.println("Commande inconnue.");
             }
@@ -237,11 +281,11 @@ public class App {
             if (commande.equals("r")) {
                 commande_faite = true;
             } else if (commande.equals("p")) {
-                System.out.println("Nom du livre à commander :");
-                String nomLivre = System.console().readLine();
+                System.out.println("ISBN du livre à commander :");
+                String isbn = System.console().readLine();
                 Livre livreTrouve = null;
                 for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
-                    if (l.getTitre(this.connexionSQL.getConnection()).equalsIgnoreCase(nomLivre)) {
+                    if (l.getIsbn().equalsIgnoreCase(isbn)) {
                         livreTrouve = l;
                         break;
                     }
@@ -252,23 +296,22 @@ public class App {
                 }
                 System.out.println("Quantité à commander :");
                 int quantite = Integer.parseInt(System.console().readLine());
-                System.out.println("Nom du magasin pour la commande :");
-                String nomMagasin = System.console().readLine();
-                Magasin magasin = new Magasin(nomMagasin);
+                System.out.println("ID du magasin pour la commande :");
+                int idMagasin = Integer.parseInt(System.console().readLine());
                 System.out.println("Commande en ligne ? (o/n) :");
                 boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
                 char typeLivraison;
                 if (enLigne) {
                     typeLivraison = 'L';
                 } else {
-                    System.out.println("Type de livraison (M pour retrait en magasin, C pour livraison à domicile( chez le client)) :");
+                    System.out.println("Type de livraison (M pour retrait en magasin, C pour livraison à domicile) :");
                     typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
                 }
                 ArrayList<Livre> livres = new ArrayList<>();
                 for (int i = 0; i < quantite; i++) {
                     livres.add(livreTrouve);
                 }
-                client.passerCommande(enLigne, typeLivraison, livres, magasin);
+                client.passerCommande(enLigne, typeLivraison, livres, idMagasin);
                 System.out.println("Commande passée !");
             }else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
