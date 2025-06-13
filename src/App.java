@@ -167,11 +167,9 @@ public class App {
                 String nom = System.console().readLine();
                 System.out.println("Prénom du vendeur :");
                 String prenom = System.console().readLine();
-                System.out.println("Nom du magasin :");
-                String nomMagasin = System.console().readLine();
-                Magasin magasin = new Magasin(nomMagasin);
-                admin.creerVendeur(nom, prenom, magasin);
-                System.out.println("Vendeur créé !");
+                System.out.println("ID du magasin :");
+                int idmag = Integer.parseInt(System.console().readLine());
+                admin.creerVendeur(nom, prenom, idmag);
             } else if (commande.equals("a")) {
                 System.out.println("Nom de la librairie :");
                 String nom = System.console().readLine();

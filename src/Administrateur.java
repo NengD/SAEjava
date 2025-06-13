@@ -13,7 +13,7 @@ public class Administrateur {
         this.connexion = connexion;
     }
 
-    public void creerVendeur(String nom, String prenom, Magasin magasin) {
+    public void creerVendeur(String nom, String prenom, int idmag) {
         try {
             // Générer un nouvel idvendeur
             Connection conn = this.connexion.getConnection();
@@ -28,12 +28,12 @@ public class Administrateur {
 
             // Insérer le vendeur dans la base
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO VENDEUR (idven, nom, prenom, idmag) VALUES (?, ?, ?, ?)"
+                "INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES (?, ?, ?, ?)"
             );
             ps.setInt(1, idven);
             ps.setString(2, nom);
             ps.setString(3, prenom);
-            ps.setString(4, magasin.getIdMagasin(conn));
+            ps.setInt(4, idmag);
             ps.executeUpdate();
             ps.close();
             System.out.println("Vendeur créé !");
