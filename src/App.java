@@ -153,7 +153,6 @@ public class App {
             System.out.println("R: Retourner menu principal");
             System.out.println("C: Crée un compte vendeur");
             System.out.println("A: Ajouter une nouvelle librairie");
-            System.out.println("G: Gérer les stocks de toutes les librairies");
             System.out.println("S: Consulter les statistiques de vente");
             System.out.println("T: Transférer un livre d'un magasin à un autre");
             System.out.println("L: Créer un livre");
