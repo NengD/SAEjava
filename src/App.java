@@ -224,7 +224,6 @@ public class App {
             System.out.println("Que voulez vous faire?");
             System.out.println("R: Retourner menu principal");
             System.out.println("P: Passer une commande");
-            System.out.println("M: Choisir le mode de réception");
             System.out.println("C: Consulter le catalogue");
             System.out.println("O: On vous recommande");
 
@@ -267,10 +266,7 @@ public class App {
                 }
                 client.passerCommande(enLigne, typeLivraison, livres, magasin);
                 System.out.println("Commande passée !");
-            } else if (commande.equals("m")) {
-                System.out.println("Nouveau mode de réception (M/C) :");
-                System.out.println("Mode de réception mis à jour !");
-            } else if (commande.equals("c")) {
+            }else if (commande.equals("c")) {
                 System.out.println("Catalogue :");
                 for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
                     System.out.println(l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection()));
