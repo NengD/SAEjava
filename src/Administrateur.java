@@ -69,9 +69,115 @@ public class Administrateur {
         }
     }
 
-
-    public void afficherChiffreAffaires() {
+    public void transfertLivreEntreMagasins(String isbn, int quantite, int idMagasinSource, int idMagasinDest) {
         try {
+            Connection conn = this.connexion.getConnection();
+
+            // Vérifier la quantité disponible dans le magasin source
+            PreparedStatement psCheck = conn.prepareStatement(
+                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
+            );
+            psCheck.setInt(1, idMagasinSource);
+            psCheck.setString(2, isbn);
+            ResultSet rs = psCheck.executeQuery();
+            if (rs.next()) {
+                int qteSource = rs.getInt("qte");
+                if (qteSource < quantite) {
+                    System.out.println("Quantité insuffisante dans le magasin source.");
+                    rs.close();
+                    psCheck.close();
+                    return;
+                }
+            } else {
+                System.out.println("Livre non trouvé dans le magasin source.");
+                rs.close();
+                psCheck.close();
+                return;
+            }
+            rs.close();
+            psCheck.close();
+
+            // Retirer la quantité du magasin source
+            PreparedStatement psUpdateSource = conn.prepareStatement(
+                "UPDATE POSSEDER SET qte = qte - ? WHERE idmag = ? AND isbn = ?"
+            );
+            psUpdateSource.setInt(1, quantite);
+            psUpdateSource.setInt(2, idMagasinSource);
+            psUpdateSource.setString(3, isbn);
+            psUpdateSource.executeUpdate();
+            psUpdateSource.close();
+
+            // Ajouter ou mettre à jour la quantité dans le magasin destination
+            PreparedStatement psCheckDest = conn.prepareStatement(
+                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
+            );
+            psCheckDest.setInt(1, idMagasinDest);
+            psCheckDest.setString(2, isbn);
+            ResultSet rsDest = psCheckDest.executeQuery();
+            if (rsDest.next()) {
+                PreparedStatement psUpdateDest = conn.prepareStatement(
+                    "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
+                );
+                psUpdateDest.setInt(1, quantite);
+                psUpdateDest.setInt(2, idMagasinDest);
+                psUpdateDest.setString(3, isbn);
+                psUpdateDest.executeUpdate();
+                psUpdateDest.close();
+            } else {
+                PreparedStatement psInsertDest = conn.prepareStatement(
+                    "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)"
+                );
+                psInsertDest.setInt(1, idMagasinDest);
+                psInsertDest.setString(2, isbn);
+                psInsertDest.setInt(3, quantite);
+                psInsertDest.executeUpdate();
+                psInsertDest.close();
+            }
+            rsDest.close();
+            psCheckDest.close();
+
+            System.out.println("Transfert effectué avec succès !");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors du transfert : " + e.getMessage());
+        }
+    }
+
+    public void creerLivre(String isbn, String titre, int nbpages, String datepubli, double prix, int iddewey) {
+        try {
+            Connection conn = this.connexion.getConnection();
+            PreparedStatement psCheck = conn.prepareStatement(
+                "SELECT isbn FROM LIVRE WHERE isbn = ?"
+            );
+            psCheck.setString(1, isbn);
+            ResultSet rs = psCheck.executeQuery();
+            if (rs.next()) {
+                System.out.println("Ce livre existe déjà dans la base.");
+                rs.close();
+                psCheck.close();
+                return;
+            }
+            rs.close();
+            psCheck.close();
+
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO LIVRE (isbn, titre, nbpages, datepubli, prix, iddewey) VALUES (?, ?, ?, ?, ?, ?)"
+            );
+            ps.setString(1, isbn);
+            ps.setString(2, titre);
+            ps.setInt(3, nbpages);
+            ps.setString(4, datepubli);
+            ps.setDouble(5, prix);
+            ps.setInt(6, iddewey);
+            ps.executeUpdate();
+            ps.close();
+            System.out.println("Livre ajouté à la base !");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout du livre : " + e.getMessage());
+        }
+    }
+
+     public void afficherChiffreAffaires() {
+       try {
             Connection conn = this.connexion.getConnection();
             // Chiffre d'affaires par magasin
             PreparedStatement ps = conn.prepareStatement(
@@ -132,7 +238,4 @@ public class Administrateur {
     afficherChiffreAffaires();
     bestseller();
    }
-
-
-
 }

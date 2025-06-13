@@ -155,12 +155,13 @@ public class App {
             System.out.println("A: Ajouter une nouvelle librairie");
             System.out.println("G: Gérer les stocks de toutes les librairies");
             System.out.println("S: Consulter les statistiques de vente");
+            System.out.println("T: Transférer un livre d'un magasin à un autre");
+            System.out.println("L: Créer un livre");
 
             String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
             if (commande.equals("r")) {
-                this.quitter = true;
                 commande_faite = true;
             } else if (commande.equals("c")) {
                 System.out.println("Nom du vendeur :");
@@ -176,10 +177,32 @@ public class App {
                 System.out.println("Ville :");
                 String ville = System.console().readLine();
                 admin.ajouterLibrairie(nom, ville);
-            } else if (commande.equals("g")) {
-                System.out.println("Gestion des stocks (fonctionnalité à implémenter)");
             } else if (commande.equals("s")) {
-                System.out.println("Statistiques de vente (fonctionnalité à implémenter)");
+                admin.consulterStatisques();
+            } else if (commande.equals("t")) {
+                System.out.println("ISBN du livre à transférer :");
+                String isbn = System.console().readLine();
+                System.out.println("Quantité à transférer :");
+                int quantite = Integer.parseInt(System.console().readLine());
+                System.out.println("ID du magasin source :");
+                int idMagSource = Integer.parseInt(System.console().readLine());
+                System.out.println("ID du magasin de destination :");
+                int idMagDest = Integer.parseInt(System.console().readLine());
+                admin.transfertLivreEntreMagasins(isbn, quantite, idMagSource, idMagDest);
+            } else if (commande.equals("l")) {
+                System.out.println("ISBN du livre :");
+                String isbn = System.console().readLine();
+                System.out.println("Titre du livre :");
+                String titre = System.console().readLine();
+                System.out.println("Nombre de pages :");
+                int nbpages = Integer.parseInt(System.console().readLine());
+                System.out.println("Date de publication (YYYY-MM-DD) :");
+                String datepubli = System.console().readLine();
+                System.out.println("Prix :");
+                double prix = Double.parseDouble(System.console().readLine());
+                System.out.println("ID Dewey (classification) :");
+                int iddewey = Integer.parseInt(System.console().readLine());
+                admin.creerLivre(isbn, titre, nbpages, datepubli, prix, iddewey);
             } else {
                 System.out.println("Commande inconnue.");
             }
