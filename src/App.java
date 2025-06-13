@@ -196,12 +196,15 @@ public class App {
                 String titre = System.console().readLine();
                 System.out.println("Nombre de pages :");
                 int nbpages = Integer.parseInt(System.console().readLine());
-                System.out.println("Date de publication (YYYY-MM-DD) :");
-                String datepubli = System.console().readLine();
+                System.out.println("Année de publication :");
+                int datepubli = Integer.parseInt(System.console().readLine());
                 System.out.println("Prix :");
                 double prix = Double.parseDouble(System.console().readLine());
-                System.out.println("ID Dewey (classification) :");
-                int iddewey = Integer.parseInt(System.console().readLine());
+                System.out.println("ID Dewey (classification, laisser vide si aucune) :");
+                String iddewey = System.console().readLine().trim();
+                if (iddewey.isEmpty()) {
+                    iddewey = null;
+                }
                 admin.creerLivre(isbn, titre, nbpages, datepubli, prix, iddewey);
             } else {
                 System.out.println("Commande inconnue.");

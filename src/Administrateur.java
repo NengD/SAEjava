@@ -142,9 +142,10 @@ public class Administrateur {
         }
     }
 
-    public void creerLivre(String isbn, String titre, int nbpages, String datepubli, double prix, int iddewey) {
+    public void creerLivre(String isbn, String titre, int nbpages, int datepubli, double prix, String iddewey) {
         try {
             Connection conn = this.connexion.getConnection();
+            // Vérifier si le livre existe déjà
             PreparedStatement psCheck = conn.prepareStatement(
                 "SELECT isbn FROM LIVRE WHERE isbn = ?"
             );
@@ -159,33 +160,53 @@ public class Administrateur {
             rs.close();
             psCheck.close();
 
+            // Insérer le livre
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO LIVRE (isbn, titre, nbpages, datepubli, prix, iddewey) VALUES (?, ?, ?, ?, ?, ?)"
+                "INSERT INTO LIVRE (isbn, titre, nbpages, datepubli, prix) VALUES (?, ?, ?, ?, ?)"
             );
             ps.setString(1, isbn);
             ps.setString(2, titre);
             ps.setInt(3, nbpages);
-            ps.setString(4, datepubli);
+            ps.setInt(4, datepubli);
             ps.setDouble(5, prix);
-            ps.setInt(6, iddewey);
             ps.executeUpdate();
             ps.close();
+
+            if (iddewey != null && !iddewey.isEmpty()) {
+            PreparedStatement psCheckDewey = conn.prepareStatement(
+                "SELECT iddewey FROM CLASSIFICATION WHERE iddewey = ?"
+            );
+            psCheckDewey.setString(1, iddewey);
+            ResultSet rsDewey = psCheckDewey.executeQuery();
+            if (rsDewey.next()) {
+                PreparedStatement psTheme = conn.prepareStatement(
+                    "INSERT INTO THEMES (isbn, iddewey) VALUES (?, ?)"
+                );
+                psTheme.setString(1, isbn);
+                psTheme.setString(2, iddewey);
+                psTheme.executeUpdate();
+                psTheme.close();
+            } else {
+                System.out.println("Erreur : l'ID Dewey n'existe pas dans la table CLASSIFICATION.");
+            }
+            rsDewey.close();
+            psCheckDewey.close();
+        }
             System.out.println("Livre ajouté à la base !");
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout du livre : " + e.getMessage());
         }
     }
 
-     public void afficherChiffreAffaires() {
-       try {
+    public void afficherChiffreAffaires() {
+        try {
             Connection conn = this.connexion.getConnection();
-            // Chiffre d'affaires par magasin
+            // Chiffre d'affaires par magasin (correction des jointures et noms de colonnes)
             PreparedStatement ps = conn.prepareStatement(
                 "SELECT m.idmag, m.nommag, SUM(d.qte * d.prixvente) AS ca " +
                 "FROM MAGASIN m " +
-                "LEFT JOIN VENDEUR v ON m.idmag = v.idmag " +
-                "LEFT JOIN COMMANDE c ON v.idven = c.idven " +
-                "LEFT JOIN DETAILCOMMANDE d ON c.idcom = d.idcom " +
+                "LEFT JOIN COMMANDE c ON m.idmag = c.idmag " +
+                "LEFT JOIN DETAILCOMMANDE d ON c.numcom = d.numcom " +
                 "GROUP BY m.idmag, m.nommag"
             );
             ResultSet rs = ps.executeQuery();
@@ -205,16 +226,14 @@ public class Administrateur {
         }
     }
 
-
-
     public void bestseller() {
         try {
             Connection conn = this.connexion.getConnection();
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT l.idlivre, l.titre, SUM(d.qte) AS total_vendu " +
+                "SELECT l.isbn, l.titre, SUM(d.qte) AS total_vendu " +
                 "FROM LIVRE l " +
-                "JOIN DETAILCOMMANDE d ON l.idlivre = d.idlivre " +
-                "GROUP BY l.idlivre, l.titre " +
+                "JOIN DETAILCOMMANDE d ON l.isbn = d.isbn " +
+                "GROUP BY l.isbn, l.titre " +
                 "ORDER BY total_vendu DESC " +
                 "LIMIT 1"
             );
@@ -233,9 +252,9 @@ public class Administrateur {
         }
     }
 
-   public void consulterStatisques(){
-    System.out.println("=== Statistiques ===");
-    afficherChiffreAffaires();
-    bestseller();
-   }
+    public void consulterStatisques(){
+        System.out.println("=== Statistiques ===");
+        afficherChiffreAffaires();
+        bestseller();
+    }
 }
