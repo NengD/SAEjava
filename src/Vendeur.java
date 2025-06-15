@@ -3,31 +3,50 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Classe représentant un vendeur de la librairie.
+ * Permet la gestion du stock, des transferts de livres et la prise de commandes pour les clients.
+ */
 public class Vendeur {
 
     private int idVendeur;
     private int idmagasin;
     private ConnexionMySQL connexion;
 
-    public Vendeur(int idVendeur, ConnexionMySQL connexion,int idmagasin) {
+    /**
+     * Constructeur Vendeur.
+     * @param idVendeur identifiant du vendeur
+     * @param connexion connexion à la base de données
+     * @param idmagasin identifiant du magasin associé
+     */
+    public Vendeur(int idVendeur, ConnexionMySQL connexion, int idmagasin) {
         this.connexion = connexion;
         this.idVendeur = idVendeur;
         this.idmagasin = idmagasin;
     }
 
+    /** @return l'identifiant du vendeur */
     public int getIdVendeur() {
         return idVendeur;
     }
 
+    /** @param idVendeur nouvel identifiant du vendeur */
     public void setIdVendeur(int idVendeur) {
         this.idVendeur = idVendeur;
     }
 
+    /** @return l'identifiant du magasin associé */
     public int getIdMagasin() {
         return this.idmagasin;
     }
 
-    public void ajouterLivre(String idLivre, int quantite){
+    /**
+     * Ajoute un livre au stock du magasin.
+     * Si le livre existe déjà, augmente la quantité.
+     * @param idLivre ISBN du livre
+     * @param quantite quantité à ajouter
+     */
+    public void ajouterLivre(String idLivre, int quantite) {
         try {
             PreparedStatement ps = this.connexion.prepareStatement(
                 "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
@@ -63,7 +82,12 @@ public class Vendeur {
         }
     }
 
-    public void majQuantiteLivre(Livre livre, int quantite){
+    /**
+     * Met à jour la quantité d'un livre dans le stock du magasin.
+     * @param livre livre concerné
+     * @param quantite quantité à ajouter (peut être négative)
+     */
+    public void majQuantiteLivre(Livre livre, int quantite) {
         try {
             PreparedStatement ps = this.connexion.prepareStatement(
                 "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
@@ -71,9 +95,9 @@ public class Vendeur {
             ps.setInt(1, quantite);
             ps.setInt(2, this.idmagasin);
             ps.setString(3, livre.getIsbn());
-            int rows = ps.executeUpdate();
+            int nbLigne = ps.executeUpdate();
             ps.close();
-            if (rows == 0) {
+            if (nbLigne == 0) {
                 System.out.println("Livre non trouvé dans le stock.");
             } else {
                 System.out.println("Quantité mise à jour.");
@@ -83,7 +107,12 @@ public class Vendeur {
         }
     }
 
-    public boolean livreDisponible(String nomLivre){
+    /**
+     * Vérifie si un livre est disponible dans le stock du magasin.
+     * @param nomLivre titre du livre
+     * @return true si disponible, false sinon
+     */
+    public boolean livreDisponible(String nomLivre) {
         try {
             PreparedStatement ps = this.connexion.prepareStatement(
                 "SELECT qte FROM POSSEDER p JOIN LIVRE l ON p.isbn = l.isbn WHERE p.idmag = ? AND l.titre = ?"
@@ -104,18 +133,23 @@ public class Vendeur {
         }
     }
 
-    public void transfertLivre(String isbn, int quantite, int idMagasinDest){
+    /**
+     * Transfère une quantité de livre du magasin courant vers un autre magasin.
+     * @param isbn ISBN du livre
+     * @param quantite quantité à transférer
+     * @param idMagasinDest identifiant du magasin de destination
+     */
+    public void transfertLivre(String isbn, int quantite, int idMagasinDest) {
         try {
             int idMagOrig = this.idmagasin;
-            int idMagDest = idMagasinDest;
 
             // Vérifier la quantité disponible dans le magasin d'origine
-            PreparedStatement psCheck = this.connexion.prepareStatement(
+            PreparedStatement psVerif = this.connexion.prepareStatement(
                 "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
             );
-            psCheck.setInt(1, idMagOrig);
-            psCheck.setString(2, isbn);
-            ResultSet rs = psCheck.executeQuery();
+            psVerif.setInt(1, idMagOrig);
+            psVerif.setString(2, isbn);
+            ResultSet rs = psVerif.executeQuery();
             if (rs.next() && rs.getInt("qte") >= quantite) {
                 // Retirer la quantité du magasin d'origine
                 PreparedStatement psUpdateOrig = this.connexion.prepareStatement(
@@ -128,18 +162,18 @@ public class Vendeur {
                 psUpdateOrig.close();
 
                 // Ajouter ou mettre à jour la quantité dans le magasin de destination
-                PreparedStatement psCheckDest = this.connexion.prepareStatement(
+                PreparedStatement psVerifDest = this.connexion.prepareStatement(
                     "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
                 );
-                psCheckDest.setInt(1, idMagDest);
-                psCheckDest.setString(2, isbn);
-                ResultSet rsDest = psCheckDest.executeQuery();
+                psVerifDest.setInt(1, idMagasinDest);
+                psVerifDest.setString(2, isbn);
+                ResultSet rsDest = psVerifDest.executeQuery();
                 if (rsDest.next()) {
                     PreparedStatement psUpdateDest = this.connexion.prepareStatement(
                         "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
                     );
                     psUpdateDest.setInt(1, quantite);
-                    psUpdateDest.setInt(2, idMagDest);
+                    psUpdateDest.setInt(2, idMagasinDest);
                     psUpdateDest.setString(3, isbn);
                     psUpdateDest.executeUpdate();
                     psUpdateDest.close();
@@ -147,28 +181,35 @@ public class Vendeur {
                     PreparedStatement psInsertDest = this.connexion.prepareStatement(
                         "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)"
                     );
-                    psInsertDest.setInt(1, idMagDest);
+                    psInsertDest.setInt(1, idMagasinDest);
                     psInsertDest.setString(2, isbn);
                     psInsertDest.setInt(3, quantite);
                     psInsertDest.executeUpdate();
                     psInsertDest.close();
                 }
                 rsDest.close();
-                psCheckDest.close();
+                psVerifDest.close();
                 System.out.println("Transfert effectué.");
             } else {
                 System.out.println("Quantité insuffisante dans le stock du magasin d'origine.");
             }
             rs.close();
-            psCheck.close();
+            psVerif.close();
         } catch (SQLException e) {
             System.out.println("Erreur lors du transfert : " + e.getMessage());
         }
     }
 
-    public void passerCommandePourClient(boolean enLigne, String typeLivraison, List<Livre> livres, Client client){
+    /**
+     * Passe une commande pour un client en magasin.
+     * @param enLigne true si la commande est en ligne, false sinon
+     * @param typeLivraison type de livraison ('M', 'C')
+     * @param livres liste des livres à commander
+     * @param client client concerné
+     */
+    public void passerCommandePourClient(boolean enLigne, String typeLivraison, List<Livre> livres, Client client) {
         char typeLiv = typeLivraison.charAt(0);
         client.passerCommande(enLigne, typeLiv, livres, this.idmagasin);
-        System.out.println("Commande passée pour le client ");
+        System.out.println("Commande passée pour le client.");
     }
 }

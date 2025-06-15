@@ -3,22 +3,37 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Classe représentant un administrateur de la librairie.
+ * Permet la gestion des vendeurs, librairies, transferts de livres et statistiques.
+ */
 public class Administrateur {
 
     private int idadmin;
     private ConnexionMySQL connexion;
 
+    /**
+     * Constructeur Administrateur.
+     * @param idadmin identifiant de l'administrateur
+     * @param connexion connexion à la base de données
+     */
     public Administrateur(int idadmin, ConnexionMySQL connexion) {
         this.idadmin = idadmin;
         this.connexion = connexion;
     }
 
+    /**
+     * Crée un nouveau vendeur dans la base de données.
+     * @param nom nom du vendeur
+     * @param prenom prénom du vendeur
+     * @param idmag identifiant du magasin d'affectation
+     */
     public void creerVendeur(String nom, String prenom, int idmag) {
         try {
-            // Générer un nouvel idvendeur
             Connection conn = this.connexion.getConnection();
             int idven = -1;
-            PreparedStatement psNum = conn.prepareStatement("SELECT COALESCE(MAX(idven), 0) + 1 AS nextId FROM VENDEUR");
+            PreparedStatement psNum = conn.prepareStatement(
+                "SELECT COALESCE(MAX(idven), 0) + 1 AS nextId FROM VENDEUR");
             ResultSet rsNum = psNum.executeQuery();
             if (rsNum.next()) {
                 idven = rsNum.getInt("nextId");
@@ -26,10 +41,8 @@ public class Administrateur {
             rsNum.close();
             psNum.close();
 
-            // Insérer le vendeur dans la base
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES (?, ?, ?, ?)"
-            );
+                "INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES (?, ?, ?, ?)");
             ps.setInt(1, idven);
             ps.setString(2, nom);
             ps.setString(3, prenom);
@@ -42,12 +55,17 @@ public class Administrateur {
         }
     }
 
+    /**
+     * Ajoute une nouvelle librairie (magasin) dans la base de données.
+     * @param nom nom de la librairie
+     * @param ville ville de la librairie
+     */
     public void ajouterLibrairie(String nom, String ville) {
         try {
             Connection conn = this.connexion.getConnection();
-            // Générer un nouvel idmag
             int idmag = -1;
-            PreparedStatement psNum = conn.prepareStatement("SELECT COALESCE(MAX(idmag), 0) + 1 AS nextId FROM MAGASIN");
+            PreparedStatement psNum = conn.prepareStatement(
+                "SELECT COALESCE(MAX(idmag), 0) + 1 AS nextId FROM MAGASIN");
             ResultSet rsNum = psNum.executeQuery();
             if (rsNum.next()) {
                 idmag = rsNum.getInt("nextId");
@@ -56,8 +74,7 @@ public class Administrateur {
             psNum.close();
 
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO MAGASIN (idmag, nommag, villemag) VALUES (?, ?, ?)"
-            );
+                "INSERT INTO MAGASIN (idmag, nommag, villemag) VALUES (?, ?, ?)");
             ps.setInt(1, idmag);
             ps.setString(2, nom);
             ps.setString(3, ville);
@@ -69,38 +86,43 @@ public class Administrateur {
         }
     }
 
+    /**
+     * Transfère une quantité de livre d'un magasin source vers un magasin destination.
+     * @param isbn ISBN du livre à transférer
+     * @param quantite quantité à transférer
+     * @param idMagasinSource identifiant du magasin source
+     * @param idMagasinDest identifiant du magasin destination
+     */
     public void transfertLivreEntreMagasins(String isbn, int quantite, int idMagasinSource, int idMagasinDest) {
         try {
             Connection conn = this.connexion.getConnection();
 
             // Vérifier la quantité disponible dans le magasin source
-            PreparedStatement psCheck = conn.prepareStatement(
-                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
-            );
-            psCheck.setInt(1, idMagasinSource);
-            psCheck.setString(2, isbn);
-            ResultSet rs = psCheck.executeQuery();
+            PreparedStatement psVerif = conn.prepareStatement(
+                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?");
+            psVerif.setInt(1, idMagasinSource);
+            psVerif.setString(2, isbn);
+            ResultSet rs = psVerif.executeQuery();
             if (rs.next()) {
                 int qteSource = rs.getInt("qte");
                 if (qteSource < quantite) {
                     System.out.println("Quantité insuffisante dans le magasin source.");
                     rs.close();
-                    psCheck.close();
+                    psVerif.close();
                     return;
                 }
             } else {
                 System.out.println("Livre non trouvé dans le magasin source.");
                 rs.close();
-                psCheck.close();
+                psVerif.close();
                 return;
             }
             rs.close();
-            psCheck.close();
+            psVerif.close();
 
             // Retirer la quantité du magasin source
             PreparedStatement psUpdateSource = conn.prepareStatement(
-                "UPDATE POSSEDER SET qte = qte - ? WHERE idmag = ? AND isbn = ?"
-            );
+                "UPDATE POSSEDER SET qte = qte - ? WHERE idmag = ? AND isbn = ?");
             psUpdateSource.setInt(1, quantite);
             psUpdateSource.setInt(2, idMagasinSource);
             psUpdateSource.setString(3, isbn);
@@ -108,16 +130,14 @@ public class Administrateur {
             psUpdateSource.close();
 
             // Ajouter ou mettre à jour la quantité dans le magasin destination
-            PreparedStatement psCheckDest = conn.prepareStatement(
-                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?"
-            );
-            psCheckDest.setInt(1, idMagasinDest);
-            psCheckDest.setString(2, isbn);
-            ResultSet rsDest = psCheckDest.executeQuery();
+            PreparedStatement psVerifDest = conn.prepareStatement(
+                "SELECT qte FROM POSSEDER WHERE idmag = ? AND isbn = ?");
+            psVerifDest.setInt(1, idMagasinDest);
+            psVerifDest.setString(2, isbn);
+            ResultSet rsDest = psVerifDest.executeQuery();
             if (rsDest.next()) {
                 PreparedStatement psUpdateDest = conn.prepareStatement(
-                    "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?"
-                );
+                    "UPDATE POSSEDER SET qte = qte + ? WHERE idmag = ? AND isbn = ?");
                 psUpdateDest.setInt(1, quantite);
                 psUpdateDest.setInt(2, idMagasinDest);
                 psUpdateDest.setString(3, isbn);
@@ -125,8 +145,7 @@ public class Administrateur {
                 psUpdateDest.close();
             } else {
                 PreparedStatement psInsertDest = conn.prepareStatement(
-                    "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)"
-                );
+                    "INSERT INTO POSSEDER (idmag, isbn, qte) VALUES (?, ?, ?)");
                 psInsertDest.setInt(1, idMagasinDest);
                 psInsertDest.setString(2, isbn);
                 psInsertDest.setInt(3, quantite);
@@ -134,7 +153,7 @@ public class Administrateur {
                 psInsertDest.close();
             }
             rsDest.close();
-            psCheckDest.close();
+            psVerifDest.close();
 
             System.out.println("Transfert effectué avec succès !");
         } catch (SQLException e) {
@@ -142,28 +161,35 @@ public class Administrateur {
         }
     }
 
+    /**
+     * Crée un nouveau livre dans la base de données, et l'associe à une classification si précisée.
+     * @param isbn ISBN du livre
+     * @param titre titre du livre
+     * @param nbpages nombre de pages
+     * @param datepubli année de publication
+     * @param prix prix du livre
+     * @param iddewey identifiant de la classification (peut être null)
+     */
     public void creerLivre(String isbn, String titre, int nbpages, int datepubli, double prix, String iddewey) {
         try {
             Connection conn = this.connexion.getConnection();
             // Vérifier si le livre existe déjà
-            PreparedStatement psCheck = conn.prepareStatement(
-                "SELECT isbn FROM LIVRE WHERE isbn = ?"
-            );
-            psCheck.setString(1, isbn);
-            ResultSet rs = psCheck.executeQuery();
+            PreparedStatement psVerif = conn.prepareStatement(
+                "SELECT isbn FROM LIVRE WHERE isbn = ?");
+            psVerif.setString(1, isbn);
+            ResultSet rs = psVerif.executeQuery();
             if (rs.next()) {
                 System.out.println("Ce livre existe déjà dans la base.");
                 rs.close();
-                psCheck.close();
+                psVerif.close();
                 return;
             }
             rs.close();
-            psCheck.close();
+            psVerif.close();
 
             // Insérer le livre
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO LIVRE (isbn, titre, nbpages, datepubli, prix) VALUES (?, ?, ?, ?, ?)"
-            );
+                "INSERT INTO LIVRE (isbn, titre, nbpages, datepubli, prix) VALUES (?, ?, ?, ?, ?)");
             ps.setString(1, isbn);
             ps.setString(2, titre);
             ps.setInt(3, nbpages);
@@ -172,36 +198,37 @@ public class Administrateur {
             ps.executeUpdate();
             ps.close();
 
+            // Associer à une classification si précisée
             if (iddewey != null && !iddewey.isEmpty()) {
-            PreparedStatement psCheckDewey = conn.prepareStatement(
-                "SELECT iddewey FROM CLASSIFICATION WHERE iddewey = ?"
-            );
-            psCheckDewey.setString(1, iddewey);
-            ResultSet rsDewey = psCheckDewey.executeQuery();
-            if (rsDewey.next()) {
-                PreparedStatement psTheme = conn.prepareStatement(
-                    "INSERT INTO THEMES (isbn, iddewey) VALUES (?, ?)"
-                );
-                psTheme.setString(1, isbn);
-                psTheme.setString(2, iddewey);
-                psTheme.executeUpdate();
-                psTheme.close();
-            } else {
-                System.out.println("Erreur : l'ID Dewey n'existe pas dans la table CLASSIFICATION.");
+                PreparedStatement psVerifDewey = conn.prepareStatement(
+                    "SELECT iddewey FROM CLASSIFICATION WHERE iddewey = ?");
+                psVerifDewey.setString(1, iddewey);
+                ResultSet rsDewey = psVerifDewey.executeQuery();
+                if (rsDewey.next()) {
+                    PreparedStatement psTheme = conn.prepareStatement(
+                        "INSERT INTO THEMES (isbn, iddewey) VALUES (?, ?)");
+                    psTheme.setString(1, isbn);
+                    psTheme.setString(2, iddewey);
+                    psTheme.executeUpdate();
+                    psTheme.close();
+                } else {
+                    System.out.println("Erreur : l'ID Dewey n'existe pas dans la table CLASSIFICATION.");
+                }
+                rsDewey.close();
+                psVerifDewey.close();
             }
-            rsDewey.close();
-            psCheckDewey.close();
-        }
             System.out.println("Livre ajouté à la base !");
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout du livre : " + e.getMessage());
         }
     }
 
+    /**
+     * Affiche le chiffre d'affaires par magasin et le total.
+     */
     public void afficherChiffreAffaires() {
         try {
             Connection conn = this.connexion.getConnection();
-            // Chiffre d'affaires par magasin (correction des jointures et noms de colonnes)
             PreparedStatement ps = conn.prepareStatement(
                 "SELECT m.idmag, m.nommag, SUM(d.qte * d.prixvente) AS ca " +
                 "FROM MAGASIN m " +
@@ -226,6 +253,9 @@ public class Administrateur {
         }
     }
 
+    /**
+     * Affiche le livre le plus vendu (bestseller) toutes boutiques confondues.
+     */
     public void bestseller() {
         try {
             Connection conn = this.connexion.getConnection();
@@ -252,7 +282,10 @@ public class Administrateur {
         }
     }
 
-    public void consulterStatisques(){
+    /**
+     * Affiche les statistiques principales : chiffre d'affaires et bestseller.
+     */
+    public void consulterStatisques() {
         System.out.println("=== Statistiques ===");
         afficherChiffreAffaires();
         bestseller();
