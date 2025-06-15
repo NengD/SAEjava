@@ -8,14 +8,27 @@ import java.util.List;
 public class Auteur {
     private String idauteur;
 
+    /**
+     * Constructeur de la classe Auteur.
+     * @param idauteur identifiant de l'auteur
+     */
     public Auteur(String idauteur) {
         this.idauteur = idauteur;
     }
 
+     /**
+     * Retourne l'identifiant de l'auteur.
+     * @return identifiant de l'auteur
+     */
     public String getIdAuteur() {
         return idauteur;
     }
 
+    /**
+     * Récupère le nom de l'auteur depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return nom de l'auteur ou null si non trouvé
+     */
     public String getNom(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT nomauteur FROM AUTEUR WHERE idauteur = ?");
@@ -35,6 +48,11 @@ public class Auteur {
         return null;
     }
 
+    /**
+     * Récupère le prénom de l'auteur depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return prénom de l'auteur ou null si non trouvé
+     */
     public String getPrenom(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT prenomauteur FROM AUTEUR WHERE idauteur = ?");
@@ -54,6 +72,11 @@ public class Auteur {
         return null;
     }
 
+     /**
+     * Récupère la liste des livres écrits par cet auteur.
+     * @param connexion connexion à la base de données
+     * @return liste des livres de l'auteur
+     */
     public List<Livre> getLivres(Connection connexion) {
         List<Livre> livres = new ArrayList<>();
         try {

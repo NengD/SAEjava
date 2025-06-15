@@ -5,14 +5,27 @@ import java.util.List;
 public class Magasin {
     private String nom;
 
+    /**
+     * Constructeur de la classe Magasin.
+     * @param nom nom du magasin
+     */
     public Magasin(String nom) {
         this.nom = nom;
     }
 
+    /**
+     * Retourne le nom du magasin.
+     * @return nom du magasin
+     */
     public String getNom() {
         return nom;
     }
 
+    /**
+     * Récupère l'identifiant du magasin depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return identifiant du magasin ou null si non trouvé
+     */
     public String getIdMagasin(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT idmag FROM MAGASIN WHERE nommag = ?");
@@ -32,7 +45,12 @@ public class Magasin {
         return null;
     }
 
-     public List<Commande> getCommandes(Connection connexion) {
+    /**
+     * Récupère la liste des commandes passées dans ce magasin.
+     * @param connexion connexion à la base de données
+     * @return liste des commandes du magasin
+     */ 
+    public List<Commande> getCommandes(Connection connexion) {
         List<Commande> commandes = new ArrayList<>();
         String idMagasin = getIdMagasin(connexion);
         if (idMagasin == null) return commandes;
@@ -54,6 +72,11 @@ public class Magasin {
         return commandes;
     }
 
+    /**
+     * Récupère le stock du magasin (ISBN et quantité).
+     * @param connexion connexion à la base de données
+     * @return liste des stocks sous forme de chaînes
+     */
     public List<String> getStock(Connection connexion) {
         List<String> stock = new ArrayList<>();
         String idMagasin = getIdMagasin(connexion);
@@ -75,6 +98,11 @@ public class Magasin {
         return stock;
     }
 
+    /**
+     * Génère une facture détaillée pour le magasin.
+     * @param connexion connexion à la base de données
+     * @return facture sous forme de chaîne de caractères
+     */
     public String editerFacture(Connection connexion) {
     StringBuilder facture = new StringBuilder();
     String idMagasin = getIdMagasin(connexion);
@@ -130,6 +158,6 @@ public class Magasin {
     return facture.toString();
 }
 
-    //public String qtatistiqueMagasin(){}
+  
 
 }

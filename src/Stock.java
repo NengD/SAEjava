@@ -11,12 +11,22 @@ public class Stock {
     private ConnexionMySQL connexion;
 
     
+    /**
+     * Constructeur de la classe Stock.
+     * @param magasin magasin associé
+     * @param connexion connexion à la base de données
+     */
     public Stock(Magasin magasin,ConnexionMySQL connexion) {
         this.magasin = magasin;
         this.quantiteLivre = new HashMap<>();
         this.connexion = connexion;
     }
 
+     /**
+     * Ajoute un livre au stock si absent, sinon affiche un message.
+     * @param livre livre à ajouter
+     * @param quantite quantité à ajouter
+     */
     public void ajouterLivre(Livre livre, int quantite) {
         try{
             Statement s = this.connexion.createStatement();
@@ -34,6 +44,12 @@ public class Stock {
         }
 }
 
+    
+    /**
+     * Met à jour la quantité d'un livre dans le stock.
+     * @param livre livre concerné
+     * @param quantite quantité à ajouter
+     */
     public void majQuantiteLivre(Livre livre, int quantite) {
         try{
             Statement s = this.connexion.createStatement();
@@ -51,6 +67,10 @@ public class Stock {
     }
 }
 
+    /**
+     * Calcule la valeur totale du stock (prix * quantité pour chaque livre).
+     * @return valeur totale du stock
+     */
     public Double getValeurStock() {
         Double valeur = 0.0;
         
@@ -73,6 +93,10 @@ public class Stock {
         return valeur;
     }
 
+    /**
+     * Retourne la quantité totale de livres en stock.
+     * @return quantité totale de livres
+     */
     public Integer getQuantiteLivre() {
         try{
             Statement s = this.connexion.createStatement();

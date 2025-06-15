@@ -8,14 +8,27 @@ import java.util.List;
 public class Commande {
     private int numCommande;
 
+    /**
+     * Constructeur de la classe Commande.
+     * @param numCommande numéro de la commande
+     */
     public Commande(int numCommande) {
         this.numCommande = numCommande;
     }
 
+     /**
+     * Retourne le numéro de la commande.
+     * @return numéro de la commande
+     */
     public int getNumCommande() {
         return this.numCommande;
     }
 
+    /**
+     * Indique si la commande a été passée en ligne.
+     * @param connexion connexion à la base de données
+     * @return true si la commande est en ligne, false sinon
+     */
     public boolean isEnLigne(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT enligne FROM COMMANDE WHERE numcom = ?");
@@ -35,6 +48,11 @@ public class Commande {
         return false;
     }
 
+     /**
+     * Récupère le type de livraison de la commande.
+     * @param connexion connexion à la base de données
+     * @return type de livraison (caractère)
+     */
     public char getTypeLivraison(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT livraison FROM COMMANDE WHERE numcom = ?");
@@ -54,6 +72,11 @@ public class Commande {
         return ' ';
     }
 
+    /**
+     * Récupère la date de la commande.
+     * @param connexion connexion à la base de données
+     * @return date de la commande (String) ou null si non trouvée
+     */
     public String getDateCommande(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT datecom FROM COMMANDE WHERE numcom = ?");
@@ -73,6 +96,11 @@ public class Commande {
         return null;
     }
 
+     /**
+     * Récupère l'identifiant du client ayant passé la commande.
+     * @param connexion connexion à la base de données
+     * @return identifiant du client ou -1 si non trouvé
+     */
     public int getIdClient(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT idcli FROM COMMANDE WHERE numcom = ?");
@@ -92,6 +120,11 @@ public class Commande {
         return -1;
     }
 
+    /**
+     * Récupère la liste des détails de la commande.
+     * @param connexion connexion à la base de données
+     * @return liste des détails de la commande
+     */
     public List<DetailCommande> getDetailsCommande(Connection connexion) {
         List<DetailCommande> details = new ArrayList<>();
         try {

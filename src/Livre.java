@@ -8,14 +8,27 @@ import java.util.List;
 public class Livre {
     private String isbn;
 
+    /**
+     * Constructeur de la classe Livre.
+     * @param isbn ISBN du livre
+     */
     public Livre(String isbn) {
         this.isbn = isbn;
     }
 
+    /**
+     * Retourne l'ISBN du livre.
+     * @return ISBN du livre
+     */
     public String getIsbn() {
         return isbn;
     }
 
+    /**
+     * Récupère le titre du livre depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return titre du livre ou null si non trouvé
+     */
     public String getTitre(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT titre FROM LIVRE WHERE isbn = ?");
@@ -35,6 +48,11 @@ public class Livre {
         return null;
     }
 
+    /**
+     * Récupère la classification Dewey du livre depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return classification Dewey ou null si non trouvée
+     */
     public String getClassification(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement(
@@ -56,6 +74,11 @@ public class Livre {
         return null;
     }
 
+    /**
+     * Récupère le prix du livre depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return prix du livre ou null si non trouvé
+     */
     public Double getPrix(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT prix FROM LIVRE WHERE isbn = ?");
@@ -75,7 +98,11 @@ public class Livre {
         return null;
     }
 
-    // À adapter selon vos classes Auteur et Editeur
+    /**
+     * Récupère la liste des auteurs de ce livre.
+     * @param connexion connexion à la base de données
+     * @return liste des auteurs du livre
+     */
     public List<Auteur> getAuteurs(Connection connexion) {
         List<Auteur> auteurs = new ArrayList<>();
         try {
@@ -96,6 +123,11 @@ public class Livre {
         return auteurs;
     }
 
+    /**
+     * Récupère l'éditeur du livre.
+     * @param connexion connexion à la base de données
+     * @return éditeur du livre ou null si non trouvé
+     */
     public Editeur getEditeur(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement(
@@ -117,6 +149,10 @@ public class Livre {
         return null;
     }
 
+     /**
+     * Retourne une représentation textuelle du livre.
+     * @return chaîne représentant le livre
+     */
     @Override
     public String toString() {
         return "ISBN: " + isbn;

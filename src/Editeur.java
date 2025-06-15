@@ -7,15 +7,28 @@ import java.util.List;
 
 public class Editeur {
     private int idedit;
-
+    
+    /**
+     * Constructeur de la classe Editeur.
+     * @param idedit identifiant de l'éditeur
+     */
     public Editeur(int idedit) {
         this.idedit = idedit;
     }
 
+    /**
+     * Retourne l'identifiant de l'éditeur.
+     * @return identifiant de l'éditeur
+     */
     public int getIdEdit() {
         return idedit;
     }
 
+    /**
+     * Récupère le nom de l'éditeur depuis la base de données.
+     * @param connexion connexion à la base de données
+     * @return nom de l'éditeur ou null si non trouvé
+     */
     public String getNom(Connection connexion) {
         try {
             PreparedStatement ps = connexion.prepareStatement("SELECT nomedit FROM EDITEUR WHERE idedit = ?");
@@ -35,6 +48,11 @@ public class Editeur {
         return null;
     }
 
+    /**
+     * Récupère la liste des livres édités par cet éditeur.
+     * @param connexion connexion à la base de données
+     * @return liste des livres édités
+     */
     public List<Livre> getLivres(Connection connexion) {
         List<Livre> livres = new ArrayList<>();
         try {
