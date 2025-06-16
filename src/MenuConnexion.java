@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 
 public class MenuConnexion extends Application {
     // Déclaration des composants en attributs de classe
+    private ConnexionMySQL connexionSQL;
     private ComboBox<String> typeCompte;
     private TextField idField;
     private PasswordField mdpField;
@@ -16,6 +17,12 @@ public class MenuConnexion extends Application {
 
     @Override
     public void init() {
+        try {
+            this.connexionSQL = new ConnexionMySQL();
+            this.connexionSQL.connecter();
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
+        }
         // Initialisation des composants (sans les ajouter à la scène)
         this.typeCompte = new ComboBox<>();
         this.typeCompte.getItems().addAll("Client", "Administrateur", "Vendeur");
@@ -28,6 +35,7 @@ public class MenuConnexion extends Application {
         this.mdpField.setPrefWidth(200);
 
         this.connexionBtn = new Button("Connexion");
+        this.connexionBtn.setOnAction(new ControleurBoutonConnexion(this.connexionSQL, this));
     }
 
     @Override
@@ -72,5 +80,17 @@ public class MenuConnexion extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void afficheMenuClient(ConnexionMySQL connexionSQL) {
+        // Logique pour afficher le menu client
+    }
+
+    public void afficheMenuVendeur(ConnexionMySQL connexionSQL) {
+        // Logique pour afficher le menu vendeur
+    }
+
+    public void afficheMenuAdmin(ConnexionMySQL connexionSQL) {
+        // Logique pour afficher le menu administrateur
     }
 }
