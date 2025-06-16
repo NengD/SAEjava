@@ -243,10 +243,10 @@ public class Administrateur {
             while (rs.next()) {
                 String nomMag = rs.getString("nommag");
                 double ca = rs.getDouble("ca");
-                res += "- %s : %.2f €\n" + nomMag + ca;
+                res += String.format("- %s : %.2f €\n", nomMag, ca);
                 caTotal += ca;
             }
-            System.out.printf("Chiffre d'affaires total : %.2f €\n", caTotal);
+            res += String.format("Chiffre d'affaires total : %.2f €\n", caTotal);
             rs.close();
             ps.close();
         } catch (SQLException e) {
@@ -274,7 +274,7 @@ public class Administrateur {
             if (rs.next()) {
                 String titre = rs.getString("titre");
                 int quantite = rs.getInt("total_vendu");
-                res = "Meilleur livre toutes boutiques confondues : " + titre + " (" + quantite + " exemplaires vendus)";
+                res += String.format("Meilleur livre toutes boutiques confondues : " + titre + " (" + quantite + " exemplaires vendus)");
             } else {
                 System.out.println("Aucun livre vendu.");
             }

@@ -39,25 +39,24 @@ public class MenuAdministrateur extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(MenuAdministrateur.class, args);
+        launch(args);
     }
     
-    public void setContexte(ConnexionMySQL connexionMySQL, int idAdmin){
+    public void setContexte(ConnexionMySQL connexionMySQL, Administrateur admin){
         this.connexion = connexionMySQL;
-        this.idAdmin = idAdmin;
+        this.admin = admin;
     }
    
     @Override
     public void init(){
         try {
-            this.connexionSQL = new ConnexionMySQL();
-            this.connexionSQL.connecter();
+            this.connexion = new ConnexionMySQL();
+            this.connexion.connecter();
         } catch (Exception e) {
             System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
         }
         
         
-        this.admin = getAdminFromDB(idAdmin);
         this.root = new BorderPane();
         ControleurBoutonAdministrateur controleur = new ControleurBoutonAdministrateur(this);
 
@@ -81,7 +80,7 @@ public class MenuAdministrateur extends Application {
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
         
-        this.boutonInfo = new Button();
+        this.boutonInfo = new Button("Info");
         Image imgInfo = new Image("file:./img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
@@ -139,8 +138,10 @@ public class MenuAdministrateur extends Application {
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
         res.setCenter(gauche);
-        Vbox centre = new VBox();
-        centre.getChildren().add(admin.consulterStatistiques());
+        VBox centre = new VBox();
+        Text stats = new Text(admin.consulterStatisques());
+        centre.getChildren().add(stats);
+        res.setCenter(centre);
         
         return res;
 
