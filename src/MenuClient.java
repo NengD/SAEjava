@@ -32,9 +32,9 @@ public class MenuClient extends Application {
     private Button boutonInfo;
     private BorderPane root;
 
-    public void setContext(ConnexionMySQL connexionSQL, int idClient) {
+    public void setContext(ConnexionMySQL connexionSQL, Client client) {
         this.connexionSQL = connexionSQL;
-        this.client = new Client(idClient, connexionSQL);
+        this.client = client;
     }
 
     @Override
@@ -133,7 +133,12 @@ public class MenuClient extends Application {
         }
         Text textCatalogue = new Text(catalogue);
         vboxCatalogue.getChildren().add(textCatalogue);
-        VBox vbox = new VBox(15, label, vboxCatalogue, btnRetour);
+
+        ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefViewportHeight(200);
+
+        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
         
