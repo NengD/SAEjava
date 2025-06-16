@@ -12,16 +12,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar.ButtonData ;
+import javafx.scene.control.ButtonBar.ButtonData;
 
 import java.util.List;
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
 
- 
 public class MenuAdministrateur extends Application {
-    
+
     private Administrateur admin;
     private ConnexionMySQL connexion;
     private Button btnCreerVendeur;
@@ -33,55 +32,51 @@ public class MenuAdministrateur extends Application {
     private Button boutonInfo;
     private BorderPane root;
     private Button retour;
-    
- 
-    /** 
+
+    /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(MenuAdministrateur.class, args);
+        launch(args);
     }
-    
-    public void setContexte(ConnexionMySQL connexionMySQL, int idAdmin){
+
+    public void setContexte(ConnexionMySQL connexionMySQL, Administrateur admin) {
         this.connexion = connexionMySQL;
-        this.idAdmin = idAdmin;
+        this.admin = admin;
     }
-   
+
     @Override
-    public void init(){
+    public void init() {
         try {
-            this.connexionSQL = new ConnexionMySQL();
-            this.connexionSQL.connecter();
+            this.connexion = new ConnexionMySQL();
+            this.connexion.connecter();
         } catch (Exception e) {
             System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
         }
-        
-        
-        this.admin = getAdminFromDB(idAdmin);
+
         this.root = new BorderPane();
         ControleurBoutonAdministrateur controleur = new ControleurBoutonAdministrateur(this);
 
-
         this.btnConsulterStat = new Button("Consulter les statistiques");
         this.btnConsulterStat.setOnAction(controleur);
-        
+
         this.btnCreerVendeur = new Button("Créer un vendeur");
         this.btnCreerVendeur.setOnAction(controleur);
-        
+
         this.btnCreerLibrairie = new Button("Créer une librairie");
         this.btnCreerLibrairie.setOnAction(controleur);
-        
+
         this.btnCreerLivre = new Button("Créer un livre");
         this.btnCreerLivre.setOnAction(controleur);
-        
+
         this.boutonMaison = new Button();
         Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
-        
-        this.boutonInfo = new Button();
+
+        this.boutonInfo = new Button("Info");
         Image imgInfo = new Image("file:./img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
@@ -92,13 +87,12 @@ public class MenuAdministrateur extends Application {
         this.retour = new Button("Retour");
         this.retour.setOnAction(controleur);
     }
-    
-    public BorderPane getRoot() {
-    return this.root;
-    }
-    
 
-    public Pane titre(){
+    public BorderPane getRoot() {
+        return this.root;
+    }
+
+    public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
         BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
@@ -114,15 +108,13 @@ public class MenuAdministrateur extends Application {
         banniere.setLeft(titre);
         return banniere;
     }
-    
-    
 
-    public BorderPane fenetreAdm(){
+    public BorderPane fenetreAdm() {
         BorderPane res = new BorderPane();
         BackgroundFill background1 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundAdm = new Background(background1);
         res.setBackground(backgroundAdm);
-        
+
         VBox boutons = new VBox();
         boutons.getChildren().addAll(btnConsulterStat, btnCreerVendeur, btnCreerLibrairie, btnCreerLivre);
         boutons.setSpacing(10);
@@ -131,7 +123,7 @@ public class MenuAdministrateur extends Application {
         return res;
     }
 
-    public BorderPane pageStats(){
+    public BorderPane pageStats() {
         BorderPane res = new BorderPane();
         BackgroundFill background2 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundStat = new Background(background2);
@@ -139,15 +131,15 @@ public class MenuAdministrateur extends Application {
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
         res.setCenter(gauche);
-        Vbox centre = new VBox();
-        centre.getChildren().add(admin.consulterStatistiques());
-        
+        VBox centre = new VBox();
+        Text stats = new Text(admin.consulterStatisques());
+        centre.getChildren().add(stats);
+        res.setCenter(centre);
+
         return res;
-
-
     }
 
-    public BorderPane pageCreerLivre(){
+    public BorderPane pageCreerLivre() {
         BorderPane res = new BorderPane();
         BackgroundFill background3 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundLi = new Background(background3);
@@ -155,10 +147,11 @@ public class MenuAdministrateur extends Application {
         VBox centre = new VBox();
         centre.getChildren().add(this.retour);
         res.setCenter(centre);
-        
+
         return res;
     }
-    public BorderPane pageCreerVendeur(){
+
+    public BorderPane pageCreerVendeur() {
         BorderPane res = new BorderPane();
         BackgroundFill background4 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundVe = new Background(background4);
@@ -166,11 +159,11 @@ public class MenuAdministrateur extends Application {
         VBox centre = new VBox();
         centre.getChildren().add(this.retour);
         res.setCenter(centre);
-        
+
         return res;
     }
 
-    public BorderPane pageCreerLibrairie(){
+    public BorderPane pageCreerLibrairie() {
         BorderPane res = new BorderPane();
         BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundLib = new Background(background5);
@@ -178,17 +171,14 @@ public class MenuAdministrateur extends Application {
         VBox centre = new VBox();
         centre.getChildren().add(this.retour);
         res.setCenter(centre);
-        
+
         return res;
     }
 
-
-
-    
-    private Scene lascene(){
+    private Scene lascene() {
         this.root.setTop(titre());
         this.root.setCenter(fenetreAdm());
-        return new Scene(this.root, 600, 400);  
+        return new Scene(this.root, 600, 400);
     }
 
     public void start(Stage stage) {
@@ -197,15 +187,14 @@ public class MenuAdministrateur extends Application {
         stage.setScene(lascene());
         stage.show();
     }
-    
-    public Alert info(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION,"Vous ếtes sur la page Administrateur, Vous pouvez gérer la base de donnèes et l'ensemble des magasins. Les différents boutons vous permette de réaliser plusieurs actions.");
+
+    public Alert info() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "Vous ếtes sur la page Administrateur, Vous pouvez gérer la base de donnèes et l'ensemble des magasins. Les différents boutons vous permette de réaliser plusieurs actions.");
         alert.setTitle("Information");
         alert.getDialogPane().setPrefSize(500, 200);
         alert.setHeaderText("Aide");
         return alert;
     }
-    
-    
 
 }
