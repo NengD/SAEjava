@@ -24,8 +24,8 @@ public class MenuClient extends Application {
     private Button btnCatalogue;
     private Button btnRecommande;
     private Button btnCommande;
-    public BorderPane panelCentral;
     private Button boutonMaison;
+    private BorderPane root;
 
     @Override
     public void init(){
@@ -41,20 +41,17 @@ public class MenuClient extends Application {
     }
 
     private Scene lascene(){
-        BorderPane page = new BorderPane();
-        page.setTop(titre());
-        page.setCenter(pageMenu());
-        
-        return new Scene(page, 600, 400);  
+        root = new BorderPane();
+        root.setTop(titre());
+        root.setCenter(pageMenu());
+        return new Scene(root, 600, 400);  
     }
 
     public void start(Stage stage) {
-        this.panelCentral = pageMenu();
         stage.setTitle("Livre Express - Menu Client");
         stage.setScene(lascene());
         stage.show();
     }
-    
 
     public Pane titre(){
         BorderPane banniere = new BorderPane();
@@ -73,7 +70,6 @@ public class MenuClient extends Application {
         return banniere;
     }
 
-
     public BorderPane pageMenu() {
         BorderPane res = new BorderPane();
         VBox bouton = new VBox();
@@ -83,9 +79,9 @@ public class MenuClient extends Application {
         btnCommande.setPrefWidth(200);
         btnRecommande.setPrefWidth(200);
 
-        btnCatalogue.setOnAction(e -> pageCatalogue());
-        btnCommande.setOnAction(e -> pagePasserCommande());
-        btnRecommande.setOnAction(e -> pageRecommande());
+        btnCatalogue.setOnAction(e -> root.setCenter(pageCatalogue()));
+        btnCommande.setOnAction(e -> root.setCenter(pagePasserCommande()));
+        btnRecommande.setOnAction(e -> root.setCenter(pageRecommande()));
 
         VBox vbox = new VBox(20, btnCatalogue, btnCommande, btnRecommande);
         vbox.setAlignment(Pos.CENTER);
@@ -100,8 +96,7 @@ public class MenuClient extends Application {
         TextField tfParam = new TextField();
         tfParam.setPromptText("Paramètre (ex: filtre, mot-clé...)");
         Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> pageMenu());
-
+        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
         VBox vbox = new VBox(15, label, tfParam, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -123,7 +118,7 @@ public class MenuClient extends Application {
         tfIdMagasin.setPromptText("ID magasin");
 
         Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> pageMenu());
+        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
 
         VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnRetour);
         vbox.setAlignment(Pos.CENTER);
@@ -134,20 +129,22 @@ public class MenuClient extends Application {
     }
 
     public BorderPane pageRecommande() {
-        BorderPane root = new BorderPane();
+        BorderPane rootPane = new BorderPane();
         Label label = new Label("On vous recommande");
         TextField tfParam = new TextField();
         tfParam.setPromptText("Paramètre (ex: ID client, etc.)");
         Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> pageMenu());
+        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
+
 
         VBox vbox = new VBox(15, label, tfParam, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
     
-        root.setCenter(vbox);
-        return root;
-    }
+        rootPane.setCenter(vbox);
+        return rootPane;
+   }
+
 
     public static void main(String[] args) {
         launch(args);
