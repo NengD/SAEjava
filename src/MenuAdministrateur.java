@@ -22,6 +22,8 @@ import java.util.ArrayList;
  
 public class MenuAdministrateur extends Application {
     
+    private Administrateur admin;
+    private ConnexionMySQL connexion;
     private Button btnCreerVendeur;
     private Button btnCreerLibrairie;
     private Button btnConsulterStat;
@@ -40,8 +42,22 @@ public class MenuAdministrateur extends Application {
         launch(MenuAdministrateur.class, args);
     }
     
+    public void setContexte(ConnexionMySQL connexionMySQL, int idAdmin){
+        this.connexion = connexionMySQL;
+        this.idAdmin = idAdmin;
+    }
+   
     @Override
     public void init(){
+        try {
+            this.connexionSQL = new ConnexionMySQL();
+            this.connexionSQL.connecter();
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
+        }
+        
+        
+        this.admin = getAdminFromDB(idAdmin);
         this.root = new BorderPane();
         ControleurBoutonAdministrateur controleur = new ControleurBoutonAdministrateur(this);
 
@@ -120,9 +136,11 @@ public class MenuAdministrateur extends Application {
         BackgroundFill background2 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundStat = new Background(background2);
         res.setBackground(backgroundStat);
-        VBox centre = new VBox();
-        centre.getChildren().add(this.retour);
-        res.setCenter(centre);
+        VBox gauche = new VBox();
+        gauche.getChildren().add(this.retour);
+        res.setCenter(gauche);
+        Vbox centre = new VBox();
+        centre.getChildren().add(admin.consulterStatistiques());
         
         return res;
 
