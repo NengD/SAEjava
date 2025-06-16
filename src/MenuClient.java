@@ -1,3 +1,4 @@
+import com.sun.jdi.event.ThreadStartEvent;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
@@ -37,6 +38,10 @@ public class MenuClient extends Application {
         this.client = client;
     }
 
+    public BorderPane getRoot() {
+        return this.root;
+    }
+
     @Override
     public void init(){
         try {
@@ -52,6 +57,7 @@ public class MenuClient extends Application {
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
         this.boutonInfo = new Button();
+        this.boutonInfo.setId("info");
         Image imgInfo = new Image("file:./img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
@@ -61,8 +67,12 @@ public class MenuClient extends Application {
         this.btnCommande = new Button("Passer une Commande");
         this.btnRecommande = new Button("On vous recommande");
         this.btnRetour = new Button("Retour");
-        this.btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
-        this.boutonInfo.setOnAction(e -> {infoAlert().showAndWait();});
+        ControleurBoutonClient controleur = new ControleurBoutonClient(this);
+        this.btnRetour.setOnAction(controleur);
+        this.boutonInfo.setOnAction(controleur);
+        this.btnCatalogue.setOnAction(controleur);
+        this.btnCommande.setOnAction(controleur);
+        this.btnRecommande.setOnAction(controleur);
     }
 
     private Scene lascene(){
@@ -101,18 +111,12 @@ public class MenuClient extends Application {
         BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
         Background backgroundMenu = new Background(background);
         res.setBackground(backgroundMenu);
-        VBox bouton = new VBox();
-        bouton.getChildren().addAll(btnCatalogue, btnCommande, btnRecommande);
 
-        btnCatalogue.setPrefWidth(200);
-        btnCommande.setPrefWidth(200);
-        btnRecommande.setPrefWidth(200);
+        this.btnCatalogue.setPrefWidth(200);
+        this.btnCommande.setPrefWidth(200);
+        this.btnRecommande.setPrefWidth(200);
 
-        btnCatalogue.setOnAction(e -> root.setCenter(pageCatalogue()));
-        btnCommande.setOnAction(e -> root.setCenter(pagePasserCommande()));
-        btnRecommande.setOnAction(e -> root.setCenter(pageRecommande()));
-
-        VBox vbox = new VBox(20, btnCatalogue, btnCommande, btnRecommande);
+        VBox vbox = new VBox(20, this.btnCatalogue, this.btnCommande, this.btnRecommande);
         vbox.setAlignment(Pos.CENTER);
 
         res.setCenter(vbox);
