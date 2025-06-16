@@ -20,6 +20,7 @@ public class MenuVendeur extends Application {
     private Button btnCommande;
     private Button boutonMaison;
     private Button btnInfo;
+    private Vendeur monVendeur;
 
     public static void main(String[] args) {
         launch(MenuVendeur.class, args);
@@ -46,6 +47,9 @@ public class MenuVendeur extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.btnInfo.setGraphic(viewInfo);
+
+        btnInfo.setOnAction(new ControleurInfo());
+        btnAjouter.setOnAction(new ControleurAjouterLivre());
     }
 
     private Scene laScene() {
@@ -58,7 +62,7 @@ public class MenuVendeur extends Application {
     public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#582900"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
 
@@ -78,6 +82,10 @@ public class MenuVendeur extends Application {
 
     public BorderPane fenetreVendeur() {
         BorderPane fenetre = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundFenetre = new Background(background);
+        fenetre.setBackground(backgroundFenetre);
+
         VBox boutons = new VBox(20);
         boutons.setPadding(new Insets(40));
         boutons.setAlignment(Pos.CENTER);
