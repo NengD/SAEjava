@@ -21,23 +21,42 @@ import javax.swing.border.Border;
 
 
 public class MenuClient extends Application {
+    private ConnexionMySQL connexionSQL;
+    private Client client;
     private Button btnCatalogue;
     private Button btnRecommande;
     private Button btnCommande;
+    private Button btnRetour;
     private Button boutonMaison;
+    private Button boutonInfo;
     private BorderPane root;
 
     @Override
     public void init(){
+        try {
+            this.connexionSQL = new ConnexionMySQL();
+            this.connexionSQL.connecter();
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
+        }
         this.boutonMaison = new Button();
         Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
+        this.boutonInfo = new Button();
+        Image imgInfo = new Image("file:./img/info.png");
+        ImageView viewInfo = new ImageView(imgInfo);
+        viewInfo.setFitWidth(32);
+        viewInfo.setFitHeight(32);
+        this.boutonInfo.setGraphic(viewInfo);
         this.btnCatalogue = new Button("Consulter Catalogue");
         this.btnCommande = new Button("Passer une Commande");
         this.btnRecommande = new Button("On vous recommande");
+        this.btnRetour = new Button("Retour");
+        this.btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
+        this.boutonInfo.setOnAction(e -> {infoAlert().showAndWait();});
     }
 
     private Scene lascene(){
@@ -47,6 +66,7 @@ public class MenuClient extends Application {
         return new Scene(root, 600, 400);  
     }
 
+    
     public void start(Stage stage) {
         stage.setTitle("Livre Express - Menu Client");
         stage.setScene(lascene());
@@ -64,7 +84,7 @@ public class MenuClient extends Application {
         HBox boiteTitre = new HBox();
         boiteTitre.setSpacing(10);
         boiteTitre.setAlignment(Pos.CENTER);
-        boiteTitre.getChildren().add(this.boutonMaison);
+        boiteTitre.getChildren().addAll(this.boutonMaison,this.boutonInfo);
         banniere.setRight(boiteTitre);
         banniere.setLeft(titre);
         return banniere;
@@ -72,6 +92,9 @@ public class MenuClient extends Application {
 
     public BorderPane pageMenu() {
         BorderPane res = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundMenu = new Background(background);
+        res.setBackground(backgroundMenu);
         VBox bouton = new VBox();
         bouton.getChildren().addAll(btnCatalogue, btnCommande, btnRecommande);
 
@@ -92,12 +115,19 @@ public class MenuClient extends Application {
 
     public BorderPane pageCatalogue() {
         BorderPane res = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundMenu = new Background(background);
+        res.setBackground(backgroundMenu);
         Label label = new Label("Consulter le catalogue");
-        TextField tfParam = new TextField();
-        tfParam.setPromptText("Paramètre (ex: filtre, mot-clé...)");
-        Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
-        VBox vbox = new VBox(15, label, tfParam, btnRetour);
+        VBox vboxCatalogue = new VBox();
+        vboxCatalogue.setAlignment(Pos.CENTER);
+        String catalogue = "";
+        for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
+            catalogue+=l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection())+"\n";
+        }
+        Text textCatalogue = new Text(catalogue);
+        vboxCatalogue.getChildren().add(textCatalogue);
+        VBox vbox = new VBox(15, label, vboxCatalogue, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
         
@@ -107,18 +137,23 @@ public class MenuClient extends Application {
 
     public BorderPane pagePasserCommande() {
         BorderPane res = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundMenu = new Background(background);
+        res.setBackground(backgroundMenu);
         Label label = new Label("Passer une commande");
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
+        String enLigne = tfEnLigne.getText();
         TextField tfTypeLivraison = new TextField();
         tfTypeLivraison.setPromptText("Type de livraison (M/C)");
+        String typeLivraison = tfTypeLivraison.getText();
         TextField tfLivres = new TextField();
-        tfLivres.setPromptText("Liste ISBN (séparés par ,)");
+        tfLivres.setPromptText("Liste des titres des livres à commander (séparés par ,)");
+        String titres = tfLivres.getText();
         TextField tfIdMagasin = new TextField();
         tfIdMagasin.setPromptText("ID magasin");
-
-        Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
+        String idMagasin = tfIdMagasin.getText();
+        this.client.passerCommande(enLigne, typeLivraison, , idMagasin);
 
         VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnRetour);
         vbox.setAlignment(Pos.CENTER);
@@ -130,20 +165,39 @@ public class MenuClient extends Application {
 
     public BorderPane pageRecommande() {
         BorderPane rootPane = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundMenu = new Background(background);
+        res.setBackground(backgroundMenu);
         Label label = new Label("On vous recommande");
-        TextField tfParam = new TextField();
-        tfParam.setPromptText("Paramètre (ex: ID client, etc.)");
-        Button btnRetour = new Button("Retour");
-        btnRetour.setOnAction(e -> root.setCenter(pageMenu()));
+        VBox vboxRecommande = new VBox();
+        vboxRecommande.setAlignment(Pos.CENTER);
+        String recomande = "";
+        for (String titre : client.onVousRecommande()) {
+            System.out.println("- " + titre);
+        }
+        Text textRecommande = new Text(recomande);
+        vboxRecommande.getChildren().add(textRecommande);
 
-
-        VBox vbox = new VBox(15, label, tfParam, btnRetour);
+        VBox vbox = new VBox(15, label, vboxRecommande, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
     
         rootPane.setCenter(vbox);
         return rootPane;
    }
+
+   public Alert infoAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText("Aide");
+        alert.setContentText("Bienvenue dans le menu client de Livre Express !\n\n"
+                + "1. Consulter le catalogue : Affiche la liste des livres disponibles.\n"
+                + "2. Passer une commande : Permet de passer une commande en ligne ou en magasin.\n"
+                + "3. On vous recommande : Affiche les livres recommandés pour vous.\n\n"
+                + "Pour toute assistance, veuillez contacter le support.");
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        return alert;
+    }
 
 
     public static void main(String[] args) {
