@@ -1,4 +1,3 @@
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
@@ -12,14 +11,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData ;
 
 import java.util.List;
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.border.Border;
-
 
  
 public class MenuAdministrateur extends Application {
@@ -45,18 +43,20 @@ public class MenuAdministrateur extends Application {
     @Override
     public void init(){
         this.root = new BorderPane();
-        
+        ControleurBoutonAdministrateur controleur = new ControleurBoutonAdministrateur(this);
+
+
         this.btnConsulterStat = new Button("Consulter les statistiques");
-        this.btnConsulterStat.setOnAction(e ->root.setCenter(pageStats()));
+        this.btnConsulterStat.setOnAction(controleur);
         
         this.btnCreerVendeur = new Button("Créer un vendeur");
-        this.btnCreerVendeur.setOnAction(e -> root.setCenter(pageCreerVendeur()));
+        this.btnCreerVendeur.setOnAction(controleur);
         
         this.btnCreerLibrairie = new Button("Créer une librairie");
-        this.btnCreerLibrairie.setOnAction(e -> root.setCenter(pageCreerLibrairie()));
+        this.btnCreerLibrairie.setOnAction(controleur);
         
         this.btnCreerLivre = new Button("Créer un livre");
-        this.btnCreerLivre.setOnAction(e -> root.setCenter(pageCreerLivre()));
+        this.btnCreerLivre.setOnAction(controleur);
         
         this.boutonMaison = new Button();
         Image imgMaison = new Image("file:./img/home.png");
@@ -71,9 +71,14 @@ public class MenuAdministrateur extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.boutonInfo.setGraphic(viewInfo);
+        this.boutonInfo.setOnAction(controleur);
 
         this.retour = new Button("Retour");
-        this.retour.setOnAction(e -> root.setCenter(fenetreAdm()));
+        this.retour.setOnAction(controleur);
+    }
+    
+    public BorderPane getRoot() {
+    return this.root;
     }
     
 
@@ -175,7 +180,13 @@ public class MenuAdministrateur extends Application {
         stage.show();
     }
     
-
+    public Alert info(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,"Vous ếtes sur la page Administrateur, Vous pouvez gérer la base de donnèes et l'ensemble des magasins. Les différents boutons vous permette de réaliser plusieurs actions.");
+        alert.setTitle("Information");
+        alert.getDialogPane().setPrefSize(500, 200);
+        alert.setHeaderText("Aide");
+        return alert;
+    }
     
     
 
