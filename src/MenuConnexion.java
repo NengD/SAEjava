@@ -94,18 +94,20 @@ public class MenuConnexion extends Application {
         stage.close();
 
         String id = this.idField.getText();
-        Client client = getClientFromDB(id); // Utilisation du PreparedStatement
+        Client client = getClientFromDB(id);
         if (client == null) {
             System.out.println("Client introuvable.");
             return;
         }
         MenuClient menuClient = new MenuClient();
-        menuClient.setContexte(this.connexionSQL, client.getId());
+        menuClient.init();
+        menuClient.setContext(this.connexionSQL, client);
         Stage stageClient = new Stage();
         try {
             menuClient.start(stageClient);
         } catch (Exception e) {
             System.out.println("Erreur lors de l'ouverture du menu client.");
+            e.printStackTrace();
         }
     }
 
@@ -120,12 +122,14 @@ public class MenuConnexion extends Application {
             return;
         }
         MenuVendeur menuVendeur = new MenuVendeur();
-        menuVendeur.setContexte(this.connexionSQL, vendeur.getIdVendeur());
+        menuVendeur.init();
+        menuVendeur.setContext(this.connexionSQL, vendeur);
         Stage stageVendeur = new Stage();
         try {
             menuVendeur.start(stageVendeur);
         } catch (Exception e) {
             System.out.println("Erreur lors de l'ouverture du menu vendeur.");
+            e.printStackTrace();
         }
     }
 
@@ -140,26 +144,14 @@ public class MenuConnexion extends Application {
             return;
         }
         MenuAdministrateur menuAdmin = new MenuAdministrateur();
-        menuAdmin.setContexte(this.connexionSQL, admin.getId());
+        menuAdmin.init();
+        menuAdmin.setContexte(this.connexionSQL, admin);
         Stage stageAdmin = new Stage();
         try {
             menuAdmin.start(stageAdmin);
         } catch (Exception e) {
             System.out.println("Erreur lors de l'ouverture du menu administrateur.");
-        }
-    }
-
-    public void afficheMenuAdmin(ConnexionMySQL connexionSQL) {
-        Stage stage = (Stage) this.connexionBtn.getScene().getWindow();
-        stage.close();
-
-        MenuAdministrateur menuAdmin = new MenuAdministrateur();
-        menuAdmin.setContexte(this.connexionSQL, Integer.parseInt(this.idField.getText()));
-        Stage stageAdmin = new Stage();
-        try {
-            menuAdmin.start(stageAdmin);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'ouverture du menu vendeur.");
+            e.printStackTrace();
         }
     }
 
