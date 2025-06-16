@@ -136,7 +136,8 @@ public class MenuClient extends Application {
 
         ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefViewportHeight(200);
+        scrollPane.setPrefViewportHeight(600);
+        scrollPane.setStyle("-fx-background: #d2d1ad; -fx-background-color: #d2d1ad;");
 
         VBox vbox = new VBox(15, btnRetour, label, scrollPane);
         vbox.setAlignment(Pos.CENTER);
