@@ -226,7 +226,8 @@ public class Administrateur {
     /**
      * Affiche le chiffre d'affaires par magasin et le total.
      */
-    public void afficherChiffreAffaires() {
+    public String afficherChiffreAffaires() {
+        String res ="";
         try {
             Connection conn = this.connexion.getConnection();
             PreparedStatement ps = conn.prepareStatement(
@@ -242,7 +243,7 @@ public class Administrateur {
             while (rs.next()) {
                 String nomMag = rs.getString("nommag");
                 double ca = rs.getDouble("ca");
-                System.out.printf("- %s : %.2f €\n", nomMag, ca);
+                res+= "- %s : %.2f €\n"+ nomMag + ca;
                 caTotal += ca;
             }
             System.out.printf("Chiffre d'affaires total : %.2f €\n", caTotal);
@@ -251,12 +252,14 @@ public class Administrateur {
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'affichage du chiffre d'affaires : " + e.getMessage());
         }
+        return res;
     }
 
     /**
      * Affiche le livre le plus vendu (bestseller) toutes boutiques confondues.
      */
-    public void bestseller() {
+    public String bestseller() {
+        String res = "";
         try {
             Connection conn = this.connexion.getConnection();
             PreparedStatement ps = conn.prepareStatement(
@@ -271,7 +274,7 @@ public class Administrateur {
             if (rs.next()) {
                 String titre = rs.getString("titre");
                 int quantite = rs.getInt("total_vendu");
-                System.out.println("Meilleur livre toutes boutiques confondues : " + titre + " (" + quantite + " exemplaires vendus)");
+                res += "Meilleur livre toutes boutiques confondues : " + titre + " (" + quantite + " exemplaires vendus)";
             } else {
                 System.out.println("Aucun livre vendu.");
             }
@@ -280,14 +283,16 @@ public class Administrateur {
         } catch (SQLException e) {
             System.out.println("Erreur lors de la recherche du bestseller : " + e.getMessage());
         }
+        return res;
     }
 
     /**
      * Affiche les statistiques principales : chiffre d'affaires et bestseller.
      */
-    public void consulterStatisques() {
-        System.out.println("=== Statistiques ===");
-        afficherChiffreAffaires();
-        bestseller();
+    public String consulterStatisques() {
+        String res = "=== Statistiques ===\n";
+        res += afficherChiffreAffaires()+"\n";
+        res += bestseller();
+        return res;
     }
 }
