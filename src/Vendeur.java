@@ -207,9 +207,9 @@ public class Vendeur {
      * @param livres liste des livres à commander
      * @param client client concerné
      */
-    public void passerCommandePourClient(boolean enLigne, String typeLivraison, List<Livre> livres, Client client) {
+    public void passerCommandePourClient(boolean enLigne, String typeLivraison, List<String> titres, Client client) {
         char typeLiv = typeLivraison.charAt(0);
-        client.passerCommande(enLigne, typeLiv, livres, this.idmagasin);
+        client.passerCommande(enLigne, typeLiv, titres, this.idmagasin);
         System.out.println("Commande passée pour le client.");
     }
 }

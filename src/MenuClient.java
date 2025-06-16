@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.border.Border;
+import javax.swing.plaf.synth.Region;
 
 
 public class MenuClient extends Application {
@@ -30,6 +31,11 @@ public class MenuClient extends Application {
     private Button boutonMaison;
     private Button boutonInfo;
     private BorderPane root;
+
+    public void setContext(ConnexionMySQL connexionSQL, int idClient) {
+        this.connexionSQL = connexionSQL;
+        this.client = new Client(idClient, connexionSQL);
+    }
 
     @Override
     public void init(){
@@ -144,16 +150,21 @@ public class MenuClient extends Application {
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
         String enLigne = tfEnLigne.getText();
+        Boolean isEnLigne = false;
+        if(enLigne.equals("true")){ isEnLigne = true;}
         TextField tfTypeLivraison = new TextField();
         tfTypeLivraison.setPromptText("Type de livraison (M/C)");
         String typeLivraison = tfTypeLivraison.getText();
+        char typeLivraisonChar = typeLivraison.charAt(0);
         TextField tfLivres = new TextField();
         tfLivres.setPromptText("Liste des titres des livres à commander (séparés par ,)");
         String titres = tfLivres.getText();
+        String[] titresArray = titres.split(",");
+        List<String> listTitres = Arrays.asList(titresArray);
         TextField tfIdMagasin = new TextField();
         tfIdMagasin.setPromptText("ID magasin");
-        String idMagasin = tfIdMagasin.getText();
-        this.client.passerCommande(enLigne, typeLivraison, , idMagasin);
+        int idMagasin = Integer.parseInt(tfIdMagasin.getText());
+        this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
 
         VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnRetour);
         vbox.setAlignment(Pos.CENTER);
@@ -167,7 +178,7 @@ public class MenuClient extends Application {
         BorderPane rootPane = new BorderPane();
         BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
         Background backgroundMenu = new Background(background);
-        res.setBackground(backgroundMenu);
+        rootPane.setBackground(backgroundMenu);
         Label label = new Label("On vous recommande");
         VBox vboxRecommande = new VBox();
         vboxRecommande.setAlignment(Pos.CENTER);
@@ -195,7 +206,6 @@ public class MenuClient extends Application {
                 + "2. Passer une commande : Permet de passer une commande en ligne ou en magasin.\n"
                 + "3. On vous recommande : Affiche les livres recommandés pour vous.\n\n"
                 + "Pour toute assistance, veuillez contacter le support.");
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         return alert;
     }
 
