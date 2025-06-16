@@ -31,6 +31,9 @@ public class MenuAdministrateur extends Application {
     public BorderPane panelCentral;
     private Button boutonMaison;
     private Button boutonInfo;
+    private BorderPane root;
+    private Button retour;
+    
  
     /** 
      * @param args the command line arguments
@@ -41,29 +44,43 @@ public class MenuAdministrateur extends Application {
     
     @Override
     public void init(){
+        this.root = new BorderPane();
+        
         this.btnConsulterStat = new Button("Consulter les statistiques");
+        this.btnConsulterStat.setOnAction(e ->root.setCenter(pageStats()));
+        
         this.btnCreerVendeur = new Button("Créer un vendeur");
+        this.btnCreerVendeur.setOnAction(e -> root.setCenter(pageCreerVendeur()));
+        
         this.btnCreerLibrairie = new Button("Créer une librairie");
+        this.btnCreerLibrairie.setOnAction(e -> root.setCenter(pageCreerLibrairie()));
+        
         this.btnCreerLivre = new Button("Créer un livre");
+        this.btnCreerLivre.setOnAction(e -> root.setCenter(pageCreerLivre()));
+        
         this.boutonMaison = new Button();
         Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
+        
         this.boutonInfo = new Button();
         Image imgInfo = new Image("file:./img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.boutonInfo.setGraphic(viewInfo);
+
+        this.retour = new Button("Retour");
+        this.retour.setOnAction(e -> root.setCenter(fenetreAdm()));
     }
     
 
     public Pane titre(){
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#582900"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
         Text titre = new Text("Menu Administrateur");
@@ -81,18 +98,74 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane fenetreAdm(){
         BorderPane res = new BorderPane();
+        BackgroundFill background1 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundAdm = new Background(background1);
+        res.setBackground(backgroundAdm);
+        
         VBox boutons = new VBox();
         boutons.getChildren().addAll(btnConsulterStat, btnCreerVendeur, btnCreerLibrairie, btnCreerLivre);
+        boutons.setSpacing(10);
+        boutons.setAlignment(Pos.CENTER);
         res.setCenter(boutons);
         return res;
     }
 
+    public BorderPane pageStats(){
+        BorderPane res = new BorderPane();
+        BackgroundFill background2 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundStat = new Background(background2);
+        res.setBackground(backgroundStat);
+        VBox centre = new VBox();
+        centre.getChildren().add(this.retour);
+        res.setCenter(centre);
+        
+        return res;
+
+
+    }
+
+    public BorderPane pageCreerLivre(){
+        BorderPane res = new BorderPane();
+        BackgroundFill background3 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundLi = new Background(background3);
+        res.setBackground(backgroundLi);
+        VBox centre = new VBox();
+        centre.getChildren().add(this.retour);
+        res.setCenter(centre);
+        
+        return res;
+    }
+    public BorderPane pageCreerVendeur(){
+        BorderPane res = new BorderPane();
+        BackgroundFill background4 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundVe = new Background(background4);
+        res.setBackground(backgroundVe);
+        VBox centre = new VBox();
+        centre.getChildren().add(this.retour);
+        res.setCenter(centre);
+        
+        return res;
+    }
+
+    public BorderPane pageCreerLibrairie(){
+        BorderPane res = new BorderPane();
+        BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundLib = new Background(background5);
+        res.setBackground(backgroundLib);
+        VBox centre = new VBox();
+        centre.getChildren().add(this.retour);
+        res.setCenter(centre);
+        
+        return res;
+    }
+
+
+
     
     private Scene lascene(){
-        BorderPane page = new BorderPane();
-        page.setTop(titre());
-        page.setCenter(fenetreAdm());
-        return new Scene(page, 600, 400);  
+        this.root.setTop(titre());
+        this.root.setCenter(fenetreAdm());
+        return new Scene(this.root, 600, 400);  
     }
 
     public void start(Stage stage) {
