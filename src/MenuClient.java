@@ -1,31 +1,83 @@
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.control.ButtonBar.ButtonData ;
+
+import java.util.List;
+import java.util.Arrays;
+import java.io.File;
+import java.util.ArrayList;
+import javax.swing.border.Border;
+
 
 public class MenuClient extends Application {
-    private StackPane root;
+    private Button btnCatalogue;
+    private Button btnRecommande;
+    private Button btnCommande;
+    public BorderPane panelCentral;
+    private Button boutonMaison;
 
     @Override
-    public void start(Stage primaryStage) {
-        root = new StackPane();
-        root.setStyle("-fx-background-color: #d2d1a2;");
-        pageMenu();
+    public void init(){
+        this.boutonMaison = new Button();
+        Image imgMaison = new Image("file:./img/home.png");
+        ImageView viewMaison = new ImageView(imgMaison);
+        viewMaison.setFitWidth(32);
+        viewMaison.setFitHeight(32);
+        this.boutonMaison.setGraphic(viewMaison);
+        this.btnCatalogue = new Button("Consulter Catalogue");
+        this.btnCommande = new Button("Passer une Commande");
+        this.btnRecommande = new Button("On vous recommande");
+    }
 
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Menu Client");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    private Scene lascene(){
+        BorderPane page = new BorderPane();
+        page.setTop(titre());
+        page.setCenter(pageMenu());
+        
+        return new Scene(page, 600, 400);  
+    }
+
+    public void start(Stage stage) {
+        this.panelCentral = pageMenu();
+        stage.setTitle("Livre Express - Menu Client");
+        stage.setScene(lascene());
+        stage.show();
+    }
+    
+
+    public Pane titre(){
+        BorderPane banniere = new BorderPane();
+        banniere.setPadding(new Insets(0, 10, 0, 10));
+        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        Background backgroundTitre = new Background(background);
+        banniere.setBackground(backgroundTitre);
+        Text titre = new Text("Menu Client");
+        titre.setFont(Font.font("Arial", 50));
+        HBox boiteTitre = new HBox();
+        boiteTitre.setSpacing(10);
+        boiteTitre.setAlignment(Pos.CENTER);
+        boiteTitre.getChildren().add(this.boutonMaison);
+        banniere.setRight(boiteTitre);
+        banniere.setLeft(titre);
+        return banniere;
     }
 
 
-    public void pageMenu() {
-        Button btnCatalogue = new Button("Consulter Catalogue");
-        Button btnCommande = new Button("Passer une Commande");
-        Button btnRecommande = new Button("On vous recommande");
+    public BorderPane pageMenu() {
+        BorderPane res = new BorderPane();
+        VBox bouton = new VBox();
+        bouton.getChildren().addAll(btnCatalogue, btnCommande, btnRecommande);
 
         btnCatalogue.setPrefWidth(200);
         btnCommande.setPrefWidth(200);
@@ -38,10 +90,12 @@ public class MenuClient extends Application {
         VBox vbox = new VBox(20, btnCatalogue, btnCommande, btnRecommande);
         vbox.setAlignment(Pos.CENTER);
 
-        root.getChildren().setAll(vbox);
+        res.setCenter(vbox);
+        return res;
     }
 
-    public void pageCatalogue() {
+    public BorderPane pageCatalogue() {
+        BorderPane res = new BorderPane();
         Label label = new Label("Consulter le catalogue");
         TextField tfParam = new TextField();
         tfParam.setPromptText("Paramètre (ex: filtre, mot-clé...)");
@@ -51,10 +105,13 @@ public class MenuClient extends Application {
         VBox vbox = new VBox(15, label, tfParam, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
-        root.getChildren().setAll(vbox);
+        
+        res.setCenter(vbox);
+        return res;
     }
 
-    public void pagePasserCommande() {
+    public BorderPane pagePasserCommande() {
+        BorderPane res = new BorderPane();
         Label label = new Label("Passer une commande");
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
@@ -71,10 +128,13 @@ public class MenuClient extends Application {
         VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
-        root.getChildren().setAll(vbox);
+        
+        res.setCenter(vbox);
+        return res;
     }
 
-    public void pageRecommande() {
+    public BorderPane pageRecommande() {
+        BorderPane root = new BorderPane();
         Label label = new Label("On vous recommande");
         TextField tfParam = new TextField();
         tfParam.setPromptText("Paramètre (ex: ID client, etc.)");
@@ -84,7 +144,9 @@ public class MenuClient extends Application {
         VBox vbox = new VBox(15, label, tfParam, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
-        root.getChildren().setAll(vbox);
+    
+        root.setCenter(vbox);
+        return root;
     }
 
     public static void main(String[] args) {
