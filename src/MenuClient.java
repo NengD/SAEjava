@@ -71,6 +71,7 @@ public class MenuClient extends Application {
         this.btnCatalogue.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
         this.btnRecommande.setOnAction(controleur);
+        this.boutonMaison.setOnAction(controleur);
     }
 
     private Scene lascene(){
