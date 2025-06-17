@@ -130,12 +130,20 @@ public class MenuClient extends Application {
         Label label = new Label("Consulter le catalogue");
         VBox vboxCatalogue = new VBox();
         vboxCatalogue.setAlignment(Pos.CENTER);
-        String catalogue = "";
+        StringBuilder catalogue = new StringBuilder();
         for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
-            catalogue+=l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection()) + l.getPrix(this.connexionSQL.getConnection()) + "\n";
+            String isbn = l.getIsbn();
+            String titre = l.getTitre(this.connexionSQL.getConnection());
+            double prix = l.getPrix(this.connexionSQL.getConnection());
+            String ligne = String.format("%-15s  %-100s  %8.2f €\n", isbn, titre, prix);
+            catalogue.append(ligne);
         }
-        Text textCatalogue = new Text(catalogue);
+        TextArea textCatalogue = new TextArea(catalogue.toString());
+        textCatalogue.setEditable(false);
+        textCatalogue.setWrapText(false);
+        textCatalogue.setStyle("-fx-font-family: 'monospaced';-fx-control-inner-background: #d2d1ad;-fx-background-color: #d2d1ad;-fx-text-fill: black;");
         vboxCatalogue.getChildren().add(textCatalogue);
+
 
         ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
         scrollPane.setFitToWidth(true);
