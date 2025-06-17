@@ -132,7 +132,7 @@ public class MenuClient extends Application {
         vboxCatalogue.setAlignment(Pos.CENTER);
         String catalogue = "";
         for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
-            catalogue+=l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection())+"\n";
+            catalogue+=l.getIsbn() + " - " + l.getTitre(this.connexionSQL.getConnection()) + l.getPrix(this.connexionSQL.getConnection()) + "\n";
         }
         Text textCatalogue = new Text(catalogue);
         vboxCatalogue.getChildren().add(textCatalogue);
