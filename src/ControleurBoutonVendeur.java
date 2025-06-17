@@ -18,5 +18,12 @@ public class ControleurBoutonVendeur implements EventHandler<ActionEvent> {
     if (button.getText().contains("Ajouter un livre")) {
         this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageAjouterLivre());
         }
+    if (button.getText().contains("Mise À jour Quantité Livre")) {
+    this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageMajQuantite());
+    }
+    if (button.getText().contains("Disponibilité Livre")) {
+    this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageDispoLivres());
+    }
+
     }
 }

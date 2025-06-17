@@ -1,5 +1,11 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.table.TableColumn;
+import javax.swing.text.TableView;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -33,6 +39,8 @@ public class MenuVendeur extends Application {
     private Button boutonMaison;
     private Button btnInfo;
     private Vendeur vendeur;
+    private Stock stock;
+    private Magasin magasin;
     private ConnexionMySQL connexion;
     private BorderPane root;    
 
@@ -81,8 +89,7 @@ public class MenuVendeur extends Application {
         this.btnDispo.setOnAction(controleur);
         this.btnTransfert.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
-        btnInfo.setOnAction(new ControleurInfo());
-        btnAjouter.setOnAction(e -> root.setCenter(afficherPageAjouterLivre()));
+        
     }
 
     private Scene laScene() {
@@ -139,15 +146,19 @@ public class MenuVendeur extends Application {
         return fenetre;
     }
 
+/////////////////////////////////////////////////////////
+
     public BorderPane afficherPageAjouterLivre() {
         //Page pour ajouter un livre
 
         BorderPane page = new BorderPane();
+        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+        Background backgroundPage = new Background(background);
+        page.setBackground(backgroundPage);
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(20));
-        grid.setVgap(10);
-        grid.setHgap(10);
+        VBox vbox = new VBox(5);
+        vbox.setPadding(new Insets(20));
+        vbox.setAlignment(Pos.CENTER);
 
         Label isbnLabel = new Label("ISBN :");
         TextField isbnField = new TextField();
@@ -155,8 +166,8 @@ public class MenuVendeur extends Application {
         Label qteLabel = new Label("Quantité :");
         TextField qteField = new TextField();
 
+        //Bouton Ajouter 
         Button ajouterBtn = new Button("Ajouter");
-
         ajouterBtn.setOnAction(e -> {
             String isbn = isbnField.getText();
             String qteStr = qteField.getText();
@@ -171,7 +182,7 @@ public class MenuVendeur extends Application {
             }
 
             try {
-                Connection conn = this.connexion.getConnection();
+                //Connection conn = this.connexion.getConnection();
                 vendeur.ajouterLivre(isbn, quantite);
                 showAlert("Succès", "Livre ajouté !");
                 isbnField.clear();
@@ -181,15 +192,124 @@ public class MenuVendeur extends Application {
             }
         });
 
-        grid.add(isbnLabel, 0, 0);
-        grid.add(isbnField, 1, 0);
-        grid.add(qteLabel, 0, 1);
-        grid.add(qteField, 1, 1);
-        grid.add(ajouterBtn, 0, 2);
+        //Bouton Retour
+        Button retourBtn = new Button("Retour");
+        retourBtn.setOnAction(e -> {this.getRoot().setCenter(this.fenetreVendeur());});
 
-        page.setCenter(grid);
-        return page;
+        HBox boutons = new HBox(10, retourBtn,ajouterBtn);
+        boutons.setAlignment(Pos.CENTER);
+
+        vbox.getChildren().addAll(isbnLabel, isbnField, qteLabel, qteField, boutons);
+        page.setCenter(vbox);
+    return page;
     }
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+ //Page pour mettre à jour la quantité d'un livre
+public BorderPane afficherPageMajQuantite() {
+    BorderPane page = new BorderPane();
+    BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+    Background backgroundPage = new Background(background);
+    page.setBackground(backgroundPage);
+
+    VBox vbox = new VBox(5);
+    vbox.setPadding(new Insets(20));
+    vbox.setAlignment(Pos.CENTER);
+    
+    Label isbnLabel = new Label("ISBN :");
+    TextField isbnField = new TextField();
+
+    Label qteLabel = new Label("Quantité à ajouter/retirer :");
+    TextField qteField = new TextField();
+
+    //Bouton pour mettre à jour la quantité
+    Button majBtn = new Button("Mettre à jour");
+
+    majBtn.setOnAction(e -> {
+        String isbn = isbnField.getText();
+        String qteStr = qteField.getText();
+        int quantite = Integer.parseInt(qteStr);
+
+        try {
+         quantite = Integer.parseInt(qteStr);
+        } catch (NumberFormatException ex) {
+            showAlert("Erreur", "Quantité invalide.");
+        }
+
+        try {
+            Livre livre = new Livre(isbn);
+            vendeur.majQuantiteLivre(livre, quantite);
+            showAlert("Succès", "Quantité mise à jour !");
+            isbnField.clear();
+            qteField.clear();
+
+        } catch (Exception ex) {
+            showAlert("Erreur", "Erreur lors de la mise à jour.");
+        }
+    });
+
+    //Bouton Retour
+    Button retourBtn = new Button("Retour");
+    retourBtn.setOnAction(e -> {this.getRoot().setCenter(this.fenetreVendeur());});
+
+    HBox boutons = new HBox(10, retourBtn,majBtn);
+    boutons.setAlignment(Pos.CENTER);
+
+    vbox.getChildren().addAll(isbnLabel, isbnField, qteLabel, qteField, boutons);
+    page.setCenter(vbox);
+    return page;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+public BorderPane afficherPageDispoLivres() {
+    BorderPane page = new BorderPane();
+    BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+    Background backgroundPage = new Background(background);
+    page.setBackground(backgroundPage);
+
+    VBox vbox = new VBox(15);
+    vbox.setPadding(new Insets(30));
+    vbox.setAlignment(Pos.CENTER);
+
+    Label titreLabel = new Label("Vérifier la disponibilité d'un livre");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+    Label livreLabel = new Label("Titre du livre :");
+    TextField livreField = new TextField();
+
+    Button verifierBtn = new Button("Vérifier");
+    Label resultatLabel = new Label();
+
+    Button retourBtn = new Button("Retour");
+
+    verifierBtn.setOnAction(e -> {
+        String titreLivre = livreField.getText().trim();
+        if (titreLivre.isEmpty()) {
+            resultatLabel.setText("Veuillez entrer un titre.");
+            
+        }
+        boolean dispo = vendeur.livreDisponible(titreLivre);
+        if (dispo) {
+            resultatLabel.setText("Le livre \"" + titreLivre + "\" est disponible en stock.");
+        } else {
+            resultatLabel.setText("Le livre \"" + titreLivre + "\" n'est pas disponible en stock.");
+        }
+    });
+
+    retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
+
+    HBox boutons = new HBox(10, retourBtn, verifierBtn);
+    boutons.setAlignment(Pos.CENTER);
+
+    vbox.getChildren().addAll(titreLabel, livreLabel, livreField, boutons, resultatLabel);
+    page.setCenter(vbox);
+    return page;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 
 
     private void showAlert(String titre, String message) {
