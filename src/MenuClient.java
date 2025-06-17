@@ -212,7 +212,7 @@ public class MenuClient extends Application {
             }
     });
 
-        VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnValider, btnRetour);
+        VBox vbox = new VBox(10, btnRetour, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnValider);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
 
@@ -236,7 +236,7 @@ public class MenuClient extends Application {
         Text textRecommande = new Text(recomande);
         vboxRecommande.getChildren().add(textRecommande);
 
-        VBox vbox = new VBox(15, label, vboxRecommande, btnRetour);
+        VBox vbox = new VBox(15, btnRetour, label, vboxRecommande);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
     
