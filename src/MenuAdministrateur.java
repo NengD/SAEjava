@@ -130,8 +130,14 @@ public class MenuAdministrateur extends Application {
         res.setBackground(backgroundStat);
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
-        res.setCenter(gauche);
+        gauche.setPadding(new Insets(10));
+        gauche.setAlignment(Pos.TOP_LEFT);
+        gauche.setSpacing(10);
+        res.setLeft(gauche);
         VBox centre = new VBox();
+        centre.setPadding(new Insets(10));
+        centre.setAlignment(Pos.CENTER);
+        centre.setSpacing(10);
         Text stats = new Text(admin.consulterStatisques());
         centre.getChildren().add(stats);
         res.setCenter(centre);
@@ -144,9 +150,9 @@ public class MenuAdministrateur extends Application {
         BackgroundFill background3 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundLi = new Background(background3);
         res.setBackground(backgroundLi);
-        VBox centre = new VBox();
-        centre.getChildren().add(this.retour);
-        res.setCenter(centre);
+        VBox gauche = new VBox();
+        gauche.getChildren().add(this.retour);
+        res.setLeft(gauche);
 
         return res;
     }
@@ -156,9 +162,9 @@ public class MenuAdministrateur extends Application {
         BackgroundFill background4 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundVe = new Background(background4);
         res.setBackground(backgroundVe);
-        VBox centre = new VBox();
-        centre.getChildren().add(this.retour);
-        res.setCenter(centre);
+        VBox gauche = new VBox();
+        gauche.getChildren().add(this.retour);
+        res.setLeft(gauche);
 
         return res;
     }
@@ -168,9 +174,9 @@ public class MenuAdministrateur extends Application {
         BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
         Background backgroundLib = new Background(background5);
         res.setBackground(backgroundLib);
-        VBox centre = new VBox();
-        centre.getChildren().add(this.retour);
-        res.setCenter(centre);
+        VBox gauche = new VBox();
+        gauche.getChildren().add(this.retour);
+        res.setLeft(gauche);
 
         return res;
     }
