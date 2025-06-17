@@ -76,13 +76,11 @@ public class MenuVendeur extends Application {
         ControleurBoutonVendeur controleur = new ControleurBoutonVendeur(this);
         btnInfo.setOnAction(controleur);
         btnAjouter.setOnAction(controleur);
-        this.btnAjouter = setOnAction(controleur);
-        this.btnMajQuantite = setOnAction(controleur);
-        this.btnDispo = setOnAction(controleur);
-        this.btnTransfert = setOnAction(controleur);
-        this.btnCommande = setOnAction(controleur);
-        btnInfo.setOnAction(new ControleurInfo());
-        btnAjouter.setOnAction(e -> root.setCenter(afficherPageAjouterLivre()));
+        this.btnAjouter.setOnAction(controleur);
+        this.btnMajQuantite.setOnAction(controleur);
+        this.btnDispo.setOnAction(controleur);
+        this.btnTransfert.setOnAction(controleur);
+        this.btnCommande.setOnAction(controleur);
     }
 
     private Scene laScene() {
@@ -171,7 +169,7 @@ public class MenuVendeur extends Application {
             }
 
             try {
-                Connection conn = vendeur.getConnexion().getConnection();
+                Connection conn = this.connexion.getConnection();
                 vendeur.ajouterLivre(isbn, quantite);
                 showAlert("Succès", "Livre ajouté !");
                 isbnField.clear();
