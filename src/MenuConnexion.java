@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javafx.application.Platform;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +22,7 @@ public class MenuConnexion extends Application {
     private TextField idField;
     private PasswordField mdpField;
     private Button connexionBtn;
+    private Button quitter;
 
     @Override
     public void init() {
@@ -43,6 +45,11 @@ public class MenuConnexion extends Application {
 
         this.connexionBtn = new Button("Connexion");
         this.connexionBtn.setOnAction(new ControleurBoutonConnexion(this.connexionSQL, this));
+
+        this.quitter = new Button("Quitter");
+        this.quitter.setOnAction(e -> {
+            javafx.application.Platform.exit();
+        });
     }
 
     @Override
@@ -68,7 +75,8 @@ public class MenuConnexion extends Application {
         grid.add(mdpLabel, 0, 2);
         grid.add(mdpField, 1, 2);
 
-        grid.add(connexionBtn, 2, 2);
+        grid.add(this.connexionBtn, 1, 3);
+        grid.add(this.quitter, 1, 4);
 
         // Centrage du contenu
         BorderPane root = new BorderPane();
