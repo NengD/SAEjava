@@ -187,9 +187,11 @@ public class MenuConnexion extends Application {
 
     public Client getClientFromDB(String idClient) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idcli FROM CLIENT WHERE idcli = ?");
+                    "SELECT idcli FROM CLIENT WHERE idcli = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idClient));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idcli = rs.getInt("idcli");
@@ -207,9 +209,11 @@ public class MenuConnexion extends Application {
 
     public Vendeur getVendeurFromDB(String idVendeur) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idven, idmag FROM VENDEUR WHERE idven = ?");
+                    "SELECT idven, idmag FROM VENDEUR WHERE idven = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idVendeur));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idven = rs.getInt("idven");
@@ -228,9 +232,11 @@ public class MenuConnexion extends Application {
 
     public Administrateur getAdminFromDB(String idAdmin) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idadm FROM ADMINISTRATEUR WHERE idadm = ?");
+                    "SELECT idadm FROM ADMINISTRATEUR WHERE idadm = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idAdmin));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idadm = rs.getInt("idadm");

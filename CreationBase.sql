@@ -19,7 +19,8 @@ CREATE TABLE CLIENT (
   prenomcli  varchar(30),
   adressecli varchar(100),
   codepostal varchar(5),
-  villecli   varchar(100)
+  villecli   varchar(100),
+  mdp        varchar(50)
 );
 
 CREATE TABLE COMMANDE (
@@ -93,15 +94,17 @@ CREATE TABLE VENDEUR(
   idven     int NOT NULL,
   nomven    varchar(50),
   prenomven varchar(30),
-  idmag     VARCHAR(42) NOT NULL
+  idmag     VARCHAR(42) NOT NULL,
+  mdp       varchar(50)
 );
 
 CREATE TABLE ADMINISTRATEUR(
   PRIMARY KEY (idadm),
   idadm     int NOT NULL,
   nomadm    varchar(50),
-  prenomadm varchar(30)
-)
+  prenomadm varchar(30),
+  mdp       varchar(50)
+);
 
 ALTER TABLE COMMANDE ADD FOREIGN KEY (idmag) REFERENCES MAGASIN (idmag);
 ALTER TABLE COMMANDE ADD FOREIGN KEY (idcli) REFERENCES CLIENT (idcli);

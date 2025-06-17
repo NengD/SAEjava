@@ -24622,3 +24622,66 @@ INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES
 INSERT INTO ADMINISTRATEUR (idadm, nomadm, prenomadm) VALUES
   (1, 'Lefevre', 'Paul'),
   (2, 'Bernard', 'Lucie');
+
+INSERT INTO COMMANDE(numcom, datecom, enligne, livraison, idcli, idmag) VALUES
+  (10001, '2024-06-17', 'N', 'M', 1, 1);
+
+INSERT INTO DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) VALUES
+  (10001, 1, '9782205054750', 1, 8.81),
+  (10001, 2, '9782020977739', 1, 25.00),
+  (10001, 3, '9782070633708', 1, 12.00);
+
+INSERT INTO COMMANDE(numcom, datecom, enligne, livraison, idcli, idmag) VALUES
+  (10002, '2024-06-17', 'N', 'M', 2, 1);
+
+INSERT INTO DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) VALUES
+  (10002, 1, '9782205054750', 1, 8.81),
+  (10002, 2, '9782020977739', 1, 25.00),
+  (10002, 3, '9782070633708', 1, 12.00),
+  (10002, 4, '9782081210110', 1, 15.00),
+  (10002, 5, '9782226142733', 1, 18.00);
+
+INSERT INTO COMMANDE(numcom, datecom, enligne, livraison, idcli, idmag) VALUES
+  (10003, '2024-06-17', 'N', 'M', 3, 1);
+
+INSERT INTO DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) VALUES
+  (10003, 1, '9782205054750', 1, 8.81),
+  (10003, 2, '9782020977739', 1, 25.00),
+  (10003, 3, '9782070633708', 1, 12.00),
+  (10003, 4, '9782081210110', 1, 15.00);
+
+INSERT INTO COMMANDE(numcom, datecom, enligne, livraison, idcli, idmag) VALUES
+  (10004, '2024-06-17', 'N', 'M', 4, 1);
+
+INSERT INTO DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) VALUES
+  (10004, 1, '9782205054750', 1, 8.81),
+  (10004, 2, '9782020977739', 1, 25.00),
+  (10004, 3, '9782081210110', 1, 15.00);
+
+UPDATE CLIENT SET mdp = 'mdp1' WHERE idcli = 1;
+UPDATE CLIENT SET mdp = 'mdp2' WHERE idcli = 2;
+UPDATE CLIENT SET mdp = 'mdp3' WHERE idcli = 3;
+UPDATE CLIENT SET mdp = 'mdp4' WHERE idcli = 4;
+UPDATE CLIENT SET mdp = 'mdp5' WHERE idcli = 5;
+UPDATE CLIENT SET mdp = 'mdp6' WHERE idcli = 6;
+UPDATE CLIENT SET mdp = 'mdp7' WHERE idcli = 7;
+UPDATE CLIENT SET mdp = 'mdp8' WHERE idcli = 8;
+UPDATE CLIENT SET mdp = 'mdp9' WHERE idcli = 9;
+UPDATE CLIENT SET mdp = 'mdp10' WHERE idcli = 10;
+UPDATE CLIENT SET mdp = 'mdp11' WHERE idcli = 11;
+UPDATE CLIENT SET mdp = 'mdp12' WHERE idcli = 12;
+UPDATE CLIENT SET mdp = 'mdp13' WHERE idcli = 13;
+UPDATE CLIENT SET mdp = 'mdp14' WHERE idcli = 14;
+UPDATE CLIENT SET mdp = 'mdp15' WHERE idcli = 15;
+UPDATE CLIENT SET mdp = 'mdp16' WHERE idcli = 16;
+UPDATE CLIENT SET mdp = 'mdp17' WHERE idcli = 17;
+UPDATE CLIENT SET mdp = 'mdp18' WHERE idcli = 18;
+UPDATE CLIENT SET mdp = 'mdp19' WHERE idcli = 19;
+UPDATE CLIENT SET mdp = 'mdp20' WHERE idcli = 20;
+
+UPDATE VENDEUR SET mdp = 'mdp1' WHERE idven = 1;
+UPDATE VENDEUR SET mdp = 'mdp2' WHERE idven = 2;
+UPDATE VENDEUR SET mdp = 'mdp3' WHERE idven = 3;
+
+UPDATE ADMINISTRATEUR SET mdp = 'mdp1' WHERE idadm = 1;
+UPDATE ADMINISTRATEUR SET mdp = 'mdp2' WHERE idadm = 2;
