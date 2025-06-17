@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class Client {
     private int idcli;
-    private ConnexionMySQL connexion;
+    public ConnexionMySQL connexion;
 
     /**
      * Constructeur Client.
@@ -41,7 +41,7 @@ public class Client {
      * @param livres liste des livres à commander
      * @param idmagasin identifiant du magasin
      */
-    public void passerCommande(boolean enLigne, char typeLivraison, List<Livre> livres, int idmagasin) {
+    public void passerCommande(boolean enLigne, char typeLivraison, List<String> titres, int idmagasin) {
         Connection connexion = this.connexion.getConnection();
         try {
             // Générer un nouveau numéro de commande
@@ -67,27 +67,34 @@ public class Client {
             ps1.executeUpdate();
             ps1.close();
 
-            // Calculer la quantité de chaque livre
-            Map<String, Integer> dictLivres = new HashMap<>();
-            for (Livre livre : livres) {
-                dictLivres.put(livre.getIsbn(), dictLivres.getOrDefault(livre.getIsbn(), 0) + 1);
+            // Calculer la quantité de chaque titre
+            Map<String, Integer> dictTitres = new HashMap<>();
+            for (String titre : titres) {
+                dictTitres.put(titre, dictTitres.getOrDefault(titre, 0) + 1);
             }
 
             int numlig = 1;
-            for (String isbn : dictLivres.keySet()) {
-                int quantite = dictLivres.get(isbn);
+            for (String titre : dictTitres.keySet()) {
+                int quantite = dictTitres.get(titre);
 
-                // Récupérer le prix du livre dynamiquement
+                // Récupérer l'isbn et le prix du livre à partir du titre
+                String isbn = null;
                 double prix = 0.0;
-                PreparedStatement psPrix = connexion.prepareStatement(
-                    "SELECT prix FROM LIVRE WHERE isbn = ?");
-                psPrix.setString(1, isbn);
-                ResultSet rsPrix = psPrix.executeQuery();
-                if (rsPrix.next()) {
-                    prix = rsPrix.getDouble("prix");
+                PreparedStatement psLivre = connexion.prepareStatement(
+                    "SELECT isbn, prix FROM LIVRE WHERE titre = ?");
+                psLivre.setString(1, titre);
+                ResultSet rsLivre = psLivre.executeQuery();
+                if (rsLivre.next()) {
+                    isbn = rsLivre.getString("isbn");
+                    prix = rsLivre.getDouble("prix");
                 }
-                rsPrix.close();
-                psPrix.close();
+                rsLivre.close();
+                psLivre.close();
+
+                if (isbn == null) {
+                    System.out.println("Livre non trouvé pour le titre : " + titre);
+                    continue;
+                }
 
                 // Insérer le détail de la commande
                 PreparedStatement ps2 = connexion.prepareStatement(
@@ -114,6 +121,7 @@ public class Client {
             System.out.println("Erreur lors du passage de la commande : " + e.getMessage());
         }
     }
+
 
     /**
      * Retourne la liste des livres du catalogue.

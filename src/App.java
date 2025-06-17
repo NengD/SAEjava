@@ -312,7 +312,7 @@ public class App {
                     boolean enLigne = System.console().readLine().trim().equalsIgnoreCase("o");
                     System.out.println("Type de livraison (M pour retrait en magasin, C pour livraison à domicile) :");
                     char typeLivraison = System.console().readLine().trim().toUpperCase().charAt(0);
-                    vendeur.passerCommandePourClient(enLigne, String.valueOf(typeLivraison), livres, client);
+
                     break;
                 case "t":
                     System.out.println("ISBN du livre à transférer :");
@@ -383,7 +383,6 @@ public class App {
                     for (int i = 0; i < quantite; i++) {
                         livres.add(livreTrouve);
                     }
-                    client.passerCommande(enLigne, typeLivraison, livres, idMagasin);
                     System.out.println("Commande passée !");
                     break;
                 case "c":
