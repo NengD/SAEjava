@@ -21,9 +21,9 @@ public class ControleurBoutonConnexion implements EventHandler<ActionEvent> {
         if (type.equals("Client")) {
             this.appli.afficheMenuClient();
         } else if (type.equals("Vendeur")) {
-            this.appli.afficheMenuVendeur(this.connexionSQL);
+            this.appli.afficheMenuVendeur();
         } else if (type.equals("Administrateur")) {
-            this.appli.afficheMenuAdmin(this.connexionSQL);
+            this.appli.afficheMenuAdmin();
         }
     }
 }
