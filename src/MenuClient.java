@@ -238,6 +238,8 @@ public class MenuClient extends Application {
 
    public Alert infoAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.getDialogPane().setPrefWidth(400);
+        alert.getDialogPane().setPrefHeight(400);
         alert.setTitle("Information");
         alert.setHeaderText("Aide");
         alert.setContentText("Bienvenue dans le menu client de Livre Express !\n\n"
