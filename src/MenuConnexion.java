@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javafx.scene.text.*;
 import javafx.application.Platform;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -52,9 +53,24 @@ public class MenuConnexion extends Application {
         });
     }
 
+    public Pane titre() {
+        BorderPane banniere = new BorderPane();
+        banniere.setPadding(new Insets(0, 10, 0, 10));
+        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        Background backgroundTitre = new Background(background);
+        banniere.setBackground(backgroundTitre);
+        Text titre = new Text("Menu Connexion");
+        titre.setFont(Font.font("Arial", 50));
+        HBox boiteTitre = new HBox();
+        boiteTitre.setSpacing(10);
+        boiteTitre.setAlignment(Pos.CENTER);
+        banniere.setRight(boiteTitre);
+        banniere.setLeft(titre);
+        return banniere;
+    }
+
     @Override
     public void start(Stage stage) {
-        // Labels
         Label typeLabel = new Label("Type de compte");
         Label idLabel = new Label("ID");
         Label mdpLabel = new Label("Mot de passe:");
@@ -81,6 +97,8 @@ public class MenuConnexion extends Application {
         // Centrage du contenu
         BorderPane root = new BorderPane();
         root.setCenter(grid);
+
+        root.setTop(titre());
 
         // Style du fond
         BackgroundFill background = new BackgroundFill(Color.web("d2d1ad"), null, null);
