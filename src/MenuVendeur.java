@@ -73,8 +73,14 @@ public class MenuVendeur extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.btnInfo.setGraphic(viewInfo);
-
-        //ActionBouton
+        ControleurBoutonVendeur controleur = new ControleurBoutonVendeur(this);
+        btnInfo.setOnAction(controleur);
+        btnAjouter.setOnAction(controleur);
+        this.btnAjouter.setOnAction(controleur);
+        this.btnMajQuantite.setOnAction(controleur);
+        this.btnDispo.setOnAction(controleur);
+        this.btnTransfert.setOnAction(controleur);
+        this.btnCommande.setOnAction(controleur);
         btnInfo.setOnAction(new ControleurInfo());
         btnAjouter.setOnAction(e -> root.setCenter(afficherPageAjouterLivre()));
     }
@@ -165,7 +171,7 @@ public class MenuVendeur extends Application {
             }
 
             try {
-                Connection conn = vendeur.getConnexion().getConnection();
+                Connection conn = this.connexion.getConnection();
                 vendeur.ajouterLivre(isbn, quantite);
                 showAlert("Succès", "Livre ajouté !");
                 isbnField.clear();
