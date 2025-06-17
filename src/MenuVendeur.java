@@ -81,6 +81,8 @@ public class MenuVendeur extends Application {
         this.btnDispo.setOnAction(controleur);
         this.btnTransfert.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
+        btnInfo.setOnAction(new ControleurInfo());
+        btnAjouter.setOnAction(e -> root.setCenter(afficherPageAjouterLivre()));
     }
 
     private Scene laScene() {

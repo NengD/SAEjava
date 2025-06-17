@@ -51,6 +51,7 @@ public class MenuClient extends Application {
             System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
         }
         this.boutonMaison = new Button();
+        this.boutonMaison.setId("maison");
         Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
@@ -159,30 +160,44 @@ public class MenuClient extends Application {
         Label label = new Label("Passer une commande");
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
-        String enLigne = tfEnLigne.getText();
-        Boolean isEnLigne = false;
-        if(enLigne.equals("true")){ isEnLigne = true;}
         TextField tfTypeLivraison = new TextField();
         tfTypeLivraison.setPromptText("Type de livraison (M/C)");
-        String typeLivraison = tfTypeLivraison.getText();
-        char typeLivraisonChar = typeLivraison.charAt(0);
         TextField tfLivres = new TextField();
         tfLivres.setPromptText("Liste des titres des livres à commander (séparés par ,)");
-        String titres = tfLivres.getText();
-        String[] titresArray = titres.split(",");
-        List<String> listTitres = Arrays.asList(titresArray);
         TextField tfIdMagasin = new TextField();
         tfIdMagasin.setPromptText("ID magasin");
-        int idMagasin = Integer.parseInt(tfIdMagasin.getText());
-        this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
+        Button btnValider = new Button("Valider la commande");
+        btnValider.setOnAction(event -> {
+            String enLigne = tfEnLigne.getText();
+            boolean isEnLigne = "true".equalsIgnoreCase(enLigne);
+            String typeLivraison = tfTypeLivraison.getText();
+            if (typeLivraison == null || typeLivraison.isEmpty()) {
+                System.out.println("Erreur : type de livraison vide");
+                return;
+            }
+            char typeLivraisonChar = typeLivraison.charAt(0);
+            String titres = tfLivres.getText();
+            List<String> listTitres = Arrays.asList(titres.split(","));
+            String idMagasinStr = tfIdMagasin.getText();
+            int idMagasin;
+            try {
+                idMagasin = Integer.parseInt(idMagasinStr);
+            } catch (NumberFormatException e) {
+                System.out.println("Erreur : ID magasin non valide");
+                return;
+            }
+            this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
+            System.out.println("Commande passée !");
+        });
 
-        VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnRetour);
+        VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnValider, btnRetour);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
-        
+
         res.setCenter(vbox);
         return res;
     }
+
 
     public BorderPane pageRecommande() {
         BorderPane rootPane = new BorderPane();
@@ -194,7 +209,7 @@ public class MenuClient extends Application {
         vboxRecommande.setAlignment(Pos.CENTER);
         String recomande = "";
         for (String titre : client.onVousRecommande()) {
-            System.out.println("- " + titre);
+            recomande += "- " + titre + "\n";
         }
         Text textRecommande = new Text(recomande);
         vboxRecommande.getChildren().add(textRecommande);
