@@ -28,6 +28,7 @@ public class MenuAdministrateur extends Application {
     private Button btnCreerLibrairie;
     private Button btnConsulterStat;
     private Button btnCreerLivre;
+    private Button btnTransfertLivre;
     public BorderPane panelCentral;
     private Button boutonMaison;
     private Button boutonInfo;
@@ -70,7 +71,12 @@ public class MenuAdministrateur extends Application {
         this.btnCreerLivre = new Button("Créer un livre");
         this.btnCreerLivre.setOnAction(controleur);
 
+        this.btnTransfertLivre = new Button("Transférer un livre");
+        this.btnTransfertLivre.setOnAction(controleur);
+        
         this.boutonMaison = new Button();
+        boutonMaison.setId("maison");
+        boutonMaison.setOnAction(controleur);
         Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
@@ -121,7 +127,7 @@ public class MenuAdministrateur extends Application {
         res.setBackground(backgroundAdm);
 
         VBox boutons = new VBox();
-        boutons.getChildren().addAll(btnConsulterStat, btnCreerVendeur, btnCreerLibrairie, btnCreerLivre);
+        boutons.getChildren().addAll(btnConsulterStat, btnCreerVendeur, btnCreerLibrairie, btnCreerLivre,btnTransfertLivre);
         boutons.setSpacing(10);
         boutons.setAlignment(Pos.CENTER);
         res.setCenter(boutons);
@@ -316,6 +322,66 @@ public class MenuAdministrateur extends Application {
         res.setBottom(btnCreerMagasin);
 
         return res;
+    }
+
+    public BorderPane pageTransfertLivre(){
+        BorderPane res = new BorderPane();
+        BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
+        Background backgroundLib = new Background(background5);
+        res.setBackground(backgroundLib);
+        VBox gauche = new VBox();
+        gauche.getChildren().add(this.retour);
+        res.setLeft(gauche);
+
+
+        TextField isbnL = new TextField();
+        isbnL.setPromptText("isbn du livre");
+        TextField qte = new TextField();
+        qte.setPromptText("quantité à transférer");
+        TextField idMagS = new TextField();
+        idMagS.setPromptText("Id Magasin Source");
+        TextField idMagasinD = new TextField();
+        idMagasinD.setPromptText("Id Magasin Destination");
+        
+        VBox centre = new VBox();
+        centre.setPadding(new Insets(10));
+        centre.setAlignment(Pos.CENTER);
+        centre.setSpacing(10);
+        centre.getChildren().addAll(isbnL, qte,idMagS,idMagasinD);
+        
+        Button btnFaireTransfert = new Button("effectuer tranfert");
+        btnFaireTransfert.setOnAction(event ->{
+            String isbn = isbnL.getText();
+            int quantite = Integer.parseInt(qte.getText());
+            int idMagasinSource = Integer.parseInt(idMagS.getText());
+            int idMagasinDest = Integer.parseInt(idMagasinD.getText());
+            
+            try {
+                admin.transfertLivreEntreMagasins(isbn,quantite, idMagasinSource, idMagasinDest);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText(null);
+                alert.setContentText("Trasnfert effectué");
+                alert.showAndWait();
+                isbnL.clear();
+                qte.clear();
+                idMagS.clear();
+                idMagasinD.clear();
+
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText(null);
+                alert.setContentText("Erreur lors du tranfert : " + e.getMessage());
+                alert.showAndWait();
+            }
+            });
+            
+        res.setCenter(centre);
+        res.setBottom(btnFaireTransfert);
+
+        return res;
+
     }
 
     private Scene lascene() {
