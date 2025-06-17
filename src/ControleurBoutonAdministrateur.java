@@ -2,6 +2,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 
 public class ControleurBoutonAdministrateur implements EventHandler<ActionEvent> {
 private MenuAdministrateur menuAdm;
@@ -28,6 +29,21 @@ public void handle(ActionEvent event) {
     } else if (button.getText().contains("Retour")) {
         this.menuAdm.getRoot().setCenter(this.menuAdm.fenetreAdm());
     }
+    else if (button.getText().contains("Transférer un livre")) {
+        this.menuAdm.getRoot().setCenter(this.menuAdm.pageTransfertLivre());
+    }
+    else if ("maison".equals(button.getId())) {
+            Stage stage = (Stage) button.getScene().getWindow();
+            stage.close();
+            MenuConnexion menuConnexion = new MenuConnexion();
+            menuConnexion.init();
+            Stage stageConnexion = new Stage();
+            try {
+                menuConnexion.start(stageConnexion);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 }
 
 }
