@@ -1,3 +1,4 @@
+import javafx.scene.control.TextField;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
@@ -92,6 +93,10 @@ public class MenuAdministrateur extends Application {
         return this.root;
     }
 
+    public Administrateur getAdmin() {
+        return this.admin;
+    }
+
     public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
@@ -153,6 +158,57 @@ public class MenuAdministrateur extends Application {
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
         res.setLeft(gauche);
+        
+        TextField isbnLivre = new TextField();
+        isbnLivre.setPromptText("ISBN du Livre");
+        TextField titreLivre = new TextField();
+        titreLivre.setPromptText("Titre du Livre");
+        TextField nbpages = new TextField();
+        nbpages.setPromptText("Nombre de pages");
+        TextField datePubli = new TextField();
+        datePubli.setPromptText("Date de publication (format: YYYY)");
+        TextField prixLivre = new TextField();
+        prixLivre.setPromptText("Prix du Livre");
+        TextField idDewey = new TextField();
+        idDewey.setPromptText("ID Dewey");
+        VBox centre = new VBox();
+        centre.setPadding(new Insets(10));
+        centre.setAlignment(Pos.CENTER);
+        centre.setSpacing(10);
+        centre.getChildren().addAll(isbnLivre, titreLivre, nbpages, datePubli, prixLivre, idDewey);
+        Button btnCreerLivre = new Button("Créer le Livre");
+        btnCreerLivre.setOnAction(event ->{
+            String isbn = isbnLivre.getText();
+            String titre = titreLivre.getText();
+            int nbPages = Integer.parseInt(nbpages.getText());
+            int datePublication = Integer.parseInt(datePubli.getText());
+            Double prix = Double.parseDouble(prixLivre.getText());
+            String idDewEy = idDewey.getText();
+            try {
+                admin.creerLivre(isbn, titre, nbPages, datePublication, prix, idDewEy);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText(null);
+                alert.setContentText("Livre créé avec succès !");
+                alert.showAndWait();
+                isbnLivre.clear();
+                titreLivre.clear();
+                nbpages.clear();
+                datePubli.clear();
+                prixLivre.clear();
+                idDewey.clear();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText(null);
+                alert.setContentText("Erreur lors de la création du livre : " + e.getMessage());
+                alert.showAndWait();
+            }
+             });
+            
+        res.setCenter(centre);
+        res.setBottom(btnCreerLivre);
+       
 
         return res;
     }
@@ -166,6 +222,50 @@ public class MenuAdministrateur extends Application {
         gauche.getChildren().add(this.retour);
         res.setLeft(gauche);
 
+        TextField nomV = new TextField();
+        nomV.setPromptText("Nom de famille");
+        TextField prenomV = new TextField();
+        prenomV.setPromptText("Prénom");
+        TextField idMagV = new TextField();
+        idMagV.setPromptText("Id Magasin");
+        
+        VBox centre = new VBox();
+        centre.setPadding(new Insets(10));
+        centre.setAlignment(Pos.CENTER);
+        centre.setSpacing(10);
+        centre.getChildren().addAll(nomV, prenomV, idMagV);
+        Button btnCreerVendeur = new Button("Créer Vendeur");
+        btnCreerVendeur.setOnAction(event ->{
+            String nom = nomV.getText();
+            String prenom = prenomV.getText();
+            int idmag = Integer.parseInt(idMagV.getText());
+            
+            try {
+                admin.creerVendeur(nom,prenom,idmag);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText(null);
+                alert.setContentText("Vendeur créé avec succès !");
+                alert.showAndWait();
+                nomV.clear();
+                prenomV.clear();
+                idMagV.clear();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText(null);
+                alert.setContentText("Erreur lors de la création du Vendeur : " + e.getMessage());
+                alert.showAndWait();
+            }
+            });
+            
+        res.setCenter(centre);
+        res.setBottom(btnCreerVendeur);
+        
+
+
+
+
         return res;
     }
 
@@ -177,6 +277,43 @@ public class MenuAdministrateur extends Application {
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
         res.setLeft(gauche);
+
+
+        TextField nomM = new TextField();
+        nomM.setPromptText("Nom du Magasin");
+        TextField villeM = new TextField();
+        villeM.setPromptText("Ville du Magsin");
+        VBox centre = new VBox();
+        centre.setPadding(new Insets(10));
+        centre.setAlignment(Pos.CENTER);
+        centre.setSpacing(10);
+        centre.getChildren().addAll(nomM, villeM);
+        
+        Button btnCreerMagasin = new Button("Créer Magasin");
+        btnCreerMagasin.setOnAction(event ->{
+            String nom = nomM.getText();
+            String ville = villeM.getText();
+            
+            try {
+                admin.ajouterLibrairie(nom,ville);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succès");
+                alert.setHeaderText(null);
+                alert.setContentText("Magasin créé avec succès !");
+                alert.showAndWait();
+                nomM.clear();
+                villeM.clear();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText(null);
+                alert.setContentText("Erreur lors de la création du Magasin : " + e.getMessage());
+                alert.showAndWait();
+            }
+            });
+            
+        res.setCenter(centre);
+        res.setBottom(btnCreerMagasin);
 
         return res;
     }
