@@ -1,4 +1,3 @@
-import com.sun.jdi.event.ThreadStartEvent;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
@@ -12,14 +11,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.control.ButtonBar.ButtonData ;
-
 import java.util.List;
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.border.Border;
-import javax.swing.plaf.synth.Region;
+
+
 
 
 public class MenuClient extends Application {
@@ -166,29 +163,45 @@ public class MenuClient extends Application {
         tfLivres.setPromptText("Liste des titres des livres à commander (séparés par ,)");
         TextField tfIdMagasin = new TextField();
         tfIdMagasin.setPromptText("ID magasin");
-        Button btnValider = new Button("Valider la commande");
-        btnValider.setOnAction(event -> {
-            String enLigne = tfEnLigne.getText();
-            boolean isEnLigne = "true".equalsIgnoreCase(enLigne);
-            String typeLivraison = tfTypeLivraison.getText();
-            if (typeLivraison == null || typeLivraison.isEmpty()) {
-                System.out.println("Erreur : type de livraison vide");
-                return;
-            }
-            char typeLivraisonChar = typeLivraison.charAt(0);
-            String titres = tfLivres.getText();
-            List<String> listTitres = Arrays.asList(titres.split(","));
-            String idMagasinStr = tfIdMagasin.getText();
-            int idMagasin;
+         Button btnValider = new Button("Valider la commande");
+        btnValider.setOnAction(e -> {
             try {
-                idMagasin = Integer.parseInt(idMagasinStr);
-            } catch (NumberFormatException e) {
+                String enLigne = tfEnLigne.getText().trim();
+                if (!enLigne.equalsIgnoreCase("true") && !enLigne.equalsIgnoreCase("false")) {
+                    System.out.println("Erreur : saisie 'En ligne' incorrecte");
+                    return;
+                }
+                boolean isEnLigne = Boolean.parseBoolean(enLigne);
+                String typeLivraison = tfTypeLivraison.getText().trim();
+                if (typeLivraison.isEmpty()) {
+                    System.out.println("Erreur : type de livraison vide");
+                    return;
+                }
+                char typeLivraisonChar = typeLivraison.charAt(0);
+                String titres = tfLivres.getText().trim();
+                if (titres.isEmpty()) {
+                    System.out.println("Erreur : liste de livres vide");
+                    return;
+                }
+                List<String> listTitres = Arrays.asList(titres.split(","));
+                String idMagasinStr = tfIdMagasin.getText().trim();
+                int idMagasin = Integer.parseInt(idMagasinStr);
+                this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Commande Passée");
+                alert.setHeaderText(null);
+                alert.setContentText("Votre commande a été passée avec succès !");
+                alert.showAndWait();
+                tfEnLigne.clear();
+                tfTypeLivraison.clear();
+                tfLivres.clear();
+                tfIdMagasin.clear();
+            } catch (NumberFormatException ex) {
                 System.out.println("Erreur : ID magasin non valide");
-                return;
+            } catch (Exception ex) {
+                System.out.println("Erreur lors du passage de la commande : " + ex.getMessage());
             }
-            this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
-            System.out.println("Commande passée !");
-        });
+    });
 
         VBox vbox = new VBox(10, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnValider, btnRetour);
         vbox.setAlignment(Pos.CENTER);
@@ -231,6 +244,7 @@ public class MenuClient extends Application {
                 + "2. Passer une commande : Permet de passer une commande en ligne ou en magasin.\n"
                 + "3. On vous recommande : Affiche les livres recommandés pour vous.\n\n"
                 + "Pour toute assistance, veuillez contacter le support.");
+        
         return alert;
     }
 
