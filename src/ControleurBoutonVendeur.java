@@ -24,6 +24,12 @@ public class ControleurBoutonVendeur implements EventHandler<ActionEvent> {
     if (button.getText().contains("Disponibilité Livre")) {
     this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageDispoLivres());
     }
+    if (button.getText().contains("Transférer un livre")) {
+    this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageTransfertLivre());
+    }
+    if (button.getText().contains("Passer Commande pour un Client")) {
+    this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageCommandeClient());
+    }
 
     }
 }

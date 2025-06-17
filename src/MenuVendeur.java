@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +50,10 @@ public class MenuVendeur extends Application {
     }
 
     public void setContext(ConnexionMySQL connexion, Vendeur vendeur) {
-        this.connexion = connexion;
-        this.vendeur = vendeur;
-    }   
+    this.connexion = connexion;
+    this.vendeur = vendeur;
+}
+
 
     public BorderPane getRoot() {
         return this.root;
@@ -59,6 +61,15 @@ public class MenuVendeur extends Application {
 
     @Override
     public void init() {
+
+        try {
+            this.connexion = new ConnexionMySQL();
+            this.connexion.connecter();
+        } catch (Exception e) {
+            System.out.println("Erreur de connexion à la base : ");
+        }
+
+    
 
         //Ajout des boutons
         this.btnAjouter = new Button("Ajouter un livre");
@@ -177,18 +188,17 @@ public class MenuVendeur extends Application {
             try {
                 quantite = Integer.parseInt(qteStr);
             } catch (NumberFormatException ex) {
-                showAlert("Erreur", "Quantité invalide.");
+                showAlert("Erreur","Quantité invalide.");
                 return;
             }
 
             try {
-                //Connection conn = this.connexion.getConnection();
                 vendeur.ajouterLivre(isbn, quantite);
-                showAlert("Succès", "Livre ajouté !");
+                showAlert("","Livre ajouté");
                 isbnField.clear();
                 qteField.clear();
             } catch (Exception ex) {
-                showAlert("Erreur", "Erreur lors de l'ajout : " + ex.getMessage());
+                showAlert("Erreur","Erreur de l'ajout.");
             }
         });
 
@@ -234,18 +244,18 @@ public BorderPane afficherPageMajQuantite() {
         try {
          quantite = Integer.parseInt(qteStr);
         } catch (NumberFormatException ex) {
-            showAlert("Erreur", "Quantité invalide.");
+            showAlert("Erreur","Quantité invalide.");
         }
 
         try {
             Livre livre = new Livre(isbn);
             vendeur.majQuantiteLivre(livre, quantite);
-            showAlert("Succès", "Quantité mise à jour !");
+            showAlert("","Quantité mise à jour.");
             isbnField.clear();
             qteField.clear();
 
         } catch (Exception ex) {
-            showAlert("Erreur", "Erreur lors de la mise à jour.");
+            showAlert("Erreur","Erreur de mise à jour.");
         }
     });
 
@@ -285,13 +295,13 @@ public BorderPane afficherPageDispoLivres() {
     Button retourBtn = new Button("Retour");
 
     verifierBtn.setOnAction(e -> {
-        String titreLivre = livreField.getText().trim();
+        String titreLivre = livreField.getText();
         if (titreLivre.isEmpty()) {
             resultatLabel.setText("Veuillez entrer un titre.");
             
         }
         boolean dispo = vendeur.livreDisponible(titreLivre);
-        if (dispo) {
+        if (dispo == true) {
             resultatLabel.setText("Le livre \"" + titreLivre + "\" est disponible en stock.");
         } else {
             resultatLabel.setText("Le livre \"" + titreLivre + "\" n'est pas disponible en stock.");
@@ -311,6 +321,144 @@ public BorderPane afficherPageDispoLivres() {
 /////////////////////////////////////////////////////////////////////////////////////
 
 
+
+public BorderPane afficherPageTransfertLivre() {
+    BorderPane page = new BorderPane();
+    BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+    Background backgroundPage = new Background(background);
+    page.setBackground(backgroundPage);
+
+    VBox vbox = new VBox(15);
+    vbox.setPadding(new Insets(30));
+    vbox.setAlignment(Pos.CENTER);
+
+    Label titreLabel = new Label("Transférer un livre vers un autre magasin");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+    Label isbnLabel = new Label("ISBN :");
+    TextField isbnField = new TextField();
+
+    Label qteLabel = new Label("Quantité à transférer :");
+    TextField qteField = new TextField();
+
+    Label idMagLabel = new Label("ID du magasin de destination :");
+    TextField idMagField = new TextField();
+
+    Button transfererBtn = new Button("Transférer");
+    Label resultatLabel = new Label();
+
+    Button retourBtn = new Button("Retour");
+
+    transfererBtn.setOnAction(e -> {
+        String isbn = isbnField.getText();
+        String qteStr = qteField.getText();
+        String idMagStr = idMagField.getText();
+        int quantite, idMagasinDest;
+
+        try {
+            quantite = Integer.parseInt(qteStr);
+            idMagasinDest = Integer.parseInt(idMagStr);
+        } catch (NumberFormatException ex) {
+            resultatLabel.setText("Invalide.");
+            return;
+        }
+
+        vendeur.transfertLivre(isbn, quantite, idMagasinDest);
+        resultatLabel.setText("Transfert effectué.");
+        isbnField.clear();
+        qteField.clear();
+        idMagField.clear();
+    });
+
+    retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
+
+    HBox boutons = new HBox(10, retourBtn, transfererBtn);
+    boutons.setAlignment(Pos.CENTER);
+
+    vbox.getChildren().addAll(titreLabel,isbnLabel, isbnField,qteLabel, qteField,idMagLabel, idMagField,boutons,resultatLabel);
+    page.setCenter(vbox);
+    return page;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+public BorderPane afficherPageCommandeClient() {
+    BorderPane page = new BorderPane();
+    BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
+    Background backgroundPage = new Background(background);
+    page.setBackground(backgroundPage);
+
+    VBox vbox = new VBox(15);
+    vbox.setPadding(new Insets(30));
+    vbox.setAlignment(Pos.CENTER);
+
+    Label titreLabel = new Label("Passer une commande pour un client");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    Label idClientLabel = new Label("ID du client :");
+    TextField idClientField = new TextField();
+    Label enLigneLabel = new Label("Commande en ligne ?");
+    TextField enLigneField = new TextField();
+    Label typeLivraisonLabel = new Label("Type de livraison (M/C)");
+    TextField typeLivraisonField = new TextField();
+    Label titresLabel = new Label("Livres a commander:");
+    TextField titresField = new TextField();
+    Button commanderBtn = new Button("Commander");
+    Label resultatLabel = new Label();
+    Button retourBtn = new Button("Retour");
+
+    commanderBtn.setOnAction(e -> {
+        String idClientStr = idClientField.getText();
+        String enLigneStr = enLigneField.getText();
+        String typeLivraison = typeLivraisonField.getText();
+        String titresStr = titresField.getText();
+        int idClient = -1;
+        boolean enLigne = false;
+        
+        try {
+            idClient = Integer.parseInt(idClientStr);
+            enLigne = Boolean.parseBoolean(enLigneStr);
+        } catch (Exception ex) {
+            resultatLabel.setText("Invalide.");
+        }
+
+        Client client = null;
+        try {
+            PreparedStatement ps = this.connexion.prepareStatement("SELECT idcli FROM CLIENT WHERE idcli = ?");
+            ps.setInt(1, idClient);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                client = new Client(idClient, this.connexion);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception ex) {
+            resultatLabel.setText("Erreur");
+        }
+
+        List<String> titres = new ArrayList<>();
+        for (String titre : titresStr.split(",")) {
+            titres.add(titre);
+        }
+
+        vendeur.passerCommandePourClient(enLigne, typeLivraison, titres, client);
+        resultatLabel.setText("Commande passée.");
+        idClientField.clear();
+        enLigneField.clear();
+        typeLivraisonField.clear();
+        titresField.clear();
+    });
+
+    retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
+
+    HBox boutons = new HBox(10, retourBtn, commanderBtn);
+    boutons.setAlignment(Pos.CENTER);
+
+    vbox.getChildren().addAll(titreLabel,idClientLabel, idClientField,enLigneLabel, enLigneField,typeLivraisonLabel, typeLivraisonField,titresLabel, titresField,boutons,resultatLabel);
+    page.setCenter(vbox);
+    return page;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
 
     private void showAlert(String titre, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
