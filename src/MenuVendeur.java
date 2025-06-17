@@ -73,14 +73,8 @@ public class MenuVendeur extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.btnInfo.setGraphic(viewInfo);
-        ControleurBoutonVendeur controleur = new ControleurBoutonVendeur(this);
-        btnInfo.setOnAction(controleur);
-        btnAjouter.setOnAction(controleur);
-        this.btnAjouter = setOnAction(controleur);
-        this.btnMajQuantite = setOnAction(controleur);
-        this.btnDispo = setOnAction(controleur);
-        this.btnTransfert = setOnAction(controleur);
-        this.btnCommande = setOnAction(controleur);
+
+        //ActionBouton
         btnInfo.setOnAction(new ControleurInfo());
         btnAjouter.setOnAction(e -> root.setCenter(afficherPageAjouterLivre()));
     }
