@@ -3,10 +3,8 @@ import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
 public class ControleurInscription implements EventHandler<ActionEvent> {
-    private Stage parentStage;
     
-    public ControleurInscription(Stage parentStage) {
-        this.parentStage = parentStage;
+    public ControleurInscription() {
     }
 
     @Override
