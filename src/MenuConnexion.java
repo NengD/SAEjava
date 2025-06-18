@@ -192,7 +192,6 @@ public class MenuConnexion extends Application {
 
     public void afficheMenuAdmin() {
         Stage stage = (Stage) this.connexionBtn.getScene().getWindow();
-        stage.close();
 
         String id = this.idField.getText();
         Administrateur admin = getAdminFromDB(id);
