@@ -1,6 +1,8 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.w3c.dom.Text;
+
 import javafx.scene.text.*;
 import javafx.application.Platform;
 import javafx.application.Application;
@@ -15,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
+import javafx.scene.control.Alert;
 
 public class MenuConnexion extends Application {
     // Déclaration des composants en attributs de classe
@@ -24,6 +27,7 @@ public class MenuConnexion extends Application {
     private PasswordField mdpField;
     private Button connexionBtn;
     private Button quitter;
+    private Button inscription;
 
     @Override
     public void init() {
@@ -31,7 +35,12 @@ public class MenuConnexion extends Application {
             this.connexionSQL = new ConnexionMySQL();
             this.connexionSQL.connecter();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la connexion à la base : " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.getDialogPane().setPrefWidth(400);
+            alert.getDialogPane().setPrefHeight(400);
+            alert.setTitle("Information");
+            alert.setHeaderText("Erreur de connexion à la base de données");
+            alert.showAndWait();
         }
         // Initialisation des composants (sans les ajouter à la scène)
         this.typeCompte = new ComboBox<>();
@@ -49,14 +58,16 @@ public class MenuConnexion extends Application {
 
         this.quitter = new Button("Quitter");
         this.quitter.setOnAction(e -> {
-            javafx.application.Platform.exit();
+            Platform.exit();
         });
+
+        this.inscription = new Button("Inscription");
     }
 
     public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
         Text titre = new Text("Menu Connexion");
@@ -93,6 +104,7 @@ public class MenuConnexion extends Application {
 
         grid.add(this.connexionBtn, 1, 3);
         grid.add(this.quitter, 1, 4);
+        grid.add(this.inscription, 2, 0);
 
         // Centrage du contenu
         BorderPane root = new BorderPane();
@@ -101,10 +113,12 @@ public class MenuConnexion extends Application {
         root.setTop(titre());
 
         // Style du fond
-        BackgroundFill background = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundTitre = new Background(background);
-        root.setBackground(backgroundTitre);
-
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));
+        Background wpp = new Background(backgroundImage);
+        root.setBackground(wpp);
         Scene scene = new Scene(root, 600, 350);
         stage.setTitle("Connexion");
         stage.setScene(scene);
@@ -117,45 +131,66 @@ public class MenuConnexion extends Application {
 
     public void afficheMenuClient() {
         Stage stage = (Stage) this.connexionBtn.getScene().getWindow();
-        stage.close();
-
         String id = this.idField.getText();
         Client client = getClientFromDB(id);
         if (client == null) {
-            System.out.println("Client introuvable.");
-            return;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.getDialogPane().setPrefWidth(400);
+            alert.getDialogPane().setPrefHeight(400);
+            alert.setTitle("Erreur de Connexion");
+            alert.setHeaderText("Impossible de se connecter au menu client");
+            alert.setContentText("Le client demandé n'existe pas ou le mot de passe est incorrect.");
+            alert.showAndWait();
         }
-        MenuClient menuClient = new MenuClient();
-        menuClient.init();
-        menuClient.setContext(this.connexionSQL, client);
-        Stage stageClient = new Stage();
-        try {
-            menuClient.start(stageClient);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'ouverture du menu client.");
-            e.printStackTrace();
+
+        else {
+            stage.close();
+            MenuClient menuClient = new MenuClient();
+            menuClient.init();
+            menuClient.setContext(this.connexionSQL, client);
+            Stage stageClient = new Stage();
+            try {
+                menuClient.start(stageClient);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Erreur de Connexion");
+                alert.setHeaderText("Impossible d'ouvrir le menu client");
+                alert.showAndWait();
+            }
         }
     }
 
     public void afficheMenuVendeur() {
         Stage stage = (Stage) this.connexionBtn.getScene().getWindow();
-        stage.close();
 
         String id = this.idField.getText();
         Vendeur vendeur = getVendeurFromDB(id);
         if (vendeur == null) {
-            System.out.println("Vendeur introuvable.");
-            return;
-        }
-        MenuVendeur menuVendeur = new MenuVendeur();
-        menuVendeur.init();
-        menuVendeur.setContext(this.connexionSQL, vendeur);
-        Stage stageVendeur = new Stage();
-        try {
-            menuVendeur.start(stageVendeur);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'ouverture du menu vendeur.");
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.getDialogPane().setPrefWidth(400);
+            alert.getDialogPane().setPrefHeight(400);
+            alert.setTitle("Erreur de Connexion");
+            alert.setHeaderText("Impossible de se connecter au menu vendeur");
+            alert.setContentText("Le vendeur demandé n'existe pas ou le mot de passe est incorrect.");
+            alert.showAndWait();
+        } else {
+            stage.close();
+            MenuVendeur menuVendeur = new MenuVendeur();
+            menuVendeur.init();
+            menuVendeur.setContext(this.connexionSQL, vendeur);
+            Stage stageVendeur = new Stage();
+            try {
+                menuVendeur.start(stageVendeur);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Erreur de Connexion");
+                alert.setHeaderText("Impossible d'ouvrir le menu vendeur");
+                alert.showAndWait();
+            }
         }
     }
 
@@ -166,18 +201,29 @@ public class MenuConnexion extends Application {
         String id = this.idField.getText();
         Administrateur admin = getAdminFromDB(id);
         if (admin == null) {
-            System.out.println("Administrateur introuvable.");
-            return;
-        }
-        MenuAdministrateur menuAdmin = new MenuAdministrateur();
-        menuAdmin.init();
-        menuAdmin.setContexte(this.connexionSQL, admin);
-        Stage stageAdmin = new Stage();
-        try {
-            menuAdmin.start(stageAdmin);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'ouverture du menu administrateur.");
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.getDialogPane().setPrefWidth(400);
+            alert.getDialogPane().setPrefHeight(400);
+            alert.setTitle("Erreur de Connexion");
+            alert.setHeaderText("Impossible de se connecter au menu administrateur");
+            alert.setContentText("L'administrateur demandé n'existe pas ou le mot de passe est incorrect.");
+            alert.showAndWait();
+        } else {
+            stage.close();
+            MenuAdministrateur menuAdmin = new MenuAdministrateur();
+            menuAdmin.init();
+            menuAdmin.setContexte(this.connexionSQL, admin);
+            Stage stageAdmin = new Stage();
+            try {
+                menuAdmin.start(stageAdmin);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Erreur de Connexion");
+                alert.setHeaderText("Impossible d'ouvrir le menu administrateur");
+                alert.showAndWait();
+            }
         }
     }
 
@@ -187,9 +233,11 @@ public class MenuConnexion extends Application {
 
     public Client getClientFromDB(String idClient) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idcli FROM CLIENT WHERE idcli = ?");
+                    "SELECT idcli FROM CLIENT WHERE idcli = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idClient));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idcli = rs.getInt("idcli");
@@ -200,16 +248,17 @@ public class MenuConnexion extends Application {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la récupération du client : " + e.getMessage());
         }
         return null;
     }
 
     public Vendeur getVendeurFromDB(String idVendeur) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idven, idmag FROM VENDEUR WHERE idven = ?");
+                    "SELECT idven, idmag FROM VENDEUR WHERE idven = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idVendeur));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idven = rs.getInt("idven");
@@ -221,16 +270,17 @@ public class MenuConnexion extends Application {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la récupération du vendeur : " + e.getMessage());
         }
         return null;
     }
 
     public Administrateur getAdminFromDB(String idAdmin) {
         try {
+            String mdp = this.mdpField.getText();
             PreparedStatement ps = this.connexionSQL.prepareStatement(
-                    "SELECT idadm FROM ADMINISTRATEUR WHERE idadm = ?");
+                    "SELECT idadm FROM ADMINISTRATEUR WHERE idadm = ? AND mdp = ?");
             ps.setInt(1, Integer.parseInt(idAdmin));
+            ps.setString(2, mdp);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int idadm = rs.getInt("idadm");
@@ -241,7 +291,6 @@ public class MenuConnexion extends Application {
             rs.close();
             ps.close();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la récupération de l'administrateur : " + e.getMessage());
         }
         return null;
     }
