@@ -22,11 +22,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.geometry.Pos;
 
 public class MenuInscription extends Application {
 
     private ConnexionMySQL connexionSQL;
     private BorderPane root;
+    private Button boutonMaison;
+    private Button boutonInfo;
 
     public BorderPane getRoot() {
         return this.root;
@@ -54,7 +57,7 @@ public class MenuInscription extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.boutonInfo.setGraphic(viewInfo);
-        ControleurBoutonClient controleur = new ControleurBoutonClient(this);
+        ControleurBoutonInscription controleur = new ControleurBoutonInscription(this);
         this.boutonMaison.setOnAction(controleur);
     }
 
@@ -127,9 +130,9 @@ public class MenuInscription extends Application {
             return;
             }
             String sql = "INSERT INTO CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli, mdp) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
+            try (PreparedStatement stmt = connexionSQL.prepareStatement(sql)) {
                 int id = -1;
-                PreparedStatement psId = connexion.prepareStatement(
+                PreparedStatement psId = connexionSQL.prepareStatement(
                     "SELECT COALESCE(MAX(numcom), 0) + 1 AS nextNum FROM COMMANDE");
                 ResultSet rsId = psId.executeQuery();
                 if (rsId.next()) {
@@ -164,9 +167,12 @@ public class MenuInscription extends Application {
                 alert.setContentText("Erreur lors de l'inscription : " + e.getMessage() + "\n\n" +
                         "Veuillez vérifier vos informations et réessayer.\n\n" +
                         "Si le problème persiste, veuillez contacter notre support.");
-                    }
                 alert.showAndWait();
+                }
         });
+        centre.getChildren().add(btnSIncrire);
+        res.setCenter(centre);
+        return res;
     }
 
         
