@@ -169,7 +169,7 @@ public class MenuVendeur extends Application {
         return fenetre;
     }
 
-/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 // Page pour ajouter un livre
 public BorderPane afficherPageAjouterLivre() {
