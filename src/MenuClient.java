@@ -171,19 +171,13 @@ public class MenuClient extends Application {
         textCatalogue.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-background-color: #bec3b9; -fx-text-fill: black;");
         textCatalogue.setMaxWidth(Double.MAX_VALUE);
         textCatalogue.setMaxHeight(Double.MAX_VALUE);
+        textCatalogue.setPrefColumnCount(40);
+        textCatalogue.setPrefRowCount(catalogue.toString().split("\n").length);
 
         VBox.setVgrow(textCatalogue, Priority.ALWAYS);
         vboxCatalogue.getChildren().add(textCatalogue);
 
-        ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setPrefViewportHeight(600);
-
-        textCatalogue.setPrefColumnCount(40);
-        textCatalogue.setPrefRowCount(catalogue.toString().split("\n").length);
-
-        VBox vbox = new VBox(15, btnRetour, scrollPane);
+        VBox vbox = new VBox(15, btnRetour, textCatalogue);
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -337,12 +331,7 @@ public class MenuClient extends Application {
         textRecommande.setPrefColumnCount(40);
         textRecommande.setPrefRowCount(recommandations.toString().split("\n").length);
 
-        ScrollPane scrollPane = new ScrollPane(textRecommande);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPannable(true);
-        scrollPane.setStyle("-fx-background: #f5f5dc; -fx-background-color: #f5f5dc;");
-
-        VBox vbox = new VBox(15, btnRetour, scrollPane);
+        VBox vbox = new VBox(15, btnRetour, textRecommande);
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
