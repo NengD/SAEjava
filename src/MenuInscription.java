@@ -161,6 +161,12 @@ public class MenuInscription extends Application {
                         "Si vous avez des questions, n'hésitez pas à nous contacter.\n\n" +
                         "Merci de votre confiance !");
                 alert.showAndWait();
+                nomC.clear();
+                prenomC.clear();
+                adress.clear();
+                codePostal.clear();
+                ville.clear();
+                mdp.clear();
             } catch (SQLException e) {
                 e.printStackTrace();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
