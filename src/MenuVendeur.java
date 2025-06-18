@@ -30,6 +30,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundSize;
+
 public class MenuVendeur extends Application {
 
     private Button btnAjouter;
@@ -60,7 +66,6 @@ public class MenuVendeur extends Application {
 
     @Override
     public void init() {
-
         //Connexion BD
         try {
             this.connexion = new ConnexionMySQL();
@@ -68,7 +73,6 @@ public class MenuVendeur extends Application {
         } catch (Exception e) {
             System.out.println("Erreur de connexion à la base : ");
         }
-
 
         //Ajout des boutons
         this.btnAjouter = new Button("Ajouter un livre");
@@ -79,14 +83,16 @@ public class MenuVendeur extends Application {
 
         //Bouton Home et Info
         this.boutonMaison = new Button();
-        Image imgMaison = new Image("file:../img/home.png");
+        this.boutonMaison.setId("maison");
+        Image imgMaison = new Image("file:./img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
 
         this.btnInfo = new Button();
-        Image imgInfo = new Image("file:../img/info.png");
+        this.btnInfo.setId("info");
+        Image imgInfo = new Image("file:./img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
@@ -101,6 +107,8 @@ public class MenuVendeur extends Application {
         this.btnDispo.setOnAction(controleur);
         this.btnTransfert.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
+        this.boutonMaison.setOnAction(controleur);
+
         
     }
 
@@ -116,7 +124,7 @@ public class MenuVendeur extends Application {
         //Banniere Haut de Page
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
 
@@ -140,6 +148,11 @@ public class MenuVendeur extends Application {
         BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
         Background backgroundFenetre = new Background(background);
         fenetre.setBackground(backgroundFenetre);
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        fenetre.setBackground(wpp);
 
         //Ajustement des boutons
         VBox boutons = new VBox(20);
@@ -156,7 +169,7 @@ public class MenuVendeur extends Application {
         return fenetre;
     }
 
-/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 // Page pour ajouter un livre
 public BorderPane afficherPageAjouterLivre() {
@@ -166,14 +179,21 @@ public BorderPane afficherPageAjouterLivre() {
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
     page.setBackground(backgroundPage);
+    Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        page.setBackground(wpp);
 
     //Mise en page
     VBox vbox = new VBox(5);
     vbox.setPadding(new Insets(20));
     vbox.setAlignment(Pos.CENTER);
     Label isbnLabel = new Label("ISBN :");
+    isbnLabel.setStyle("-fx-text-fill: white;");
     TextField isbnField = new TextField();
     Label qteLabel = new Label("Quantité :");
+    qteLabel.setStyle("-fx-text-fill: white;");
     TextField qteField = new TextField();
 
     //Bouton "Ajouter"
@@ -223,14 +243,21 @@ public BorderPane afficherPageMajQuantite() {
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
     page.setBackground(backgroundPage);
+    Image fond = new Image("file:./img/wp.jpg");
+    BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+    Background wpp = new Background(backgroundImage);
+    page.setBackground(wpp);
 
     //Mise en page
     VBox vbox = new VBox(5);
     vbox.setPadding(new Insets(20));
     vbox.setAlignment(Pos.CENTER);
     Label isbnLabel = new Label("ISBN :");
+    isbnLabel.setStyle("-fx-text-fill: white;");
     TextField isbnField = new TextField();
     Label qteLabel = new Label("Quantité à ajouter/retirer :");
+    qteLabel.setStyle("-fx-text-fill: white;");
     TextField qteField = new TextField();
 
     //Bouton "Mettre à jour"
@@ -280,14 +307,20 @@ public BorderPane afficherPageDispoLivres() {
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
     page.setBackground(backgroundPage);
+    Image fond = new Image("file:./img/wp.jpg");
+    BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+    Background wpp = new Background(backgroundImage);
+    page.setBackground(wpp);
 
     // Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
     Label titreLabel = new Label("Vérifier la disponibilité d'un livre");
-    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
     Label livreLabel = new Label("Titre du livre :");
+    livreLabel.setStyle("-fx-text-fill: white;");
     TextField livreField = new TextField();
     Button verifierBtn = new Button("Vérifier");
     Label resultatLabel = new Label();
@@ -330,18 +363,26 @@ public BorderPane afficherPageTransfertLivre() {
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
     page.setBackground(backgroundPage);
+    Image fond = new Image("file:./img/wp.jpg");
+    BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+    Background wpp = new Background(backgroundImage);
+    page.setBackground(wpp);
 
     // Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
     Label titreLabel = new Label("Transférer un livre vers un autre magasin");
-    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold ;-fx-text-fill: white;");
     Label isbnLabel = new Label("ISBN :");
+    isbnLabel.setStyle("-fx-text-fill: white;");
     TextField isbnField = new TextField();
     Label qteLabel = new Label("Quantité à transférer :");
+    qteLabel.setStyle("-fx-text-fill: white;");
     TextField qteField = new TextField();
     Label idMagLabel = new Label("ID du magasin de destination :");
+    idMagLabel.setStyle("-fx-text-fill: white;");
     TextField idMagField = new TextField();
 
     // Bouton pour transférer le livre
@@ -390,20 +431,29 @@ public BorderPane afficherPageCommandeClient() {
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
     page.setBackground(backgroundPage);
+    Image fond = new Image("file:./img/wp.jpg");
+    BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+    Background wpp = new Background(backgroundImage);
+    page.setBackground(wpp);
 
     //Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
     Label titreLabel = new Label("Passer une commande pour un client");
-    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    titreLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
     Label idClientLabel = new Label("ID du client :");
+    idClientLabel.setStyle("-fx-text-fill: white;");
     TextField idClientField = new TextField();
     Label enLigneLabel = new Label("Commande en ligne ?");
+    enLigneLabel.setStyle("-fx-text-fill: white;");
     TextField enLigneField = new TextField();
     Label typeLivraisonLabel = new Label("Type de livraison (M/C)");
+    typeLivraisonLabel.setStyle("-fx-text-fill: white;");
     TextField typeLivraisonField = new TextField();
     Label titresLabel = new Label("Livres a commander:");
+    titresLabel.setStyle("-fx-text-fill: white;");
     TextField titresField = new TextField();
     Button commanderBtn = new Button("Commander");
     Label resultatLabel = new Label();
@@ -470,6 +520,22 @@ private void showAlert(String titre, String message) {
     alert.setHeaderText(null);
     alert.setContentText(message);
     alert.showAndWait();    
+    }
+
+public Alert infoAlert() {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.getDialogPane().setPrefWidth(400);
+    alert.getDialogPane().setPrefHeight(400);
+    alert.setTitle("Information");
+    alert.setHeaderText("Aide");
+    alert.setContentText("Bienvenue dans le menu vendeur de Livre Express !\n\n"
+            + "1. Ajouter un livre : Ajoutez livre au stock du magasin.\n\n"
+            + "2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n\n"
+            + "3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n\n"
+            + "4. Transférer un livre : Transférez un livre vers un autre magasin.\n\n"
+            + "5. Passer commande pour un client : Passez une commande pour un client en magasin.\n\n"
+            + "Pour toute assistance, veuillez contacter le support.");
+        return alert;
     }
 
 // demarrer application
