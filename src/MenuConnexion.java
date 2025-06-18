@@ -1,8 +1,6 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.w3c.dom.Text;
-
 import javafx.scene.text.*;
 import javafx.application.Platform;
 import javafx.application.Application;
@@ -18,6 +16,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class MenuConnexion extends Application {
     // Déclaration des composants en attributs de classe
@@ -82,9 +82,10 @@ public class MenuConnexion extends Application {
 
     @Override
     public void start(Stage stage) {
-        Label typeLabel = new Label("Type de compte");
-        Label idLabel = new Label("ID");
-        Label mdpLabel = new Label("Mot de passe:");
+
+        typeCompte.setPromptText("Sélection type de compte");
+        idField.setPromptText("Identifiant");
+        mdpField.setPromptText("Mot de passe");
 
         // Layouts pour organiser les éléments
         GridPane grid = new GridPane();
@@ -93,13 +94,8 @@ public class MenuConnexion extends Application {
         grid.setPadding(new Insets(40, 40, 40, 40));
 
         // Placement des éléments
-        grid.add(typeLabel, 0, 0);
         grid.add(typeCompte, 1, 0);
-
-        grid.add(idLabel, 0, 1);
         grid.add(idField, 1, 1);
-
-        grid.add(mdpLabel, 0, 2);
         grid.add(mdpField, 1, 2);
 
         grid.add(this.connexionBtn, 1, 3);
