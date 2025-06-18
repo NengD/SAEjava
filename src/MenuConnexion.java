@@ -62,7 +62,7 @@ public class MenuConnexion extends Application {
         });
 
         this.inscription = new Button("Inscription");
-        this.inscription.setOnAction(new ControleurInscription());
+        this.inscription.setOnAction(new ControleurInscription(this));
     }
 
     public Pane titre() {
