@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 
 public class MenuAdministrateur extends Application {
 
@@ -44,6 +46,16 @@ public class MenuAdministrateur extends Application {
     public void setContexte(ConnexionMySQL connexionMySQL, Administrateur admin) {
         this.connexion = connexionMySQL;
         this.admin = admin;
+    }
+    public void fadeOut(Button boutton, Runnable action) {
+        FadeTransition ft = new FadeTransition(Duration.millis(400), boutton);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setOnFinished(e -> {
+            boutton.setOpacity(1.0); // reset 
+            action.run();
+        });
+        ft.play();
     }
 
     @Override
