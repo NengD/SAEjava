@@ -246,7 +246,7 @@ public class Administrateur {
                 res += String.format("- %s : %.2f €\n", nomMag, ca);
                 caTotal += ca;
             }
-            res += String.format("Chiffre d'affaires total : %.2f €\n", caTotal);
+            res += String.format("\nChiffre d'affaires total : %.2f €\n", caTotal);
             rs.close();
             ps.close();
         } catch (SQLException e) {
@@ -290,8 +290,10 @@ public class Administrateur {
      * Affiche les statistiques principales : chiffre d'affaires et bestseller.
      */
     public String consulterStatisques() {
-        String res ="=== Statistiques ===\n";
+        String res ="Statistiques:           \n\n";
+        res += "Chiffre d'affaire par magasin\n";
         res += afficherChiffreAffaires();
+        res+="\n";
         res += bestseller();
         return res;
     }

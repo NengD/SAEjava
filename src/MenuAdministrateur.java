@@ -14,7 +14,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
-
 import java.util.List;
 import java.util.Arrays;
 import java.io.File;
@@ -109,10 +108,10 @@ public class MenuAdministrateur extends Application {
     public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
-        Text titre = new Text("Menu Administrateur");
+        Text titre = new Text("Menu Admin");
         titre.setFont(Font.font("Arial", 50));
         HBox boiteTitre = new HBox();
         boiteTitre.setSpacing(10);
@@ -433,11 +432,17 @@ public class MenuAdministrateur extends Application {
     }
 
     public Alert info() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                "Vous ếtes sur la page Administrateur, Vous pouvez gérer la base de donnèes et l'ensemble des magasins. Les différents boutons vous permette de réaliser plusieurs actions.");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
-        alert.getDialogPane().setPrefSize(500, 200);
+        alert.getDialogPane().setPrefSize(500, 350);
         alert.setHeaderText("Aide");
+        alert.setContentText("Bienvenue dans le menu Adminisitrateur de Livre Express !\n\n"
+               + "1. Consulter les Statistiques: Affiche le CA de chaque magasins et le livre le plus vendu parmis tous les magasins.\n"
+               + "2. Creer un Vendeur : Permet de creer un compte vendeur.\n"
+               + "3. Creer une Librairie : Permet de creer un nouveau magasin.\n"
+               + "4. Creer un Livre : Permet de creer un nouveau livre.\n"
+               + "5. Transférer un Livre : Permet de transférer un livre d'un magasin à un autre.\n\n"
+               + "Pour toute assistance, veuillez contacter le support.");
         return alert;
     }
 

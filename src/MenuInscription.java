@@ -24,6 +24,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.geometry.Pos;
 
+import javafx.scene.control.TextField;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import java.util.List;
+import java.util.Arrays;
+import java.io.File;
+import java.util.ArrayList;
+
+
 public class MenuInscription extends Application {
 
     private ConnexionMySQL connexionSQL;
@@ -78,10 +100,17 @@ public class MenuInscription extends Application {
     public Pane titre(){
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
+
         BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
         Text titre = new Text("Menu Client");
+
+        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
+        Background backgroundTitre = new Background(background);
+        banniere.setBackground(backgroundTitre);
+        Text titre = new Text("Inscription Client");
+
         titre.setFont(Font.font("Arial", 50));
         HBox boiteTitre = new HBox();
         boiteTitre.setSpacing(10);
@@ -94,6 +123,14 @@ public class MenuInscription extends Application {
 
     public BorderPane pageInscription() {
         BorderPane res = new BorderPane();
+
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+
         TextField nomC = new TextField();
         nomC.setPromptText("Nom de famille");
         TextField prenomC = new TextField();
