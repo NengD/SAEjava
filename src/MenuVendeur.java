@@ -474,20 +474,15 @@ private void showAlert(String titre, String message) {
     alert.setContentText(message);
     alert.showAndWait();    
     }
-
+    
+// Afficher Alerte d'information
 public Alert infoAlert() {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.getDialogPane().setPrefWidth(400);
     alert.getDialogPane().setPrefHeight(400);
     alert.setTitle("Information");
     alert.setHeaderText("Aide");
-    alert.setContentText("Bienvenue dans le menu vendeur de Livre Express !\n\n"
-            + "1. Ajouter un livre : Ajoutez livre au stock du magasin.\n\n"
-            + "2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n\n"
-            + "3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n\n"
-            + "4. Transférer un livre : Transférez un livre vers un autre magasin.\n\n"
-            + "5. Passer commande pour un client : Passez une commande pour un client en magasin.\n\n"
-            + "Pour toute assistance, veuillez contacter le support.");
+    alert.setContentText("Bienvenue dans le menu vendeur de Livre Express !\n\n 1. Ajouter un livre : Ajoutez livre au stock du magasin.\n\n 2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n\n 3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n\n 4. Transférer un livre : Transférez un livre vers un autre magasin.\n\n 5. Passer commande pour un client : Passez une commande pour un client en magasin.\n\n Pour toute assistance, veuillez contacter le support.");
         return alert;
     }
 
