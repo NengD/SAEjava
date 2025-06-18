@@ -79,6 +79,7 @@ public class MenuVendeur extends Application {
 
         //Bouton Home et Info
         this.boutonMaison = new Button();
+        this.boutonMaison.setId("maison");
         Image imgMaison = new Image("file:../img/home.png");
         ImageView viewMaison = new ImageView(imgMaison);
         viewMaison.setFitWidth(32);
@@ -86,6 +87,7 @@ public class MenuVendeur extends Application {
         this.boutonMaison.setGraphic(viewMaison);
 
         this.btnInfo = new Button();
+        this.btnInfo.setId("info");
         Image imgInfo = new Image("file:../img/info.png");
         ImageView viewInfo = new ImageView(imgInfo);
         viewInfo.setFitWidth(32);
@@ -101,6 +103,7 @@ public class MenuVendeur extends Application {
         this.btnDispo.setOnAction(controleur);
         this.btnTransfert.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
+        this.boutonMaison.setOnAction(controleur);
         
     }
 
@@ -300,7 +303,7 @@ public BorderPane afficherPageDispoLivres() {
             
         }
         boolean dispo = vendeur.livreDisponible(titreLivre);
-        if (dispo == true) {
+        if (dispo) {
             resultatLabel.setText("Le livre \"" + titreLivre + "\" est disponible en stock.");
         } else {
             resultatLabel.setText("Le livre \"" + titreLivre + "\" n'est pas disponible en stock.");
@@ -471,6 +474,23 @@ private void showAlert(String titre, String message) {
     alert.setContentText(message);
     alert.showAndWait();    
     }
+
+public Alert infoAlert() {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.getDialogPane().setPrefWidth(400);
+    alert.getDialogPane().setPrefHeight(400);
+    alert.setTitle("Information");
+    alert.setHeaderText("Aide");
+    alert.setContentText("Bienvenue dans le menu vendeur de Livre Express !\n\n"
+            + "1. Ajouter un livre : Ajoutez livre au stock du magasin.\n\n"
+            + "2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n\n"
+            + "3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n\n"
+            + "4. Transférer un livre : Transférez un livre vers un autre magasin.\n\n"
+            + "5. Passer commande pour un client : Passez une commande pour un client en magasin.\n\n"
+            + "Pour toute assistance, veuillez contacter le support.");
+        return alert;
+    }
+
 
 // demarrer application
 @Override

@@ -1,6 +1,7 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 
 public class ControleurBoutonVendeur implements EventHandler<ActionEvent> {
@@ -35,5 +36,18 @@ Button button = (Button) (event.getSource());
         this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageCommandeClient());
         }
 
+    if ("maison".equals(button.getId())) {
+        Stage stage = (Stage) button.getScene().getWindow();
+        stage.close();
+        MenuConnexion menuConnexion = new MenuConnexion();
+        menuConnexion.init();
+        Stage stageConnexion = new Stage();
+        menuConnexion.start(stageConnexion);
+            
     }
+
+    if ("info".equals(button.getId())) {
+        this.MenuVendeur.infoAlert().showAndWait();
+    }
+}
 }
