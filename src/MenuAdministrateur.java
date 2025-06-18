@@ -164,7 +164,7 @@ public class MenuAdministrateur extends Application {
         statsArea.setWrapText(true);
         statsArea.setText(admin.consulterStatisques());
 
-        centre.getChildren().add(btnConsulterStat);
+        centre.getChildren().add(statsArea);
         res.setCenter(centre);
 
         return res;
