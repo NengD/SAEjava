@@ -136,10 +136,10 @@ public class MenuInscription extends Application {
             try (PreparedStatement stmt = connexionSQL.prepareStatement(sql)) {
                 int id = -1;
                 PreparedStatement psId = connexionSQL.prepareStatement(
-                    "SELECT COALESCE(MAX(numcom), 0) + 1 AS nextNum FROM COMMANDE");
+                    "SELECT COALESCE(MAX(idcli), 0) + 1 AS nextId FROM CLIENT");
                 ResultSet rsId = psId.executeQuery();
                 if (rsId.next()) {
-                    id = rsId.getInt("nextNum");
+                    id = rsId.getInt("nextId");
                 }
                 rsId.close();
                 psId.close();
