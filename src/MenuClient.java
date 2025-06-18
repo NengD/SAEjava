@@ -107,13 +107,11 @@ public class MenuClient extends Application {
 
     public BorderPane pageMenu() {
         BorderPane res = new BorderPane();
-        
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
-
         this.btnCatalogue.setPrefWidth(200);
         this.btnCommande.setPrefWidth(200);
         this.btnRecommande.setPrefWidth(200);
@@ -127,16 +125,11 @@ public class MenuClient extends Application {
 
     public BorderPane pageCatalogue() {
         BorderPane res = new BorderPane();
-        
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
-        
-        Label label = new Label("Consulter le catalogue");
-        VBox vboxCatalogue = new VBox();
-        vboxCatalogue.setAlignment(Pos.CENTER);
         StringBuilder catalogue = new StringBuilder();
         for (Livre l : Client.consulterCatalogue(this.connexionSQL.getConnection())) {
             String isbn = l.getIsbn();
@@ -149,19 +142,10 @@ public class MenuClient extends Application {
         textCatalogue.setEditable(false);
         textCatalogue.setWrapText(false);
         textCatalogue.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-background-color: #bec3b9; -fx-text-fill: black;");
-        textCatalogue.setMaxWidth(Double.MAX_VALUE);
-        textCatalogue.setMaxHeight(Double.MAX_VALUE);
+        textCatalogue.setPrefColumnCount(40);
+        textCatalogue.setPrefRowCount(catalogue.toString().split("\n").length);
 
-
-        VBox.setVgrow(textCatalogue, Priority.ALWAYS);
-        vboxCatalogue.getChildren().add(textCatalogue);
-
-        ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setPrefViewportHeight(600);
-
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
+        VBox vbox = new VBox(15, btnRetour, textCatalogue);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
         
@@ -171,13 +155,11 @@ public class MenuClient extends Application {
 
     public BorderPane pagePasserCommande() {
         BorderPane res = new BorderPane();
-        
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
-        
         Label label = new Label("Passer une commande");
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
@@ -263,7 +245,6 @@ public class MenuClient extends Application {
 
     public BorderPane pageRecommande() {
         BorderPane res = new BorderPane();
-
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(
             fond,
@@ -274,7 +255,6 @@ public class MenuClient extends Application {
         );
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
-        Label label = new Label("On vous recommande");
         StringBuilder recommandations = new StringBuilder();
         for (String titre : client.onVousRecommande()) {
             recommandations.append("- ").append(titre).append("\n");
@@ -282,16 +262,11 @@ public class MenuClient extends Application {
         TextArea textRecommande = new TextArea(recommandations.toString());
         textRecommande.setEditable(false);
         textRecommande.setWrapText(true);
-        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #f5f5dc; -fx-text-fill: black;");
+        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-text-fill: black;");
         textRecommande.setPrefColumnCount(40);
         textRecommande.setPrefRowCount(recommandations.toString().split("\n").length);
 
-        ScrollPane scrollPane = new ScrollPane(textRecommande);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPannable(true);
-        scrollPane.setStyle("-fx-background: #f5f5dc; -fx-background-color: #f5f5dc;");
-
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
+        VBox vbox = new VBox(15, btnRetour, textRecommande);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
 
