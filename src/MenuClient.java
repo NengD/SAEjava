@@ -14,9 +14,12 @@ import javafx.scene.text.TextAlignment;
 import java.util.List;
 import java.util.Arrays;
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.control.ComboBox;
 
 
 
@@ -135,7 +138,6 @@ public class MenuClient extends Application {
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
         
-        Label label = new Label("Consulter le catalogue");
         VBox vboxCatalogue = new VBox();
         vboxCatalogue.setAlignment(Pos.CENTER);
 
@@ -165,7 +167,7 @@ public class MenuClient extends Application {
         textCatalogue.setPrefColumnCount(40);
         textCatalogue.setPrefRowCount(catalogue.toString().split("\n").length);
 
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane); // <-- gardez cette ligne seulement
+        VBox vbox = new VBox(15, btnRetour, scrollPane);
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -184,36 +186,41 @@ public class MenuClient extends Application {
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
 
-        Label label = new Label("Passer une commande");
-        TextField tfEnLigne = new TextField();
-        tfEnLigne.setPromptText("En ligne ? (true/false)");
-        TextField tfTypeLivraison = new TextField();
-        tfTypeLivraison.setPromptText("Type de livraison (M/C)");
+        ComboBox<String> CbEnLigne = new ComboBox<>();
+        CbEnLigne.getItems().addAll("true", "false");
+        CbEnLigne.setPrefWidth(500);
+        CbEnLigne.setPromptText("Êtes-vous en ligne ? (true/false)");
+        ComboBox<String> cbTypeLivraison = new ComboBox<>();
+        cbTypeLivraison.getItems().addAll("M", "C");
+        cbTypeLivraison.setPrefWidth(500);
+        cbTypeLivraison.setPromptText("Type de livraison (M pour magasin, C pour colis)");
         TextField tfLivres = new TextField();
         tfLivres.setPromptText("Liste des titres des livres à commander (séparés par ,)");
+        tfLivres.setPrefWidth(500);
         TextField tfIdMagasin = new TextField();
         tfIdMagasin.setPromptText("ID magasin");
-         Button btnValider = new Button("Valider la commande");
+        tfIdMagasin.setPrefWidth(500);
+        Button btnValider = new Button("Valider la commande");
         btnValider.setOnAction(e -> {
             try {
-                String enLigne = tfEnLigne.getText().trim();
+                String enLigne = CbEnLigne.getValue();
                 if (!enLigne.equalsIgnoreCase("true") && !enLigne.equalsIgnoreCase("false")) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.getDialogPane().setPrefWidth(400);
                     alert.getDialogPane().setPrefHeight(400);
                     alert.setTitle("Information");
-                    alert.setContentText("Veuillez entrer 'true' ou 'false' pour l'état en ligne.");
+                    alert.setContentText("Veuillez sélectionnez 'true' ou 'false' pour l'état en ligne.");
                     alert.showAndWait();
                     return;
                 }
-                boolean isEnLigne = Boolean.parseBoolean(enLigne);
-                String typeLivraison = tfTypeLivraison.getText().trim();
+                boolean isEnLigne = "true".equals(CbEnLigne.getValue());
+                String typeLivraison = cbTypeLivraison.getValue();
                 if (typeLivraison.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.getDialogPane().setPrefWidth(400);
                     alert.getDialogPane().setPrefHeight(400);
                     alert.setTitle("Information");
-                    alert.setContentText("Veuillez entrer le type de livraison (M pour magasin, C pour colis).");
+                    alert.setContentText("Veuillez sélectionnez le type de livraison (M pour magasin, C pour colis).");
                     alert.showAndWait();
                     return;
                 }
@@ -229,6 +236,30 @@ public class MenuClient extends Application {
                     return;
                 }
                 List<String> listTitres = Arrays.asList(titres.split(","));
+                for (String titre : listTitres) {
+                    String isbn = null;
+                    PreparedStatement psLivre = connexionSQL.prepareStatement(
+                        "SELECT isbn FROM LIVRE WHERE titre = ?");
+                    psLivre.setString(1, titre);
+                    ResultSet rsLivre = psLivre.executeQuery();
+                    if (rsLivre.next()) {
+                        isbn = rsLivre.getString("isbn");
+                    }
+                    rsLivre.close();
+                    psLivre.close();
+                    if (isbn == null) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().setPrefWidth(400);
+                        alert.getDialogPane().setPrefHeight(400);
+                        alert.setTitle("Information");
+                        alert.setContentText("Le titre '" + titre + "' n'existe pas dans le catalogue.");
+                        alert.showAndWait();
+                        return;
+                    }
+                }
+
+
+
                 String idMagasinStr = tfIdMagasin.getText().trim();
                 int idMagasin = Integer.parseInt(idMagasinStr);
                 this.client.passerCommande(isEnLigne, typeLivraisonChar, listTitres, idMagasin);
@@ -237,8 +268,6 @@ public class MenuClient extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText("Votre commande a été passée avec succès !");
                 alert.showAndWait();
-                tfEnLigne.clear();
-                tfTypeLivraison.clear();
                 tfLivres.clear();
                 tfIdMagasin.clear();
             } catch (NumberFormatException ex) {
@@ -258,7 +287,7 @@ public class MenuClient extends Application {
             }
     });
 
-        VBox vbox = new VBox(10, btnRetour, label, tfEnLigne, tfTypeLivraison, tfLivres, tfIdMagasin, btnValider);
+        VBox vbox = new VBox(10, btnRetour, CbEnLigne, cbTypeLivraison, tfLivres, tfIdMagasin, btnValider);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
 
@@ -280,8 +309,6 @@ public class MenuClient extends Application {
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
 
-        Label label = new Label("On vous recommande");
-
         StringBuilder recommandations = new StringBuilder();
         for (String titre : client.onVousRecommande()) {
             recommandations.append("- ").append(titre).append("\n");
@@ -299,7 +326,7 @@ public class MenuClient extends Application {
         scrollPane.setPannable(true);
         scrollPane.setStyle("-fx-background: #f5f5dc; -fx-background-color: #f5f5dc;");
 
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane); // <-- gardez cette ligne seulement
+        VBox vbox = new VBox(15, btnRetour, scrollPane);
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
