@@ -36,6 +36,9 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundSize;
 
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+
 public class MenuVendeur extends Application {
 
     private Button btnAjouter;
@@ -64,6 +67,17 @@ public class MenuVendeur extends Application {
         return this.root;
     }
 
+    public void fadeOut(Button boutton, Runnable action) {
+        FadeTransition ft = new FadeTransition(Duration.millis(400), boutton);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setOnFinished(e -> {
+            boutton.setOpacity(1.0); // reset 
+            action.run();
+        });
+        ft.play();
+    }
+    
     @Override
     public void init() {
         //Connexion BD
