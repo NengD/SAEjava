@@ -107,9 +107,12 @@ public class MenuClient extends Application {
 
     public BorderPane pageMenu() {
         BorderPane res = new BorderPane();
-        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
-        Background backgroundMenu = new Background(background);
-        res.setBackground(backgroundMenu);
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
 
         this.btnCatalogue.setPrefWidth(200);
         this.btnCommande.setPrefWidth(200);
@@ -124,9 +127,13 @@ public class MenuClient extends Application {
 
     public BorderPane pageCatalogue() {
         BorderPane res = new BorderPane();
-        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
-        Background backgroundMenu = new Background(background);
-        res.setBackground(backgroundMenu);
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+        
         Label label = new Label("Consulter le catalogue");
         VBox vboxCatalogue = new VBox();
         vboxCatalogue.setAlignment(Pos.CENTER);
@@ -160,9 +167,13 @@ public class MenuClient extends Application {
 
     public BorderPane pagePasserCommande() {
         BorderPane res = new BorderPane();
-        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
-        Background backgroundMenu = new Background(background);
-        res.setBackground(backgroundMenu);
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+        
         Label label = new Label("Passer une commande");
         TextField tfEnLigne = new TextField();
         tfEnLigne.setPromptText("En ligne ? (true/false)");
@@ -222,11 +233,15 @@ public class MenuClient extends Application {
 
 
     public BorderPane pageRecommande() {
-        BorderPane rootPane = new BorderPane();
-        BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
-        Background backgroundMenu = new Background(background);
-        rootPane.setBackground(backgroundMenu);
-        Label label = new Label("On vous recommande");
+        BorderPane res = new BorderPane();
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+        
+        Label label = new Label("On vous recommande");   
         VBox vboxRecommande = new VBox();
         vboxRecommande.setAlignment(Pos.CENTER);
         String recomande = "";
@@ -240,8 +255,8 @@ public class MenuClient extends Application {
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
     
-        rootPane.setCenter(vbox);
-        return rootPane;
+        res.setCenter(vbox);
+        return res;
    }
 
    public Alert infoAlert() {
