@@ -1,34 +1,5 @@
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import javafx.geometry.Pos;
-
-import javafx.scene.control.TextField;
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -36,15 +7,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar.ButtonData;
-import java.util.List;
-import java.util.Arrays;
-import java.io.File;
-import java.util.ArrayList;
-
+import javafx.stage.Stage;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class MenuInscription extends Application {
 
@@ -58,7 +26,7 @@ public class MenuInscription extends Application {
     }
 
     @Override
-    public void init(){
+    public void init() {
         try {
             this.connexionSQL = new ConnexionMySQL();
             this.connexionSQL.connecter();
@@ -72,6 +40,7 @@ public class MenuInscription extends Application {
         viewMaison.setFitWidth(32);
         viewMaison.setFitHeight(32);
         this.boutonMaison.setGraphic(viewMaison);
+
         this.boutonInfo = new Button();
         this.boutonInfo.setId("info");
         Image imgInfo = new Image("file:./img/info.png");
@@ -79,55 +48,51 @@ public class MenuInscription extends Application {
         viewInfo.setFitWidth(32);
         viewInfo.setFitHeight(32);
         this.boutonInfo.setGraphic(viewInfo);
+
         ControleurBoutonInscription controleur = new ControleurBoutonInscription(this);
         this.boutonMaison.setOnAction(controleur);
+        this.boutonInfo.setOnAction(controleur);
     }
 
-    private Scene lascene(){
+    private Scene lascene() {
         root = new BorderPane();
         root.setTop(titre());
         root.setCenter(pageInscription());
-        return new Scene(root, 600, 400);  
+        return new Scene(root, 600, 400);
     }
 
-    
+    @Override
     public void start(Stage stage) {
-        stage.setTitle("Livre Express - Menu Client");
+        stage.setTitle("Livre Express - Inscription");
         stage.setScene(lascene());
         stage.show();
     }
 
-    public Pane titre(){
+    public Pane titre() {
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-
-        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
-        Background backgroundTitre = new Background(background);
-        banniere.setBackground(backgroundTitre);
-        Text titre = new Text("Menu Client");
-
-        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
-        Background backgroundTitre = new Background(background);
-        banniere.setBackground(backgroundTitre);
-        Text titre = new Text("Inscription Client");
-
-        titre.setFont(Font.font("Arial", 50));
+        BackgroundFill bgFill = new BackgroundFill(Color.web("#bec3b9"), null, null);
+        Background bgTitre = new Background(bgFill);
+        banniere.setBackground(bgTitre);
+        Text txtTitre = new Text("Inscription Client");
+        txtTitre.setFont(Font.font("Arial", 50));
         HBox boiteTitre = new HBox();
         boiteTitre.setSpacing(10);
         boiteTitre.setAlignment(Pos.CENTER);
-        boiteTitre.getChildren().addAll(this.boutonMaison,this.boutonInfo);
+        boiteTitre.getChildren().addAll(this.boutonMaison, this.boutonInfo);
         banniere.setRight(boiteTitre);
-        banniere.setLeft(titre);
+        banniere.setLeft(txtTitre);
         return banniere;
     }
 
     public BorderPane pageInscription() {
         BorderPane res = new BorderPane();
 
-        
         Image fond = new Image("file:./img/wp.jpg");
-        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        BackgroundImage backgroundImage = new BackgroundImage(
+            fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+        );
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
 
@@ -143,14 +108,15 @@ public class MenuInscription extends Application {
         ville.setPromptText("Ville");
         PasswordField mdp = new PasswordField();
         mdp.setPromptText("Mot de passe");
-        
+
         VBox centre = new VBox();
         centre.setPadding(new Insets(10));
         centre.setAlignment(Pos.CENTER);
         centre.setSpacing(10);
         centre.getChildren().addAll(nomC, prenomC, adress, codePostal, ville, mdp);
-        Button btnSIncrire = new Button("S'inscire");
-        btnSIncrire.setOnAction(event -> {
+
+        Button btnSInscrire = new Button("S'inscrire");
+        btnSInscrire.setOnAction(event -> {
             String nom = nomC.getText();
             String prenom = prenomC.getText();
             String adresse = adress.getText();
@@ -158,13 +124,13 @@ public class MenuInscription extends Application {
             String villeStr = ville.getText();
             String motDePasse = mdp.getText();
             if (nom.isEmpty() || prenom.isEmpty() || adresse.isEmpty() || cp.isEmpty() || villeStr.isEmpty() || motDePasse.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.getDialogPane().setPrefWidth(400);
-            alert.getDialogPane().setPrefHeight(400);
-            alert.setTitle("Information");
-            alert.setContentText("Veuillez remplir tous les champs avant de vous inscrire.");
-            alert.showAndWait();
-            return;
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Information");
+                alert.setContentText("Veuillez remplir tous les champs avant de vous inscrire.");
+                alert.showAndWait();
+                return;
             }
             String sql = "INSERT INTO CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli, mdp) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = connexionSQL.prepareStatement(sql)) {
@@ -191,7 +157,7 @@ public class MenuInscription extends Application {
                 alert.setTitle("Information");
                 alert.setContentText("Inscription réussie !\n\n" +
                         "Vous pouvez maintenant vous connecter avec votre compte.\n" +
-                        "Veuillez vous souvenir de vos identifiants et de votre ID qui est." + id + "\n\n" +
+                        "Veuillez vous souvenir de vos identifiants et de votre ID qui est " + id + "\n\n" +
                         "Si vous avez des questions, n'hésitez pas à nous contacter.\n\n" +
                         "Merci de votre confiance !");
                 alert.showAndWait();
@@ -205,14 +171,12 @@ public class MenuInscription extends Application {
                         "Veuillez vérifier vos informations et réessayer.\n\n" +
                         "Si le problème persiste, veuillez contacter notre support.");
                 alert.showAndWait();
-                }
+            }
         });
-        centre.getChildren().add(btnSIncrire);
+        centre.getChildren().add(btnSInscrire);
         res.setCenter(centre);
         return res;
     }
-
-        
 
     public Alert infoAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -223,13 +187,10 @@ public class MenuInscription extends Application {
         alert.setContentText("Bienvenue dans le menu inscription de Livre Express !\n\n" +
                 "Vous pouvez créer votre compte client.\n\n" +
                 "Pour toute assistance, veuillez contacter notre support.");
-        
         return alert;
     }
-
 
     public static void main(String[] args) {
         launch(args);
     }
-
-}   
+}

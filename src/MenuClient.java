@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
-
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 
 
@@ -153,7 +154,6 @@ public class MenuClient extends Application {
         textCatalogue.setMaxWidth(Double.MAX_VALUE);
         textCatalogue.setMaxHeight(Double.MAX_VALUE);
 
-
         VBox.setVgrow(textCatalogue, Priority.ALWAYS);
         vboxCatalogue.getChildren().add(textCatalogue);
 
@@ -162,12 +162,10 @@ public class MenuClient extends Application {
         scrollPane.setFitToHeight(true);
         scrollPane.setPrefViewportHeight(600);
 
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
-
         textCatalogue.setPrefColumnCount(40);
         textCatalogue.setPrefRowCount(catalogue.toString().split("\n").length);
 
-        VBox vbox = new VBox(15, btnRetour, textCatalogue);
+        VBox vbox = new VBox(15, btnRetour, label, scrollPane); // <-- gardez cette ligne seulement
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -175,6 +173,7 @@ public class MenuClient extends Application {
         res.setCenter(vbox);
         return res;
     }
+
 
     public BorderPane pagePasserCommande() {
         BorderPane res = new BorderPane();
@@ -291,7 +290,7 @@ public class MenuClient extends Application {
         textRecommande.setEditable(false);
         textRecommande.setWrapText(true);
 
-        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #f5f5dc; -fx-text-fill: black;");
+        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-text-fill: black;");
         textRecommande.setPrefColumnCount(40);
         textRecommande.setPrefRowCount(recommandations.toString().split("\n").length);
 
@@ -300,13 +299,7 @@ public class MenuClient extends Application {
         scrollPane.setPannable(true);
         scrollPane.setStyle("-fx-background: #f5f5dc; -fx-background-color: #f5f5dc;");
 
-        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
-
-        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-text-fill: black;");
-        textRecommande.setPrefColumnCount(40);
-        textRecommande.setPrefRowCount(recommandations.toString().split("\n").length);
-
-        VBox vbox = new VBox(15, btnRetour, textRecommande);
+        VBox vbox = new VBox(15, btnRetour, label, scrollPane); // <-- gardez cette ligne seulement
 
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -314,7 +307,6 @@ public class MenuClient extends Application {
         res.setCenter(vbox);
         return res;
     }
-
 
    public Alert infoAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
