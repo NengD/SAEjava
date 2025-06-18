@@ -91,7 +91,7 @@ public class MenuClient extends Application {
     public Pane titre(){
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
-        BackgroundFill background = new BackgroundFill(Color.web("#a76726"), null, null);
+        BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
         Text titre = new Text("Menu Client");
@@ -148,14 +148,18 @@ public class MenuClient extends Application {
         TextArea textCatalogue = new TextArea(catalogue.toString());
         textCatalogue.setEditable(false);
         textCatalogue.setWrapText(false);
-        textCatalogue.setStyle("-fx-font-family: 'monospaced';-fx-control-inner-background: #d2d1ad;-fx-background-color: #d2d1ad;-fx-text-fill: black;");
-        vboxCatalogue.getChildren().add(textCatalogue);
+        textCatalogue.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #bec3b9; -fx-background-color: #bec3b9; -fx-text-fill: black;");
+        textCatalogue.setMaxWidth(Double.MAX_VALUE);
+        textCatalogue.setMaxHeight(Double.MAX_VALUE);
 
+
+        VBox.setVgrow(textCatalogue, Priority.ALWAYS);
+        vboxCatalogue.getChildren().add(textCatalogue);
 
         ScrollPane scrollPane = new ScrollPane(vboxCatalogue);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
         scrollPane.setPrefViewportHeight(600);
-        scrollPane.setStyle("-fx-background: #d2d1ad; -fx-background-color: #d2d1ad;");
 
         VBox vbox = new VBox(15, btnRetour, label, scrollPane);
         vbox.setAlignment(Pos.CENTER);
@@ -188,19 +192,34 @@ public class MenuClient extends Application {
             try {
                 String enLigne = tfEnLigne.getText().trim();
                 if (!enLigne.equalsIgnoreCase("true") && !enLigne.equalsIgnoreCase("false")) {
-                    System.out.println("Erreur : saisie 'En ligne' incorrecte");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.getDialogPane().setPrefWidth(400);
+                    alert.getDialogPane().setPrefHeight(400);
+                    alert.setTitle("Information");
+                    alert.setContentText("Veuillez entrer 'true' ou 'false' pour l'état en ligne.");
+                    alert.showAndWait();
                     return;
                 }
                 boolean isEnLigne = Boolean.parseBoolean(enLigne);
                 String typeLivraison = tfTypeLivraison.getText().trim();
                 if (typeLivraison.isEmpty()) {
-                    System.out.println("Erreur : type de livraison vide");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.getDialogPane().setPrefWidth(400);
+                    alert.getDialogPane().setPrefHeight(400);
+                    alert.setTitle("Information");
+                    alert.setContentText("Veuillez entrer le type de livraison (M pour magasin, C pour colis).");
+                    alert.showAndWait();
                     return;
                 }
                 char typeLivraisonChar = typeLivraison.charAt(0);
                 String titres = tfLivres.getText().trim();
                 if (titres.isEmpty()) {
-                    System.out.println("Erreur : liste de livres vide");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.getDialogPane().setPrefWidth(400);
+                    alert.getDialogPane().setPrefHeight(400);
+                    alert.setTitle("Information");
+                    alert.setContentText("Veuillez entrer les titres des livres à commander, séparés par des virgules.");
+                    alert.showAndWait();
                     return;
                 }
                 List<String> listTitres = Arrays.asList(titres.split(","));
@@ -217,9 +236,19 @@ public class MenuClient extends Application {
                 tfLivres.clear();
                 tfIdMagasin.clear();
             } catch (NumberFormatException ex) {
-                System.out.println("Erreur : ID magasin non valide");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Information");
+                alert.setContentText("Veuillez entrer un ID magasin valide (un nombre entier).");
+                alert.showAndWait();
             } catch (Exception ex) {
-                System.out.println("Erreur lors du passage de la commande : " + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.getDialogPane().setPrefWidth(400);
+                alert.getDialogPane().setPrefHeight(400);
+                alert.setTitle("Erreur");
+                alert.setContentText("Une erreur est survenue lors de la commande : " + ex.getMessage());
+                alert.showAndWait();
             }
     });
 
@@ -234,30 +263,42 @@ public class MenuClient extends Application {
 
     public BorderPane pageRecommande() {
         BorderPane res = new BorderPane();
-        
+
         Image fond = new Image("file:./img/wp.jpg");
-        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        BackgroundImage backgroundImage = new BackgroundImage(
+            fond,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+        );
         Background wpp = new Background(backgroundImage);
         res.setBackground(wpp);
-        
-        Label label = new Label("On vous recommande");   
-        VBox vboxRecommande = new VBox();
-        vboxRecommande.setAlignment(Pos.CENTER);
-        String recomande = "";
+        Label label = new Label("On vous recommande");
+        StringBuilder recommandations = new StringBuilder();
         for (String titre : client.onVousRecommande()) {
-            recomande += "- " + titre + "\n";
+            recommandations.append("- ").append(titre).append("\n");
         }
-        Text textRecommande = new Text(recomande);
-        vboxRecommande.getChildren().add(textRecommande);
+        TextArea textRecommande = new TextArea(recommandations.toString());
+        textRecommande.setEditable(false);
+        textRecommande.setWrapText(true);
+        textRecommande.setStyle("-fx-font-family: 'monospaced'; -fx-control-inner-background: #f5f5dc; -fx-text-fill: black;");
+        textRecommande.setPrefColumnCount(40);
+        textRecommande.setPrefRowCount(recommandations.toString().split("\n").length);
 
-        VBox vbox = new VBox(15, btnRetour, label, vboxRecommande);
+        ScrollPane scrollPane = new ScrollPane(textRecommande);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setStyle("-fx-background: #f5f5dc; -fx-background-color: #f5f5dc;");
+
+        VBox vbox = new VBox(15, btnRetour, label, scrollPane);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
-    
+
         res.setCenter(vbox);
         return res;
-   }
+    }
+
 
    public Alert infoAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
