@@ -93,7 +93,10 @@ public class MenuAdministrateur extends Application {
 
         this.retour = new Button("Retour");
         this.retour.setOnAction(controleur);
+
+        
     }
+
 
     public BorderPane getRoot() {
         return this.root;
@@ -122,9 +125,12 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane fenetreAdm() {
         BorderPane res = new BorderPane();
-        BackgroundFill background1 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundAdm = new Background(background1);
-        res.setBackground(backgroundAdm);
+        
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
 
         VBox boutons = new VBox();
         boutons.getChildren().addAll(btnConsulterStat, btnCreerVendeur, btnCreerLibrairie, btnCreerLivre,btnTransfertLivre);
@@ -136,9 +142,13 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane pageStats() {
         BorderPane res = new BorderPane();
-        BackgroundFill background2 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundStat = new Background(background2);
-        res.setBackground(backgroundStat);
+        // image de fond
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+        //-----------------------------
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
         gauche.setPadding(new Insets(10));
@@ -149,8 +159,12 @@ public class MenuAdministrateur extends Application {
         centre.setPadding(new Insets(10));
         centre.setAlignment(Pos.CENTER);
         centre.setSpacing(10);
-        Text stats = new Text(admin.consulterStatisques());
-        centre.getChildren().add(stats);
+        TextArea statsArea = new TextArea();
+        statsArea.setEditable(false);
+        statsArea.setWrapText(true);
+        statsArea.setText(admin.consulterStatisques());
+
+        centre.getChildren().add(statsArea);
         res.setCenter(centre);
 
         return res;
@@ -158,11 +172,16 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane pageCreerLivre() {
         BorderPane res = new BorderPane();
-        BackgroundFill background3 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundLi = new Background(background3);
-        res.setBackground(backgroundLi);
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
+        gauche.setPadding(new Insets(10));
+        gauche.setAlignment(Pos.TOP_LEFT);
+        gauche.setSpacing(10);
         res.setLeft(gauche);
         
         TextField isbnLivre = new TextField();
@@ -212,8 +231,9 @@ public class MenuAdministrateur extends Application {
             }
              });
             
+        centre.getChildren().add(btnCreerLivre);
         res.setCenter(centre);
-        res.setBottom(btnCreerLivre);
+        
        
 
         return res;
@@ -221,11 +241,16 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane pageCreerVendeur() {
         BorderPane res = new BorderPane();
-        BackgroundFill background4 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundVe = new Background(background4);
-        res.setBackground(backgroundVe);
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
+        gauche.setPadding(new Insets(10));
+        gauche.setAlignment(Pos.TOP_LEFT);
+        gauche.setSpacing(10);
         res.setLeft(gauche);
 
         TextField nomV = new TextField();
@@ -265,8 +290,8 @@ public class MenuAdministrateur extends Application {
             }
             });
             
+        centre.getChildren().add(btnCreerVendeur);
         res.setCenter(centre);
-        res.setBottom(btnCreerVendeur);
         
 
 
@@ -277,11 +302,16 @@ public class MenuAdministrateur extends Application {
 
     public BorderPane pageCreerLibrairie() {
         BorderPane res = new BorderPane();
-        BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundLib = new Background(background5);
-        res.setBackground(backgroundLib);
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
+        gauche.setPadding(new Insets(10));
+        gauche.setAlignment(Pos.TOP_LEFT);
+        gauche.setSpacing(10);
         res.setLeft(gauche);
 
 
@@ -318,19 +348,24 @@ public class MenuAdministrateur extends Application {
             }
             });
             
+        centre.getChildren().add(btnCreerMagasin);
         res.setCenter(centre);
-        res.setBottom(btnCreerMagasin);
 
         return res;
     }
 
     public BorderPane pageTransfertLivre(){
         BorderPane res = new BorderPane();
-        BackgroundFill background5 = new BackgroundFill(Color.web("d2d1ad"), null, null);
-        Background backgroundLib = new Background(background5);
-        res.setBackground(backgroundLib);
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
         VBox gauche = new VBox();
         gauche.getChildren().add(this.retour);
+        gauche.setPadding(new Insets(10));
+        gauche.setAlignment(Pos.TOP_LEFT);
+        gauche.setSpacing(10);
         res.setLeft(gauche);
 
 
@@ -377,8 +412,8 @@ public class MenuAdministrateur extends Application {
             }
             });
             
-        res.setCenter(centre);
-        res.setBottom(btnFaireTransfert);
+            centre.getChildren().add(btnFaireTransfert);
+            res.setCenter(centre);
 
         return res;
 
