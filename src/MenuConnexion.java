@@ -62,6 +62,7 @@ public class MenuConnexion extends Application {
         });
 
         this.inscription = new Button("Inscription");
+        this.inscription.setOnAction(new ControleurInscription());
     }
 
     public Pane titre() {
@@ -83,7 +84,7 @@ public class MenuConnexion extends Application {
     @Override
     public void start(Stage stage) {
 
-        typeCompte.setPromptText("Sélection type de compte");
+        typeCompte.setPromptText("Type de compte");
         idField.setPromptText("Identifiant");
         mdpField.setPromptText("Mot de passe");
 
