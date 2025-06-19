@@ -8,7 +8,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Button;
@@ -17,10 +16,8 @@ import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class MenuConnexion extends Application {
-    // Déclaration des composants en attributs de classe
     private ConnexionMySQL connexionSQL;
     private ComboBox<String> typeCompte;
     private TextField idField;
@@ -42,7 +39,7 @@ public class MenuConnexion extends Application {
             alert.setHeaderText("Erreur de connexion à la base de données");
             alert.showAndWait();
         }
-        // Initialisation des composants (sans les ajouter à la scène)
+
         this.typeCompte = new ComboBox<>();
         this.typeCompte.getItems().addAll("Client", "Administrateur", "Vendeur");
         this.typeCompte.setPrefWidth(200);
@@ -95,13 +92,11 @@ public class MenuConnexion extends Application {
         idField.setPromptText("Identifiant");
         mdpField.setPromptText("Mot de passe");
 
-        // Layouts pour organiser les éléments
         GridPane grid = new GridPane();
         grid.setVgap(20);
         grid.setHgap(10);
         grid.setPadding(new Insets(40, 40, 40, 40));
 
-        // Placement des éléments
         grid.add(typeCompte, 1, 0);
         grid.add(idField, 1, 1);
         grid.add(mdpField, 1, 2);
@@ -110,13 +105,11 @@ public class MenuConnexion extends Application {
         grid.add(this.quitter, 1, 4);
         grid.add(this.inscription, 2, 0);
 
-        // Centrage du contenu
         BorderPane root = new BorderPane();
         root.setCenter(grid);
 
         root.setTop(titre());
 
-        // Style du fond
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,

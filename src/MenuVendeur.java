@@ -66,22 +66,12 @@ public class MenuVendeur extends Application {
 
     @Override
     public void init() {
-        //Connexion BD
-        try {
-            this.connexion = new ConnexionMySQL();
-            this.connexion.connecter();
-        } catch (Exception e) {
-            System.out.println("Erreur de connexion à la base : ");
-        }
-
-        //Ajout des boutons
         this.btnAjouter = new Button("Ajouter un livre");
         this.btnMajQuantite = new Button("Mise À jour Quantité Livre");
         this.btnDispo = new Button("Disponibilité Livre");
         this.btnTransfert = new Button("Transférer un livre");
         this.btnCommande = new Button("Passer Commande pour un Client");
 
-        //Bouton Home et Info
         this.boutonMaison = new Button();
         this.boutonMaison.setId("maison");
         Image imgMaison = new Image("file:./img/home.png");
@@ -101,7 +91,6 @@ public class MenuVendeur extends Application {
         btnInfo.setOnAction(controleur);
         btnAjouter.setOnAction(controleur);
 
-        //Mise en marche des boutons
         this.btnAjouter.setOnAction(controleur);
         this.btnMajQuantite.setOnAction(controleur);
         this.btnDispo.setOnAction(controleur);
@@ -169,12 +158,8 @@ public class MenuVendeur extends Application {
         return fenetre;
     }
 
-//////////////////////////////////////////////////////////
-
-// Page pour ajouter un livre
 public BorderPane afficherPageAjouterLivre() {
 
-    //Background de la page
     BorderPane page = new BorderPane();
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
@@ -185,7 +170,6 @@ public BorderPane afficherPageAjouterLivre() {
         Background wpp = new Background(backgroundImage);
         page.setBackground(wpp);
 
-    //Mise en page
     VBox vbox = new VBox(5);
     vbox.setPadding(new Insets(20));
     vbox.setAlignment(Pos.CENTER);
@@ -196,7 +180,6 @@ public BorderPane afficherPageAjouterLivre() {
     qteLabel.setStyle("-fx-text-fill: white;");
     TextField qteField = new TextField();
 
-    //Bouton "Ajouter"
     Button ajouterBtn = new Button("Ajouter");
     ajouterBtn.setOnAction(e -> {
         String isbn = isbnField.getText();
@@ -220,11 +203,9 @@ public BorderPane afficherPageAjouterLivre() {
         }
     });
 
-    //Bouton "Retour"
     Button retourBtn = new Button("Retour");
     retourBtn.setOnAction(e -> {this.getRoot().setCenter(this.fenetreVendeur());});
 
-    //Placement des boutons
     HBox boutons = new HBox(10, retourBtn,ajouterBtn);
     boutons.setAlignment(Pos.CENTER);
     vbox.getChildren().addAll(isbnLabel, isbnField, qteLabel, qteField, boutons);
@@ -233,12 +214,7 @@ public BorderPane afficherPageAjouterLivre() {
     return page;
     }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-//Page pour mettre à jour la quantité d'un livre
 public BorderPane afficherPageMajQuantite() {
-
-    //Background de la page
     BorderPane page = new BorderPane();
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
@@ -249,7 +225,6 @@ public BorderPane afficherPageMajQuantite() {
     Background wpp = new Background(backgroundImage);
     page.setBackground(wpp);
 
-    //Mise en page
     VBox vbox = new VBox(5);
     vbox.setPadding(new Insets(20));
     vbox.setAlignment(Pos.CENTER);
@@ -260,7 +235,6 @@ public BorderPane afficherPageMajQuantite() {
     qteLabel.setStyle("-fx-text-fill: white;");
     TextField qteField = new TextField();
 
-    //Bouton "Mettre à jour"
     Button majBtn = new Button("Mettre à jour");
     majBtn.setOnAction(e -> {
         String isbn = isbnField.getText();
@@ -285,11 +259,9 @@ public BorderPane afficherPageMajQuantite() {
         }
     });
 
-    //Bouton Retour
     Button retourBtn = new Button("Retour");
     retourBtn.setOnAction(e -> {this.getRoot().setCenter(this.fenetreVendeur());});
 
-    //Placement des boutons
     HBox boutons = new HBox(10, retourBtn,majBtn);
     boutons.setAlignment(Pos.CENTER);
     vbox.getChildren().addAll(isbnLabel, isbnField, qteLabel, qteField, boutons);
@@ -297,12 +269,8 @@ public BorderPane afficherPageMajQuantite() {
     return page;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-//Page pour vérifier la disponibilité d'un livre
 public BorderPane afficherPageDispoLivres() {  
 
-    //Background de la page
     BorderPane page = new BorderPane();
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
@@ -313,7 +281,6 @@ public BorderPane afficherPageDispoLivres() {
     Background wpp = new Background(backgroundImage);
     page.setBackground(wpp);
 
-    // Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
@@ -325,7 +292,6 @@ public BorderPane afficherPageDispoLivres() {
     Button verifierBtn = new Button("Vérifier");
     Label resultatLabel = new Label();
 
-    //Bouton "Verifier"
     verifierBtn.setOnAction(e -> {
         String titreLivre = livreField.getText();
         if (titreLivre.isEmpty()) {
@@ -340,11 +306,9 @@ public BorderPane afficherPageDispoLivres() {
         }
     });
 
-    // Bouton Retour
     Button retourBtn = new Button("Retour");
     retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
 
-    // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, verifierBtn);
     boutons.setAlignment(Pos.CENTER);
     vbox.getChildren().addAll(titreLabel, livreLabel, livreField, boutons, resultatLabel);
@@ -352,13 +316,8 @@ public BorderPane afficherPageDispoLivres() {
     return page;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-
-// Page pour transférer un livre vers un autre magasin
 public BorderPane afficherPageTransfertLivre() {
 
-    //Background de la page
     BorderPane page = new BorderPane();
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
@@ -369,7 +328,6 @@ public BorderPane afficherPageTransfertLivre() {
     Background wpp = new Background(backgroundImage);
     page.setBackground(wpp);
 
-    // Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
@@ -385,7 +343,6 @@ public BorderPane afficherPageTransfertLivre() {
     idMagLabel.setStyle("-fx-text-fill: white;");
     TextField idMagField = new TextField();
 
-    // Bouton pour transférer le livre
     Button transfererBtn = new Button("Transférer");
     Label resultatLabel = new Label();
     transfererBtn.setOnAction(e -> {
@@ -409,11 +366,9 @@ public BorderPane afficherPageTransfertLivre() {
         idMagField.clear();
     });
 
-    //Bouton Retour
     Button retourBtn = new Button("Retour");
     retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
 
-    // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, transfererBtn);
     boutons.setAlignment(Pos.CENTER);
     vbox.getChildren().addAll(titreLabel,isbnLabel, isbnField,qteLabel, qteField,idMagLabel, idMagField,boutons,resultatLabel);
@@ -421,12 +376,7 @@ public BorderPane afficherPageTransfertLivre() {
     return page;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-// Page pour passer une commande pour un client
 public BorderPane afficherPageCommandeClient() {
-
-    //Background de la page
     BorderPane page = new BorderPane();
     BackgroundFill background = new BackgroundFill(Color.web("#d2d1ad"), null, null);
     Background backgroundPage = new Background(background);
@@ -437,7 +387,6 @@ public BorderPane afficherPageCommandeClient() {
     Background wpp = new Background(backgroundImage);
     page.setBackground(wpp);
 
-    //Mise en page
     VBox vbox = new VBox(15);
     vbox.setPadding(new Insets(30));
     vbox.setAlignment(Pos.CENTER);
@@ -458,7 +407,6 @@ public BorderPane afficherPageCommandeClient() {
     Button commanderBtn = new Button("Commander");
     Label resultatLabel = new Label();
     
-    //Bouton "Commander"
     commanderBtn.setOnAction(e -> {
         String idClientStr = idClientField.getText();
         String enLigneStr = enLigneField.getText();
@@ -501,19 +449,16 @@ public BorderPane afficherPageCommandeClient() {
         titresField.clear();
     });
 
-    //Bouton Retour
     Button retourBtn = new Button("Retour");
     retourBtn.setOnAction(e -> this.root.setCenter(this.fenetreVendeur()));
 
-    // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, commanderBtn);
     boutons.setAlignment(Pos.CENTER);
     vbox.getChildren().addAll(titreLabel,idClientLabel, idClientField,enLigneLabel, enLigneField,typeLivraisonLabel, typeLivraisonField,titresLabel, titresField,boutons,resultatLabel);
     page.setCenter(vbox);
     return page;
 }
-
-//Afficher Alerte 
+ 
 private void showAlert(String titre, String message) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(titre);
@@ -538,7 +483,6 @@ public Alert infoAlert() {
         return alert;
     }
 
-// demarrer application
 @Override
 public void start(Stage stage) {
     stage.setTitle("Menu Vendeur");
