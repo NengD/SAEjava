@@ -195,19 +195,19 @@ public BorderPane afficherPageAjouterLivre() {
         int quantite = 0;
 
         try {
-            quantite = Integer.parseInt(qteStr);
-        } catch (NumberFormatException ex) {
-            showAlert("Erreur","Quantité invalide.");
-            }
-
-        try {
             vendeur.ajouterLivre(isbn, quantite);
-            showAlert("","Livre ajouté");
+            showAlert("Livre ajouté","Le livre a bien été ajouté au stock.");
             isbnField.clear();
             qteField.clear();
         } catch (Exception ex) {
-            showAlert("Erreur","Erreur de l'ajout.");
+            showAlert("Erreur","Erreur de l'ajout dans le stock.");
         }
+
+        try {
+            quantite = Integer.parseInt(qteStr);
+        } catch (NumberFormatException ex) {
+            showAlert("Erreur"," la Quantité est invalide, entrez un nombre");
+            }
     });
 
     //Bouton "Retour"
@@ -260,20 +260,20 @@ public BorderPane afficherPageMajQuantite() {
         int quantite = 0;
 
         try {
-         quantite = Integer.parseInt(qteStr);
-        } catch (NumberFormatException ex) {
-            showAlert("Erreur","Quantité invalide.");
-        }
-
-        try {
             Livre livre = new Livre(isbn);
             vendeur.majQuantiteLivre(livre, quantite);
-            showAlert("","Quantité mise à jour.");
+            showAlert("Quantité mise a jour","La quantité a bien été mise à jour.");
             isbnField.clear();
             qteField.clear();
 
         } catch (Exception ex) {
             showAlert("Erreur","Erreur de mise à jour.");
+        }
+
+        try {
+         quantite = Integer.parseInt(qteStr);
+        } catch (NumberFormatException ex) {
+            showAlert("Erreur","La quantité est invalide, entrez un nombre");
         }
     });
 
@@ -315,26 +315,21 @@ public BorderPane afficherPageDispoLivres() {
     livreField.setStyle("-fx-prompt-text-fill: gray;");
 
     Button verifierBtn = new Button("Vérifier");
-    Label resultatLabel = new Label();
 
 
     //Bouton "Verifier"
     verifierBtn.setOnAction(e -> {
         String titreLivre = livreField.getText();
         if (titreLivre.isEmpty()) {
-            resultatLabel.setText("Veuillez entrer un titre.");
-            
+            showAlert("Erreur","Veuillez entrez un titre");
         }
         boolean dispo = vendeur.livreDisponible(titreLivre);
         if (dispo == true) {
-            resultatLabel.setText("Le livre \"" + titreLivre + "\" est disponible en stock.");
-            resultatLabel.setStyle("-fx-font-size: 16px;-fx-text-fill: white; -fx-effect: dropshadow(one-pass-box, black, 15, 0, 0, 0);");
-
+            showAlert("Livre disponible","Le livre \"" + titreLivre + "\" est disponible en stock.");
         } else {
-            resultatLabel.setText("Le livre \"" + titreLivre + "\" n'est pas disponible en stock.");
-            resultatLabel.setStyle("-fx-font-size: 16px;-fx-text-fill: white; -fx-effect: dropshadow(one-pass-box, black, 15, 0, 0, 0);");
-
+            showAlert("Livre non disponible","Le livre \"" + titreLivre + "\" n'est pas disponible en stock.");
         }
+        livreField.clear();
     });
 
     // Bouton Retour
@@ -344,7 +339,7 @@ public BorderPane afficherPageDispoLivres() {
     // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, verifierBtn);
     boutons.setAlignment(Pos.CENTER);
-    vbox.getChildren().addAll(titreLabel, livreField, boutons, resultatLabel);
+    vbox.getChildren().addAll(titreLabel, livreField, boutons);
     page.setCenter(vbox);
     return page;
 }
@@ -386,7 +381,6 @@ public BorderPane afficherPageTransfertLivre() {
 
     // Bouton pour transférer le livre
     Button transfererBtn = new Button("Transférer");
-    Label resultatLabel = new Label();
     transfererBtn.setOnAction(e -> {
         String isbn = isbnField.getText();
         String qteStr = qteField.getText();
@@ -397,15 +391,21 @@ public BorderPane afficherPageTransfertLivre() {
             quantite = Integer.parseInt(qteStr);
             idMagasinDest = Integer.parseInt(idMagStr);
         } catch (NumberFormatException ex) {
-            resultatLabel.setText("Invalide.");
+            showAlert("Erreur","La quantité est invalide, entrez un nombre");
             return;
         }
 
-        vendeur.transfertLivre(isbn, quantite, idMagasinDest);
-        resultatLabel.setText("Transfert effectué.");
-        isbnField.clear();
-        qteField.clear();
-        idMagField.clear();
+        try {
+            vendeur.transfertLivre(isbn, quantite, idMagasinDest);
+            showAlert("Livre Transféré","Le livre a bien été transféré vers"+idMagasinDest);
+            isbnField.clear();
+            qteField.clear();
+            idMagField.clear();   
+        }   catch (Exception ex){
+            showAlert("Erreur","Une erreur est survenue lors du transfert");
+        }
+        
+        
     });
 
     //Bouton Retour
@@ -415,7 +415,7 @@ public BorderPane afficherPageTransfertLivre() {
     // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, transfererBtn);
     boutons.setAlignment(Pos.CENTER);
-    vbox.getChildren().addAll(titreLabel, isbnField, qteField, idMagField,boutons,resultatLabel);
+    vbox.getChildren().addAll(titreLabel, isbnField, qteField, idMagField,boutons);
     page.setCenter(vbox);
     return page;
 }
@@ -458,7 +458,6 @@ public BorderPane afficherPageCommandeClient() {
     titresField.setStyle("-fx-prompt-text-fill: gray;");
 
     Button commanderBtn = new Button("Commander");
-    Label resultatLabel = new Label();
     
     //Bouton "Commander"
     commanderBtn.setOnAction(e -> {
@@ -473,7 +472,8 @@ public BorderPane afficherPageCommandeClient() {
             idClient = Integer.parseInt(idClientStr);
             enLigne = Boolean.parseBoolean(enLigneStr);
         } catch (Exception ex) {
-            resultatLabel.setText("Invalide.");
+            showAlert("Erreur"," Une erreur est survenue lors de botre commande reessayez.");
+
         }
 
         Client client = null;
@@ -487,7 +487,8 @@ public BorderPane afficherPageCommandeClient() {
             rs.close();
             ps.close();
         } catch (Exception ex) {
-            resultatLabel.setText("Erreur");
+            showAlert("Erreur"," Une erreur est survenue lors de botre commande reessayez.");
+
         }
 
         List<String> titres = new ArrayList<>();
@@ -495,12 +496,17 @@ public BorderPane afficherPageCommandeClient() {
             titres.add(titre);
         }
 
-        vendeur.passerCommandePourClient(enLigne, typeLivraison, titres, client);
-        resultatLabel.setText("Commande passée.");
-        idClientField.clear();
-        enLigneField.clear();
-        typeLivraisonField.clear();
-        titresField.clear();
+        try {
+            vendeur.passerCommandePourClient(enLigne, typeLivraison, titres, client);
+            showAlert("Succès"," la commande a bien été enregistré");
+            idClientField.clear();
+            enLigneField.clear();
+            typeLivraisonField.clear();
+            titresField.clear();
+        } catch (Exception ex){
+            showAlert("Erreur"," Une erreur est survenue lors de botre commande reessayez.");
+        }
+
     });
 
     //Bouton Retour
@@ -510,7 +516,7 @@ public BorderPane afficherPageCommandeClient() {
     // Placement des boutons
     HBox boutons = new HBox(10, retourBtn, commanderBtn);
     boutons.setAlignment(Pos.CENTER);
-    vbox.getChildren().addAll(titreLabel, idClientField, enLigneField, typeLivraisonField, titresField,boutons,resultatLabel);
+    vbox.getChildren().addAll(titreLabel, idClientField, enLigneField, typeLivraisonField, titresField,boutons);
     page.setCenter(vbox);
     return page;
 }
@@ -532,11 +538,10 @@ public Alert infoAlert() {
     alert.setHeaderText("Aide");
     alert.setContentText("Bienvenue dans le menu vendeur de Livre Express !\n\n"
             + "1. Ajouter un livre : Ajoutez livre au stock du magasin.\n\n"
-            + "2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n\n"
-            + "3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n\n"
-            + "4. Transférer un livre : Transférez un livre vers un autre magasin.\n\n"
-            + "5. Passer commande pour un client : Passez une commande pour un client en magasin.\n\n"
-            + "Pour toute assistance, veuillez contacter le support.");
+            + "2. Mise à jour quantité livre : Modifiez la quantité d'un livre en stock.\n"
+            + "3. Disponibilité livre : Vérifiez si un livre est disponible dans le magasin.\n"
+            + "4. Transférer un livre : Transférez un livre vers un autre magasin.\n"
+            + "5. Passer commande pour un client : Passez une commande pour un client en magasin.");
         return alert;
     }
 
