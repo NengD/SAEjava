@@ -28,7 +28,7 @@ public class Administrateur {
      * @param prenom prénom du vendeur
      * @param idmag identifiant du magasin d'affectation
      */
-    public void creerVendeur(String nom, String prenom, int idmag) {
+    public void creerVendeur(String nom, String prenom, int idmag, String mdp) {
         try {
             Connection conn = this.connexion.getConnection();
             int idven = -1;
@@ -42,11 +42,12 @@ public class Administrateur {
             psNum.close();
 
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO VENDEUR (idven, nomven, prenomven, idmag) VALUES (?, ?, ?, ?)");
+                "INSERT INTO VENDEUR (idven, nomven, prenomven, idmag, mdp) VALUES (?, ?, ?, ?, ?)");
             ps.setInt(1, idven);
             ps.setString(2, nom);
             ps.setString(3, prenom);
             ps.setInt(4, idmag);
+            ps.setString(5, mdp);
             ps.executeUpdate();
             ps.close();
             System.out.println("Vendeur créé !");

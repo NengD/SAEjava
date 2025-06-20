@@ -270,20 +270,23 @@ public class MenuAdministrateur extends Application {
         prenomV.setPromptText("Prénom");
         TextField idMagV = new TextField();
         idMagV.setPromptText("Id Magasin");
+        TextField mdp = new TextField();
+        mdp.setPromptText("Mot de passe du Vendeur");
         
         VBox centre = new VBox();
         centre.setPadding(new Insets(10));
         centre.setAlignment(Pos.CENTER);
         centre.setSpacing(10);
-        centre.getChildren().addAll(nomV, prenomV, idMagV);
+        centre.getChildren().addAll(nomV, prenomV, idMagV, mdp);
         Button btnCreerVendeur = new Button("Créer Vendeur");
         btnCreerVendeur.setOnAction(event ->{
             String nom = nomV.getText();
             String prenom = prenomV.getText();
             int idmag = Integer.parseInt(idMagV.getText());
+            String motDePasse = mdp.getText();
             
             try {
-                admin.creerVendeur(nom,prenom,idmag);
+                admin.creerVendeur(nom,prenom,idmag,mdp);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Succès");
                 alert.setHeaderText(null);
