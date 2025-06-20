@@ -19,7 +19,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+
 import javafx.scene.control.ComboBox;
+
 
 
 
@@ -43,6 +48,17 @@ public class MenuClient extends Application {
         return this.root;
     }
 
+    public void fadeOut(Button boutton, Runnable action) {
+        FadeTransition ft = new FadeTransition(Duration.millis(400), boutton);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setOnFinished(e -> {
+            boutton.setOpacity(1.0); // reset 
+            action.run();
+        });
+        ft.play();
+    }
+    
     @Override
     public void init(){
         try {
