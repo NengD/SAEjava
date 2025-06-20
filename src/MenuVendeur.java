@@ -31,7 +31,8 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundSize;
-
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 public class MenuVendeur extends Application {
 
     private Button btnAjouter;
