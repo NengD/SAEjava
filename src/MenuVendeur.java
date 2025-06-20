@@ -245,7 +245,7 @@ public BorderPane afficherPageAjouterLivre() {
     ajouterBtn.setOnAction(e -> {
         String isbn = isbnField.getText();
         String qteStr = qteField.getText();
-        int quantite = 0;
+        int quantite = Integer.parseInt(qteStr);
 
         try {
             vendeur.ajouterLivre(isbn, quantite);
