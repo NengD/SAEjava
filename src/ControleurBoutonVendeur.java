@@ -18,25 +18,25 @@ public void handle(ActionEvent event) {
 Button button = (Button) (event.getSource());
 
     if (button.getText().contains("Ajouter un livre")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageAjouterLivre());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageAjouterLivre()));
         }
 
     if (button.getText().contains("Mise À jour Quantité Livre")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageMajQuantite());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageMajQuantite()));
         }
 
     if (button.getText().contains("Disponibilité Livre")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageDispoLivres());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageDispoLivres()));
         }
     
     if (button.getText().contains("Transférer un livre")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageTransfertLivre());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageTransfertLivre()));
         }
     if (button.getText().contains("Passer Commande pour un Client")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageCommandeClient());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageCommandeClient()));
         }
     if (button.getText().contains("Afficher la facture du magasin")) {
-        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.pageFacture());
+        this.MenuVendeur.fadeOut(button, () -> MenuVendeur.getRoot().setCenter(this.MenuVendeur.pageFacture()));
         }
 
     if ("maison".equals(button.getId())) {
