@@ -35,6 +35,9 @@ Button button = (Button) (event.getSource());
     if (button.getText().contains("Passer Commande pour un Client")) {
         this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.afficherPageCommandeClient());
         }
+    if (button.getText().contains("Afficher la facture du magasin")) {
+        this.MenuVendeur.getRoot().setCenter(this.MenuVendeur.pageFacture());
+        }
 
     if ("maison".equals(button.getId())) {
         Stage stage = (Stage) button.getScene().getWindow();
