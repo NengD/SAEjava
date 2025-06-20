@@ -286,7 +286,7 @@ public class MenuAdministrateur extends Application {
             String motDePasse = mdp.getText();
             
             try {
-                admin.creerVendeur(nom,prenom,idmag,mdp);
+                admin.creerVendeur(nom,prenom,idmag,motDePasse);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Succès");
                 alert.setHeaderText(null);
