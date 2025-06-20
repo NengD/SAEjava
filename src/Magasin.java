@@ -106,16 +106,6 @@ public class Magasin {
     public String editerFacture(Connection connexion) {
     StringBuilder facture = new StringBuilder();
     String idMagasin = getIdMagasin(connexion);
-
-    facture.append(" _______      ___         ______ .___________. __    __  .______         _______ \n");
-    facture.append("|   ____|    /   \\      /      ||           ||  |  |  | |   _  \\      |   ____|\n");
-    facture.append("|  |__      /  ^  \\    |  ,----'`---|  |----`|  |  |  | |  |_)  |      |  |__   \n");
-    facture.append("|   __|    /  /_\\ \\   |  |         |  |     |  |  |  | |      /       |   __|  \n");
-    facture.append("|  |      /  ____   \\  |  `----.    |  |     |  `--'  | |  |\\  \\---. |  |____ \n");
-    facture.append("|__|     /__/     \\__\\ \\______|   |__|      \\______/ | _| `.______| |_______|\n");
-    for(int i=0; i< 4; i++){
-        facture.append("                                                                                \n");
-    }
     facture.append("=================================================================================\n");
     facture.append("||                                                                             ||\n");
     facture.append("|| Facture du magasin ").append(this.nom).append(" ID:").append(idMagasin).append("                        ||\n");
@@ -145,10 +135,8 @@ public class Magasin {
             } catch (SQLException e) {
                 titre = "Titre inconnu";
             }
-            facture.append("|| Livre : ").append(titre)
-                    .append(" | Quantité : ").append(quantite)
-                    .append(" | Prix unitaire : ").append(prix)
-                    .append(" | Total : ").append(prixTotal).append(" €      ||\n");
+            String ligne = String.format("|| %-100s | Qté : %-10d | PU : %10.2f € | Total : %10.2f € ||\n",titre, quantite, prix, prixTotal);
+            facture.append(ligne);
             total += prixTotal;
         }
     }
@@ -157,7 +145,5 @@ public class Magasin {
     facture.append("=================================================================================\n");
     return facture.toString();
 }
-
-  
 
 }

@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundRepeat;
@@ -37,6 +39,7 @@ public class MenuVendeur extends Application {
     private Button btnDispo;
     private Button btnTransfert;
     private Button btnCommande;
+    private Button btnFacture;
     private Button boutonMaison;
     private Button btnInfo;
     private Vendeur vendeur;
@@ -63,6 +66,7 @@ public class MenuVendeur extends Application {
         this.btnDispo = new Button("Disponibilité Livre");
         this.btnTransfert = new Button("Transférer un livre");
         this.btnCommande = new Button("Passer Commande pour un Client");
+        this.btnFacture = new Button("Afficher la facture du magasin");
 
         this.boutonMaison = new Button();
         this.boutonMaison.setId("maison");
@@ -87,6 +91,7 @@ public class MenuVendeur extends Application {
         this.btnTransfert.setOnAction(controleur);
         this.btnCommande.setOnAction(controleur);
         this.boutonMaison.setOnAction(controleur);
+        this.btnFacture.setOnAction(controleur);
         btnInfo.setOnAction(controleur);
 
         
@@ -101,14 +106,12 @@ public class MenuVendeur extends Application {
 
     public Pane titre() {
 
-        //Banniere Haut de Page
         BorderPane banniere = new BorderPane();
         banniere.setPadding(new Insets(0, 10, 0, 10));
         BackgroundFill background = new BackgroundFill(Color.web("#bec3b9"), null, null);
         Background backgroundTitre = new Background(background);
         banniere.setBackground(backgroundTitre);
 
-        //Titre 
         Text titre = new Text("Menu Vendeur");
         titre.setFont(Font.font("Arial", 50));
         titre.setFill(Color.BLACK);
@@ -121,9 +124,65 @@ public class MenuVendeur extends Application {
         return banniere;
     }
 
+    public BorderPane pageFacture() {
+        BorderPane res = new BorderPane();
+
+        Image fond = new Image("file:./img/wp.jpg");
+        BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));   
+        Background wpp = new Background(backgroundImage);
+        res.setBackground(wpp);
+        Button retourBtn = new Button("Retour");
+        retourBtn.setOnAction(e -> {this.getRoot().setCenter(this.fenetreVendeur());});
+        
+        VBox vboxFacture = new VBox();
+        vboxFacture.setAlignment(Pos.CENTER);
+
+        int idMagasin = this.vendeur.getIdMagasin();
+        String StringIdMagasin = String.valueOf(idMagasin);
+        String nommag = "";
+        
+        try {
+            PreparedStatement ps = connexion.prepareStatement("SELECT nommag FROM MAGASIN WHERE idmag = ?");
+            ps.setString(1, StringIdMagasin);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                nommag = rs.getString("nommag");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur getStock : " + e.getMessage());
+        }
+        Connection conn = this.connexion.getConnection();
+        Magasin magasin = new Magasin(nommag);
+        String facture = magasin.editerFacture(conn);
+
+        TextArea textFacture = new TextArea(facture);
+        textFacture.setEditable(false);
+        textFacture.setWrapText(false);
+        textFacture.setStyle("-fx-control-inner-background: #bec3b9;-fx-background-color: #bec3b9;-fx-text-fill: black;-fx-font-family: 'Courier New';");
+
+        textFacture.setMaxWidth(Double.MAX_VALUE);
+        textFacture.setMaxHeight(Double.MAX_VALUE);
+
+        VBox.setVgrow(textFacture, Priority.ALWAYS);
+        vboxFacture.getChildren().add(textFacture);
+
+        textFacture.setPrefColumnCount(40);
+        textFacture.setPrefRowCount(facture.split("\n").length);
+
+        VBox vbox = new VBox(15, textFacture, retourBtn);
+
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(20));
+        
+        res.setCenter(vbox);
+        return res;
+    }
+
     public BorderPane fenetreVendeur() {
 
-        //Background de la fenetre
         BorderPane fenetre = new BorderPane();
         Image fond = new Image("file:./img/wp.jpg");
         BackgroundImage backgroundImage = new BackgroundImage(fond, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
@@ -131,17 +190,17 @@ public class MenuVendeur extends Application {
         Background wpp = new Background(backgroundImage);
         fenetre.setBackground(wpp);
 
-        //Ajustement des boutons
         VBox boutons = new VBox(20);
         boutons.setPadding(new Insets(40));
         boutons.setAlignment(Pos.CENTER);
-        boutons.getChildren().addAll(btnAjouter, btnMajQuantite, btnDispo, btnTransfert, btnCommande);
+        boutons.getChildren().addAll(btnAjouter, btnMajQuantite, btnDispo, btnTransfert, btnCommande, btnFacture);
         fenetre.setCenter(boutons);
         btnAjouter.setMaxWidth(Double.MAX_VALUE);
         btnMajQuantite.setMaxWidth(Double.MAX_VALUE);
         btnDispo.setMaxWidth(Double.MAX_VALUE);
         btnTransfert.setMaxWidth(Double.MAX_VALUE);
         btnCommande.setMaxWidth(Double.MAX_VALUE);
+        btnFacture.setMaxWidth(Double.MAX_VALUE);
         boutons.setFillWidth(true);
         return fenetre;
     }
@@ -174,7 +233,6 @@ public BorderPane afficherPageAjouterLivre() {
     ajouterBtn.setOnAction(e -> {
         String isbn = isbnField.getText();
         String qteStr = qteField.getText();
-        //int idmag = vendeur.getIdMagasin();
         int quantite = 0;
 
         try {
