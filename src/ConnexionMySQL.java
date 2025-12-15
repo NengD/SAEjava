@@ -20,7 +20,7 @@ public class ConnexionMySQL {
     * @throws SQLException si une erreur se produit lors de la connexion
     */
     public void connecter() throws SQLException {
-        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-maria:3306/DBmoreau", "moreau", "moreau");
+        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-maria:3306/DBnom", "nom", "mdp");
         this.connecte = this.mysql != null;
     }
 
